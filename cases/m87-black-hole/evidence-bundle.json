@@ -18,25 +18,25 @@
       "kind": "observation",
       "id": "observation:m87:ring-scale-structure",
       "path": "observation.json",
-      "sha256": "172cc208a19d83a7e032e3a5505f827e4ef995e48d98d65e39ce1b312b2a6bf1"
+      "sha256": "f9f1da88f3f6300a3fec374beb28ca3433ae5c6db163276aa6bf47599be946ed"
     },
     {
       "kind": "instrument",
       "id": "instrument:eht:network",
       "path": "instrument.json",
-      "sha256": "6eaddb92d0d56cc21d074b9155fec8e6c1c03e62661a6dac5ddea93982f9a679"
+      "sha256": "032d78665b2b36a13bdb7b0d4e39c07fdbb7bc32e3ff64e591d423ed5f485a20"
     },
     {
       "kind": "transformation",
       "id": "transformation:m87:image-reconstruction",
       "path": "transformation.json",
-      "sha256": "a7ea19b194cff8d471a94ed72aee3bbfb8a32709470565a78ba6050bd8e98b42"
+      "sha256": "c6e34aabe439cc6e852ac591f63c421e1939aa6e4e9330d82fc8b35d2ffb1132"
     },
     {
       "kind": "assumption",
       "id": "assumption:m87:gr-model",
       "path": "assumption.json",
-      "sha256": "0cdf9564d81f07aa370cbf78b920ccfef9cb8ff498600460f223ca39d119054f"
+      "sha256": "0c103806a9661befed3c7fbe60d225c221f442d22109a2529f8d7df82256f088"
     }
   ],
   "root_claim_refs": [
@@ -44,11 +44,11 @@
     "claim:m87:ring-image"
   ],
   "missing": [
-    "exact source datasets and hashes",
-    "calibration evidence",
-    "reconstruction code and environment",
-    "independent confirmations",
-    "alternative hypotheses",
-    "falsification criteria"
+    "exact released dataset byte hashes",
+    "pinned calibration pipeline commits and execution environment",
+    "local reproduction of the published reconstruction",
+    "materially independent confirmation objects",
+    "machine-readable alternative hypotheses",
+    "machine-readable falsification criteria"
   ]
 }
