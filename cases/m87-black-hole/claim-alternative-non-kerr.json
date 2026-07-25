@@ -1,0 +1,15 @@
+{
+  "claim_id": "claim:m87:non-kerr-compact-object",
+  "claim_text": "The central source is an ultracompact object not described by the Kerr black-hole solution.",
+  "claim_type": "SPEC",
+  "status": "not_assessed",
+  "evidence_level": "S0",
+  "created_at": "2026-07-25T00:00:00Z",
+  "version": 1,
+  "supersedes": null,
+  "evidence_refs": [],
+  "assumption_refs": [],
+  "alternative_claim_refs": [
+    "claim:m87:ring-image"
+  ]
+}
