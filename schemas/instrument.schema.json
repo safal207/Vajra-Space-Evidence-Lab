@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/instrument.schema.json",
+  "title": "Vajra Space Instrument",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["instrument_id", "name", "instrument_type", "operator", "calibration_status"],
+  "properties": {
+    "instrument_id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "instrument_type": {"type": "string", "enum": ["telescope", "interferometer", "spectrometer", "detector", "satellite", "radar", "other"]},
+    "operator": {"type": "string", "minLength": 1},
+    "location": {"type": ["string", "null"]},
+    "calibration_status": {"type": "string", "enum": ["unknown", "declared", "verified", "expired", "failed"]},
+    "calibration_evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}
