@@ -1,22 +1,48 @@
 {
   "bundle_id": "bundle:m87:v0.1",
-  "claims": [
+  "status": "incomplete",
+  "objects": [
+    {
+      "kind": "claim",
+      "id": "claim:m87:compact-radio-source",
+      "path": "claim-compact-radio-source.json",
+      "sha256": "0459b777f7115d1a0a5e4841c7c33324205609b4ae2e7590e560ae802ad32222"
+    },
+    {
+      "kind": "claim",
+      "id": "claim:m87:ring-image",
+      "path": "claim-ring-image.json",
+      "sha256": "ed97d85ca83f44fdca6ce86040e81ae92a2f1c73dcb4e644e68c1ebfdf13af35"
+    },
+    {
+      "kind": "observation",
+      "id": "observation:m87:ring-scale-structure",
+      "path": "observation.json",
+      "sha256": "172cc208a19d83a7e032e3a5505f827e4ef995e48d98d65e39ce1b312b2a6bf1"
+    },
+    {
+      "kind": "instrument",
+      "id": "instrument:eht:network",
+      "path": "instrument.json",
+      "sha256": "6eaddb92d0d56cc21d074b9155fec8e6c1c03e62661a6dac5ddea93982f9a679"
+    },
+    {
+      "kind": "transformation",
+      "id": "transformation:m87:image-reconstruction",
+      "path": "transformation.json",
+      "sha256": "a7ea19b194cff8d471a94ed72aee3bbfb8a32709470565a78ba6050bd8e98b42"
+    },
+    {
+      "kind": "assumption",
+      "id": "assumption:m87:gr-model",
+      "path": "assumption.json",
+      "sha256": "0cdf9564d81f07aa370cbf78b920ccfef9cb8ff498600460f223ca39d119054f"
+    }
+  ],
+  "root_claim_refs": [
     "claim:m87:compact-radio-source",
     "claim:m87:ring-image"
   ],
-  "observations": [
-    "observation:m87:ring-scale-structure"
-  ],
-  "instruments": [
-    "instrument:eht:network"
-  ],
-  "transformations": [
-    "transformation:m87:image-reconstruction"
-  ],
-  "assumptions": [
-    "assumption:m87:gr-model"
-  ],
-  "status": "incomplete",
   "missing": [
     "exact source datasets and hashes",
     "calibration evidence",
