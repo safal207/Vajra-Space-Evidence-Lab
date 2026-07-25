@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vajra-space-evidence-lab"
+version = "0.3.0"
+description = "Evidence validation infrastructure for space science and space safety"
+requires-python = ">=3.11"
+dependencies = [
+  "jsonschema>=4.22"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0"
+]
+
+[project.scripts]
+vajra-space = "vajra_space.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
