@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .bundle import validate_bundle_file
 from .ledger import append_record, validate_ledger_file
 from .renderer import render_claim_markdown
 from .scoring import calculate_evidence_level
@@ -21,6 +22,10 @@ def main() -> int:
     evidence = sub.add_parser("validate-evidence")
     evidence.add_argument("evidence")
     evidence.add_argument("--schema", default="schemas/evidence.schema.json")
+
+    bundle = sub.add_parser("validate-bundle")
+    bundle.add_argument("bundle")
+    bundle.add_argument("--schema", default="schemas/bundle.schema.json")
 
     score = sub.add_parser("score-evidence")
     score.add_argument("bundle")
@@ -44,9 +49,17 @@ def main() -> int:
         result = validate_claim_file(Path(args.claim), Path(args.schema))
     elif args.command == "validate-evidence":
         result = validate_evidence_file(Path(args.evidence), Path(args.schema))
+    elif args.command == "validate-bundle":
+        bundle_result = validate_bundle_file(Path(args.bundle), Path(args.schema))
+        if bundle_result.valid:
+            print("VALID")
+            return 0
+        for issue in bundle_result.issues:
+            print(f"{issue.code}: {issue.path}: {issue.message}")
+        return 1
     elif args.command == "score-evidence":
-        bundle = json.loads(Path(args.bundle).read_text(encoding="utf-8"))
-        assessment = calculate_evidence_level(bundle)
+        assessment_input = json.loads(Path(args.bundle).read_text(encoding="utf-8"))
+        assessment = calculate_evidence_level(assessment_input)
         print(json.dumps({"level": assessment.level, "reasons": assessment.reasons}, indent=2))
         return 0
     elif args.command == "ledger-append":
