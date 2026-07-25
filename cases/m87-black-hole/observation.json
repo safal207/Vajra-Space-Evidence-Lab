@@ -1,0 +1,14 @@
+{
+  "observation_id": "observation:m87:ring-scale-structure",
+  "description": "Calibrated 2017 EHT visibility and closure measurements contain horizon-scale structure from the compact radio source at the center of M87; image-domain ring morphology is a downstream reconstruction, not a direct detector frame.",
+  "observed_at": "2017-04-11T00:00:00Z",
+  "instrument_ref": "instrument:eht:network",
+  "source_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "data_uri": "https://doi.org/10.25739/g85n-f134",
+  "band_or_channel": "1.3 mm / approximately 230 GHz",
+  "uncertainty": {
+    "description": "UNVERIFIED sentinel source_hash: exact released dataset bytes have not yet been ingested and hashed by Vajra. EHT Paper III reports cross-pipeline QA and baseline systematic limits, but those claims remain external until reproduced here.",
+    "value": null,
+    "unit": null
+  }
+}
