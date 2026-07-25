@@ -11,5 +11,11 @@
   "assumption_refs": [
     "assumption:m87:gr-model"
   ],
-  "alternative_claim_refs": []
+  "alternative_claim_refs": [
+    "claim:m87:calibration-artifact",
+    "claim:m87:imaging-prior-artifact",
+    "claim:m87:jet-only-morphology",
+    "claim:m87:non-kerr-compact-object",
+    "claim:m87:variability-bias"
+  ]
 }
