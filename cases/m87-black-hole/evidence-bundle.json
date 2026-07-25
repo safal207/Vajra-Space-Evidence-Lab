@@ -12,7 +12,37 @@
       "kind": "claim",
       "id": "claim:m87:ring-image",
       "path": "claim-ring-image.json",
-      "sha256": "ed97d85ca83f44fdca6ce86040e81ae92a2f1c73dcb4e644e68c1ebfdf13af35"
+      "sha256": "dd5205aa12a66cd47b770a4171c1d51087e9f9f3551ab9516f9292ce8eeb8796"
+    },
+    {
+      "kind": "claim",
+      "id": "claim:m87:calibration-artifact",
+      "path": "claim-alternative-calibration-artifact.json",
+      "sha256": "31b7104f37260ea4ced934211302c211deaf68e56010be99bfc33cc80cdc7b32"
+    },
+    {
+      "kind": "claim",
+      "id": "claim:m87:imaging-prior-artifact",
+      "path": "claim-alternative-imaging-prior.json",
+      "sha256": "81b539015ea24779793a031d83a5f42d47629e817ed7cc1af2ad80f0f04a38e7"
+    },
+    {
+      "kind": "claim",
+      "id": "claim:m87:jet-only-morphology",
+      "path": "claim-alternative-jet-only.json",
+      "sha256": "36aa00836ecfb545b8eef090fa116569b71b47046dd26d1ed5fccafcbfc33f30"
+    },
+    {
+      "kind": "claim",
+      "id": "claim:m87:non-kerr-compact-object",
+      "path": "claim-alternative-non-kerr.json",
+      "sha256": "79e08450fe104409eea1da12d073ca0156ea78f07e98391922c169e6f1ddbb0e"
+    },
+    {
+      "kind": "claim",
+      "id": "claim:m87:variability-bias",
+      "path": "claim-alternative-variability-bias.json",
+      "sha256": "7dbb4550e9b58c1d386b1d2465a94c4272568e1eb7b2bacd747a236d2b26f774"
     },
     {
       "kind": "observation",
@@ -48,7 +78,6 @@
     "pinned calibration pipeline commits and execution environment",
     "local reproduction of the published reconstruction",
     "materially independent confirmation objects",
-    "machine-readable alternative hypotheses",
     "machine-readable falsification criteria"
   ]
 }
