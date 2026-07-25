@@ -1,0 +1,15 @@
+{
+  "claim_id": "claim:m87:jet-only-morphology",
+  "claim_text": "The compact structure can be explained by jet-base emission without requiring a black-hole shadow interpretation.",
+  "claim_type": "SPEC",
+  "status": "not_assessed",
+  "evidence_level": "S0",
+  "created_at": "2026-07-25T00:00:00Z",
+  "version": 1,
+  "supersedes": null,
+  "evidence_refs": [],
+  "assumption_refs": [],
+  "alternative_claim_refs": [
+    "claim:m87:ring-image"
+  ]
+}
