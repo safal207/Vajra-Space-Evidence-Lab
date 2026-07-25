@@ -1,0 +1,28 @@
+{
+  "bundle_id": "bundle:m87:v0.1",
+  "claims": [
+    "claim:m87:compact-radio-source",
+    "claim:m87:ring-image"
+  ],
+  "observations": [
+    "observation:m87:ring-scale-structure"
+  ],
+  "instruments": [
+    "instrument:eht:network"
+  ],
+  "transformations": [
+    "transformation:m87:image-reconstruction"
+  ],
+  "assumptions": [
+    "assumption:m87:gr-model"
+  ],
+  "status": "incomplete",
+  "missing": [
+    "exact source datasets and hashes",
+    "calibration evidence",
+    "reconstruction code and environment",
+    "independent confirmations",
+    "alternative hypotheses",
+    "falsification criteria"
+  ]
+}
