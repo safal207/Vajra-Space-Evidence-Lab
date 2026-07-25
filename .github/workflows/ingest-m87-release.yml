@@ -1,0 +1,37 @@
+name: ingest-m87-release
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/ingest_m87_release.py
+      - .github/workflows/ingest-m87-release.yml
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch pinned official EHT release
+        run: |
+          git init /tmp/eht-release
+          git -C /tmp/eht-release remote add origin https://github.com/eventhorizontelescope/2019-D01-01.git
+          git -C /tmp/eht-release fetch --depth 1 origin 27ae76aacb9067a83388395c3826012b97aac371
+          git -C /tmp/eht-release checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/eht-release rev-parse HEAD)" = "27ae76aacb9067a83388395c3826012b97aac371"
+
+      - name: Generate SHA-256 release manifest
+        run: |
+          python scripts/ingest_m87_release.py \
+            /tmp/eht-release \
+            --output m87-release-manifest.json
+
+      - name: Upload manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-release-manifest
+          path: m87-release-manifest.json
+          if-no-files-found: error
+          retention-days: 30
