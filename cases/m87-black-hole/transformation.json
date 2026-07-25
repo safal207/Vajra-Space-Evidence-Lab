@@ -1,0 +1,18 @@
+{
+  "transformation_id": "transformation:m87:image-reconstruction",
+  "name": "M87 image reconstruction from calibrated VLBI observables",
+  "input_refs": [
+    "observation:m87:ring-scale-structure"
+  ],
+  "output_ref": "claim:m87:ring-image",
+  "method": "Apply independently developed CLEAN and regularized maximum-likelihood imaging pipelines to calibrated VLBI observables; assess robustness with blind teams, synthetic-data reconstructions, parameter surveys, and cross-method comparison.",
+  "code_uri": "https://github.com/eventhorizontelescope/2019-D01-02",
+  "code_hash": null,
+  "parameters": {
+    "published_procedure": "Two-stage imaging procedure described in EHT Paper IV",
+    "stage_1": "Four teams worked blind using CLEAN and regularized maximum-likelihood methods",
+    "stage_2": "Synthetic datasets and parameter surveys were used to select and test imaging configurations",
+    "vajra_execution_status": "not_run"
+  },
+  "reproducibility": "partial"
+}
