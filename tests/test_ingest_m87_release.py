@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.ingest_m87_release import REQUIRED_FILES, build_manifest
+from vajra_space.release_ingest import REQUIRED_FILES, build_manifest
 
 
 def git(repo: Path, *args: str) -> None:
