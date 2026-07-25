@@ -6,7 +6,7 @@
       "kind": "claim",
       "id": "claim:m87:compact-radio-source",
       "path": "claim-compact-radio-source.json",
-      "sha256": "0459b777f7115d1a0a5e4841c7c33324205609b4ae2e7590e560ae802ad32222"
+      "sha256": "0735a6866b90be2582da09f077feb8e3738b6af9f7fea47afd37d41fe78231c8"
     },
     {
       "kind": "claim",
@@ -45,10 +45,16 @@
       "sha256": "7dbb4550e9b58c1d386b1d2465a94c4272568e1eb7b2bacd747a236d2b26f774"
     },
     {
+      "kind": "evidence",
+      "id": "evidence:m87:calibrated-release-2019-D01-01",
+      "path": "evidence-calibrated-release.json",
+      "sha256": "90d0ea4af98adc0234e3da17238d7cade39dac5bfeda659a920beb2155384608"
+    },
+    {
       "kind": "observation",
       "id": "observation:m87:ring-scale-structure",
       "path": "observation.json",
-      "sha256": "f9f1da88f3f6300a3fec374beb28ca3433ae5c6db163276aa6bf47599be946ed"
+      "sha256": "5a9ad3b9ee13046b5fcbb7f66eb6c2a10471d17374e8b50a3f3117fa2f6f45b0"
     },
     {
       "kind": "instrument",
@@ -74,7 +80,7 @@
     "claim:m87:ring-image"
   ],
   "missing": [
-    "exact released dataset byte hashes",
+    "byte-for-byte equivalence with the CyVerse DOI endpoint",
     "pinned calibration pipeline commits and execution environment",
     "local reproduction of the published reconstruction",
     "materially independent confirmation objects",
