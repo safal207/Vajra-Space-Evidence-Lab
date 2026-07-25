@@ -6,6 +6,10 @@ on:
     paths:
       - scripts/ingest_m87_release.py
       - .github/workflows/ingest-m87-release.yml
+  pull_request:
+    paths:
+      - scripts/ingest_m87_release.py
+      - .github/workflows/ingest-m87-release.yml
 
 jobs:
   ingest:
