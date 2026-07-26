@@ -50,7 +50,6 @@ This card assesses only the REC claim that a ring-like image can be reconstructe
 - independent operator or external-infrastructure reproduction
 - independent review of the Paper VI-derived feature extractor and thresholds
 - investigation of cross-run numerical drift
-- machine-readable falsification criteria
 - materially independent confirmation objects
 - pinned calibration pipeline commits and execution environment
 - visibility-domain and closure-quantity comparison
