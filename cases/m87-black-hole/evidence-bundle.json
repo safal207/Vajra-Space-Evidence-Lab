@@ -12,7 +12,7 @@
       "kind": "claim",
       "id": "claim:m87:ring-image",
       "path": "claim-ring-image.json",
-      "sha256": "dd5205aa12a66cd47b770a4171c1d51087e9f9f3551ab9516f9292ce8eeb8796"
+      "sha256": "7498bbc9f73a45d6c6228192f8ba1d0d4e1a615ace55d12e0dc3a63fba20988f"
     },
     {
       "kind": "claim",
@@ -51,6 +51,12 @@
       "sha256": "90d0ea4af98adc0234e3da17238d7cade39dac5bfeda659a920beb2155384608"
     },
     {
+      "kind": "evidence",
+      "id": "evidence:m87:ehtim-bootstrap-reproduction",
+      "path": "evidence-ehtim-bootstrap-reproduction.json",
+      "sha256": "596a2733a7006fd875e3be460a3ac4249206724a4d68776fe3599a934e7fec89"
+    },
+    {
       "kind": "observation",
       "id": "observation:m87:ring-scale-structure",
       "path": "observation.json",
@@ -82,7 +88,6 @@
   "missing": [
     "byte-for-byte equivalence with the CyVerse DOI endpoint",
     "pinned calibration pipeline commits and execution environment",
-    "local reproduction of the published reconstruction",
     "materially independent confirmation objects",
     "machine-readable falsification criteria"
   ]
