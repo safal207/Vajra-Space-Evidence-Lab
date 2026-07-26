@@ -2,13 +2,27 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from .bundle import validate_bundle_file
 from .ledger import append_record, validate_ledger_file
 from .renderer import render_claim_markdown
+from .reproduction import (
+    run_reproduction,
+    validate_reproduction_manifest,
+    verify_attestation_hmac,
+)
 from .scoring import calculate_evidence_level
 from .validator import validate_claim_file, validate_evidence_file
+
+
+REPRODUCTION_EXIT_CODES = {
+    "success": 0,
+    "partial": 2,
+    "mismatch": 3,
+    "blocked": 4,
+}
 
 
 def main() -> int:
@@ -26,6 +40,23 @@ def main() -> int:
     bundle = sub.add_parser("validate-bundle")
     bundle.add_argument("bundle")
     bundle.add_argument("--schema", default="schemas/bundle.schema.json")
+
+    reproduction_manifest = sub.add_parser("validate-reproduction-manifest")
+    reproduction_manifest.add_argument("manifest")
+    reproduction_manifest.add_argument("--schema", default="schemas/reproduction.schema.json")
+
+    reproduce = sub.add_parser("reproduce")
+    reproduce.add_argument("manifest")
+    reproduce.add_argument("--schema", default="schemas/reproduction.schema.json")
+    reproduce.add_argument("--workspace", default=".")
+    reproduce.add_argument("--execute", action="store_true")
+    reproduce.add_argument("--attestation")
+    reproduce.add_argument("--signing-key-env")
+    reproduce.add_argument("--key-id")
+
+    verify_reproduction = sub.add_parser("verify-reproduction-attestation")
+    verify_reproduction.add_argument("attestation")
+    verify_reproduction.add_argument("--signing-key-env", required=True)
 
     score = sub.add_parser("score-evidence")
     score.add_argument("bundle")
@@ -56,6 +87,55 @@ def main() -> int:
             return 0
         for issue in bundle_result.issues:
             print(f"{issue.code}: {issue.path}: {issue.message}")
+        return 1
+    elif args.command == "validate-reproduction-manifest":
+        manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
+        schema = json.loads(Path(args.schema).read_text(encoding="utf-8"))
+        issues = validate_reproduction_manifest(manifest, schema)
+        if not issues:
+            print("VALID")
+            return 0
+        for issue in issues:
+            print(f"{issue['code']}: {issue['path']}: {issue['message']}")
+        return 1
+    elif args.command == "reproduce":
+        signing_key: bytes | None = None
+        if args.signing_key_env:
+            value = os.environ.get(args.signing_key_env)
+            if value is None:
+                print(json.dumps({
+                    "status": "blocked",
+                    "issues": [{
+                        "code": "missing_signing_key",
+                        "path": "$.signing_key",
+                        "message": f"Environment variable is not set: {args.signing_key_env}",
+                    }],
+                }, indent=2))
+                return REPRODUCTION_EXIT_CODES["blocked"]
+            signing_key = value.encode("utf-8")
+        reproduction_result = run_reproduction(
+            Path(args.manifest),
+            Path(args.schema),
+            Path(args.workspace),
+            allow_execution=args.execute,
+            signing_key=signing_key,
+            key_id=args.key_id,
+        )
+        payload = json.dumps(reproduction_result.attestation, indent=2, sort_keys=True) + "\n"
+        if args.attestation:
+            Path(args.attestation).write_text(payload, encoding="utf-8")
+        print(payload, end="")
+        return REPRODUCTION_EXIT_CODES[reproduction_result.status]
+    elif args.command == "verify-reproduction-attestation":
+        value = os.environ.get(args.signing_key_env)
+        if value is None:
+            print(f"Missing environment variable: {args.signing_key_env}")
+            return 1
+        attestation = json.loads(Path(args.attestation).read_text(encoding="utf-8"))
+        if verify_attestation_hmac(attestation, value.encode("utf-8")):
+            print("VALID")
+            return 0
+        print("INVALID")
         return 1
     elif args.command == "score-evidence":
         assessment_input = json.loads(Path(args.bundle).read_text(encoding="utf-8"))
