@@ -36,6 +36,16 @@
     "root_filesystem_read_only": true,
     "timeout_terminated_execution": true
   },
+  "signature": {
+    "algorithm": "ed25519",
+    "fingerprint": "sha256:7b2b0152eb08c728e7d11e519703aeb300cdb9cc1f83fdeef5f5bb00ffff28a1",
+    "key_id": "vajra-m87-podman-ceremony-2026-07-26",
+    "key_status": "retired",
+    "registry_path": "trust/signer-registry.json",
+    "registry_sha256": "06e305777985b97d09083dfa8c0579f285b59a503e9dcbdbbd239bc31e2fbba7",
+    "signed_attestation_path": "cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json",
+    "signed_attestation_sha256": "b13106e43dabab4c0051cf7dc1780aed46e8656aa7b18ad3d03332ce98516061"
+  },
   "status": "runtime_diverse_exact_match",
   "workflow": {
     "artifact_digest": "sha256:90e710f117bd4bb10896b6d8f84c5de9f171118afce0b5dc873a69917ce183ac",
