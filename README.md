@@ -22,7 +22,7 @@ Build a validated **Evidence Card** format and publish the first reference case 
 
 ## Verified M87 reproduction checkpoint
 
-The official April 11 data, official imaging pipeline, exact scientific environment, and generated output are now pinned:
+The official April 11 data, official imaging pipeline, exact scientific environment, and generated output are pinned:
 
 - environment lock: `containers/m87-ehtim/explicit-linux-64.txt`
 - environment lock SHA-256: `e4f061d38ccc642dd55cf4e4d100319749e632b001c1b0c5c0ceb5bf10061448`
@@ -30,24 +30,50 @@ The official April 11 data, official imaging pipeline, exact scientific environm
 - platform: `linux/amd64`
 - upstream `eht-imaging 1.1.0` commit: `22ae35f307921a4d423aa69f6aed6e93a74ecbc0`
 - audited Python 3 compatibility patch SHA-256: `7b432916770f1e45108329aff59b4200e148b864e564ab669a5a841402e7d167`
-- repeated FITS SHA-256: `70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad`
-- repeated canonical-pixel SHA-256: `432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2`
+- FITS SHA-256: `70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad`
+- canonical-pixel SHA-256: `432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2`
 
-GitHub Actions executed the official April 11 M87 reconstruction twice with container networking disabled, a read-only root filesystem, dropped capabilities, and the same digest-addressed OCI environment. Both generated FITS files matched byte-for-byte and all bootstrap diagnostic values matched exactly.
+GitHub Actions first executed the official reconstruction twice through Docker. Both generated FITS files matched byte-for-byte and all bootstrap diagnostic values matched exactly.
 
-See:
+A separate Podman workflow then:
+
+1. verified disabled networking;
+2. verified a read-only container root filesystem;
+3. verified zero effective Linux capabilities;
+4. verified the declared persistent workspace;
+5. verified timeout termination;
+6. reproduced the exact same FITS and canonical pixels.
+
+Podman confirmation artifact digest:
+
+`sha256:90e710f117bd4bb10896b6d8f84c5de9f171118afce0b5dc873a69917ce183ac`
+
+## Evidence status
+
+The machine-readable `REC` claim — that a ring-like image can be reconstructed under the declared pipeline and parameters — is currently:
+
+```text
+supported / S3
+```
+
+It is **not S4**. Docker and Podman used the same OCI image, dataset, pipeline, and GitHub-hosted infrastructure class. Runtime diversity is not an independent operator, independent dataset, or independent scientific method.
+
+The broader physical interpretation of M87\* remains separate from this reconstruction claim.
+
+## Reference files
 
 - [`docs/m87-oci-environment.md`](docs/m87-oci-environment.md)
+- [`docs/m87-podman-confirmation.md`](docs/m87-podman-confirmation.md)
 - [`cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json`](cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json)
-- [`cases/m87-black-hole/eht-imaging-reproduction-plan.json`](cases/m87-black-hole/eht-imaging-reproduction-plan.json)
-
-The reproduction status is **partial**, not complete. Independent execution, reviewed scientific image comparators, and cross-runtime stability limits remain open.
+- [`cases/m87-black-hole/m87-ehtim-podman-confirmation.json`](cases/m87-black-hole/m87-ehtim-podman-confirmation.json)
+- [`cases/m87-black-hole/m87-ehtim-podman-manifest.json`](cases/m87-black-hole/m87-ehtim-podman-manifest.json)
+- [`cases/m87-black-hole/evidence-bundle.json`](cases/m87-black-hole/evidence-bundle.json)
 
 ## Immediate execution order
 
-1. Charter and non-goals
-2. Core JSON schemas
-3. Evidence-level rules S0–S5
-4. Evidence Card validator and renderer
-5. M87* reference case
-6. CI validation
+1. Independent operator or external-infrastructure reproduction
+2. Reviewed scientific image-comparison contract
+3. Publicly verifiable Ed25519 attestations
+4. Materially independent confirmation objects
+5. Complete M87\* Evidence Card
+6. Space-safety reference cases
