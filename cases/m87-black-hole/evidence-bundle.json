@@ -18,31 +18,61 @@
       "kind": "claim",
       "id": "claim:m87:calibration-artifact",
       "path": "claim-alternative-calibration-artifact.json",
-      "sha256": "31b7104f37260ea4ced934211302c211deaf68e56010be99bfc33cc80cdc7b32"
+      "sha256": "1f0fca556166a8556a877746decba2c2b2f526a34fd0a7bcd18026d27f1c4cf2"
     },
     {
       "kind": "claim",
       "id": "claim:m87:imaging-prior-artifact",
       "path": "claim-alternative-imaging-prior.json",
-      "sha256": "81b539015ea24779793a031d83a5f42d47629e817ed7cc1af2ad80f0f04a38e7"
+      "sha256": "f053c34c4ea4ed61485dfe0bf84d8545904f1ead42eb411a5825626d237a1ec5"
     },
     {
       "kind": "claim",
       "id": "claim:m87:jet-only-morphology",
       "path": "claim-alternative-jet-only.json",
-      "sha256": "36aa00836ecfb545b8eef090fa116569b71b47046dd26d1ed5fccafcbfc33f30"
+      "sha256": "8fc25bc4e6f438b2aac1216b24b248e1feb6c38dc80defae3d4b180eb2fd636b"
     },
     {
       "kind": "claim",
       "id": "claim:m87:non-kerr-compact-object",
       "path": "claim-alternative-non-kerr.json",
-      "sha256": "79e08450fe104409eea1da12d073ca0156ea78f07e98391922c169e6f1ddbb0e"
+      "sha256": "e0d318088b65105d418f03cb1a1c866846ff4535f686f4f9898529cb7f0baf00"
     },
     {
       "kind": "claim",
       "id": "claim:m87:variability-bias",
       "path": "claim-alternative-variability-bias.json",
-      "sha256": "7dbb4550e9b58c1d386b1d2465a94c4272568e1eb7b2bacd747a236d2b26f774"
+      "sha256": "904320bceb0c1187460c543e3a196a9c11309c01f9a46b8e852107c9e9f13191"
+    },
+    {
+      "kind": "falsification",
+      "id": "falsification:m87:calibration-artifact:v1",
+      "path": "falsification-calibration-artifact.json",
+      "sha256": "dc480e26cd40935932031f0b3309b3671b83474684a7b09f5efce8cbc40fd943"
+    },
+    {
+      "kind": "falsification",
+      "id": "falsification:m87:imaging-prior-artifact:v1",
+      "path": "falsification-imaging-prior.json",
+      "sha256": "8de43ee700e5c0e4b81d06e9c3345c512e6a51fa44eb104fc8233d7c13dab52d"
+    },
+    {
+      "kind": "falsification",
+      "id": "falsification:m87:jet-only-morphology:v1",
+      "path": "falsification-jet-only.json",
+      "sha256": "5b7f690145b213fef30d888c4c8baf0e630b275416d3553ca1c0221ae14c7d36"
+    },
+    {
+      "kind": "falsification",
+      "id": "falsification:m87:non-kerr-compact-object:v1",
+      "path": "falsification-non-kerr.json",
+      "sha256": "e434591cc5df8749ae47916b859e7aeda7be5bd8b4df23102daeea314ed1df17"
+    },
+    {
+      "kind": "falsification",
+      "id": "falsification:m87:variability-bias:v1",
+      "path": "falsification-variability-bias.json",
+      "sha256": "d630f21f0405d51db8b3145e1bb9d9fdeb2f1d2a3af8916f26812c8249c62522"
     },
     {
       "kind": "evidence",
@@ -100,7 +130,6 @@
   "missing": [
     "byte-for-byte equivalence with the CyVerse DOI endpoint",
     "pinned calibration pipeline commits and execution environment",
-    "materially independent confirmation objects",
-    "machine-readable falsification criteria"
+    "materially independent confirmation objects"
   ]
 }
