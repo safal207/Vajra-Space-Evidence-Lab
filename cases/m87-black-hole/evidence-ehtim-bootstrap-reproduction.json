@@ -9,7 +9,7 @@
     "transformation:m87:image-reconstruction"
   ],
   "uncertainty": {
-    "description": "The official released April 11 eht-imaging pipeline produced byte-identical FITS and canonical-pixel hashes in two runs inside one pinned linux/amd64 OCI environment. Independent operator, runner, platform, and official image-ensemble metric confirmation remain unavailable, so this evidence supports reproducibility of the reconstruction path but not independent confirmation of the full physical interpretation.",
+    "description": "The official released April 11 eht-imaging pipeline produced byte-identical FITS and canonical-pixel hashes in two executions inside one pinned linux/amd64 OCI workflow, and Podman later reproduced that exact output. A subsequent GitHub-hosted workflow using the same OCI image, data, and pipeline produced a different FITS and canonical-pixel hash, revealing cross-run numerical or undeclared-randomness drift. Therefore the exact hash identifies this execution family but is not a universal expected output. Independent cross-run evidence must use explicit semantic image and morphology comparators. Independent operator, platform, method, and full physical-interpretation confirmation remain unavailable.",
     "value": null,
     "unit": null
   }
