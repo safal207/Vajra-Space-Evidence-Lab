@@ -20,7 +20,7 @@ def sha256_file(path):
 
 def canonical_pixel_hash(array):
     canonical = np.asarray(array, dtype="<f8").copy(order="C")
-    canonical[np.isnan(canonical)] = np.nan
+    canonical[~np.isfinite(canonical)] = 0.0
     return hashlib.sha256(canonical.tobytes(order="C")).hexdigest()
 
 
@@ -71,10 +71,14 @@ def analyze(path):
 
     if image.ndim != 2:
         raise ValueError("Expected a 2-D FITS image after squeeze, got shape {}".format(image.shape))
-    if not np.isfinite(image).any():
+
+    finite_mask = np.isfinite(image)
+    finite_pixel_count = int(finite_mask.sum())
+    if finite_pixel_count == 0:
         raise ValueError("FITS image has no finite pixels")
 
-    image = np.nan_to_num(image, nan=0.0, posinf=0.0, neginf=0.0)
+    image = image.copy()
+    image[~finite_mask] = 0.0
     positive = np.clip(image, 0.0, None)
     weight_sum = float(positive.sum())
     yy, xx = np.indices(image.shape, dtype=float)
@@ -119,7 +123,7 @@ def analyze(path):
             "canonical_pixel_sha256": canonical_pixel_hash(image),
             "shape": list(image.shape),
             "dtype_normalized": "float64-little-endian",
-            "finite_pixel_count": int(np.isfinite(image).sum()),
+            "finite_pixel_count": finite_pixel_count,
             "minimum": float(image.min()),
             "maximum": float(image.max()),
             "sum": float(image.sum()),
