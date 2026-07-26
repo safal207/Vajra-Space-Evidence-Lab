@@ -1,0 +1,58 @@
+{
+  "falsification_id": "falsification:m87:calibration-artifact:v1",
+  "target_claim_ref": "claim:m87:calibration-artifact",
+  "status": "planned",
+  "tests": [
+    {
+      "test_id": "test:m87:calibration-artifact:independent-pipelines",
+      "question": "Does the ring-scale morphology persist when the raw observations are reduced by independently implemented and independently configured calibration pipelines?",
+      "observable": "Agreement of calibrated closure quantities and downstream morphology across independently implemented calibration reductions.",
+      "method": "Pin and execute independent calibration pipeline commits and environments from raw or minimally processed observations; compare closure quantities before imaging and apply the same declared image-comparison contract to each calibrated product.",
+      "required_input_refs": [
+        "instrument:eht:network",
+        "observation:m87:ring-scale-structure"
+      ],
+      "missing_prerequisites": [
+        "pinned raw or minimally processed observation release",
+        "pinned independent calibration pipeline commits",
+        "independently controlled calibration execution environments",
+        "visibility-domain and closure-quantity comparison contract"
+      ],
+      "support_condition": "The ring-scale closure signature or morphology disappears, changes beyond reviewed tolerances, or tracks a shared calibration choice across otherwise independent reductions.",
+      "refutation_condition": "Independent reductions produce compatible closure quantities and ring morphology within reviewed tolerances without sharing the suspected calibration dependency.",
+      "inconclusive_condition": "The reductions share hidden dependencies, lack raw inputs, or differ in ways that cannot be separated from calibration uncertainty.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    },
+    {
+      "test_id": "test:m87:calibration-artifact:synthetic-null",
+      "question": "Can the declared calibration and imaging chain create a comparable ring from synthetic data whose source model contains no ring-scale structure?",
+      "observable": "False-positive ring morphology and closure signatures recovered from ring-free synthetic inputs after the declared calibration and imaging chain.",
+      "method": "Generate synthetic observations with the measured array coverage, noise, and station systematics from ring-free source models; pass them through pinned calibration and reconstruction workflows; evaluate false-positive morphology with the same contracts.",
+      "required_input_refs": [
+        "transformation:m87:image-reconstruction"
+      ],
+      "missing_prerequisites": [
+        "reviewed synthetic observation generator",
+        "pinned calibration pipeline",
+        "registered ring-free source-model ensemble",
+        "reviewed false-positive threshold"
+      ],
+      "support_condition": "Ring-free synthetic sources repeatedly produce ring-scale observables or morphology comparable to the M87 reconstruction at a rate above the reviewed false-positive threshold.",
+      "refutation_condition": "Ring-free synthetic controls do not produce comparable closure signatures or morphology, while injected ring controls are recovered with declared sensitivity.",
+      "inconclusive_condition": "The synthetic systematics do not cover plausible calibration failures or the false-positive threshold is not independently reviewed.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    }
+  ],
+  "independence_requirements": [
+    "At least one calibration implementation must not share the same codebase or hidden reduction products.",
+    "The operator or infrastructure owner for an independent reduction must be identified.",
+    "Raw-input provenance and all calibration parameters must be inspectable.",
+    "Comparison thresholds must be reviewed before examining the final result."
+  ],
+  "limitations": [
+    "Passing these tests would reduce support for a calibration-artifact explanation but would not prove a Kerr black hole.",
+    "Failure may identify calibration sensitivity without locating the exact faulty station, parameter, or dependency."
+  ]
+}
