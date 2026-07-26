@@ -50,7 +50,7 @@ https://conda.anaconda.org/conda-forge/linux-64/libiconv-1.18-h3b78370_2.conda#9
 https://conda.anaconda.org/conda-forge/linux-64/liblapack-3.9.0-20_linux64_openblas.conda#6fabc51f5e647d09cc010c40061557e0
 https://conda.anaconda.org/conda-forge/linux-64/libllvm9-9.0.1-default_hc23dcda_7.tar.bz2#9f4686a2c319355fe8636ca13783c3b4
 https://conda.anaconda.org/conda-forge/linux-64/liblzma-5.8.3-hb03c661_0.conda#b88d90cad08e6bc8ad540cb310a761fb
-https://conda.anaconda.org/conda-forge/linux-64/liblzma-devel-5.8.3-h3f43e3d_1.conda#55c20edec8e90c4703787acaade60808
+https://conda.anaconda.org/conda-forge/linux-64/liblzma-devel-5.8.3-hb03c661_0.conda#55c20edec8e90c4703787acaade60808
 https://conda.anaconda.org/conda-forge/linux-64/libopenblas-0.3.25-pthreads_h413a1c8_0.conda#d172b34a443b95f86089e8229ddc9a17
 https://conda.anaconda.org/conda-forge/linux-64/libpng-1.6.43-h2797004_0.conda#009981dd9cfcaa4dbfa25ffaed86bcae
 https://conda.anaconda.org/conda-forge/linux-64/libsqlite-3.46.0-hde9e2c9_0.conda#18aa975d2094c34aef978060ae7da7d8
@@ -132,7 +132,7 @@ https://conda.anaconda.org/conda-forge/noarch/pytest-astropy-0.9.0-pyhd8ed1ab_0.
 https://conda.anaconda.org/conda-forge/noarch/pytest-astropy-header-0.1.2-py_0.tar.bz2#b7833d95d36d1144933212c974b5cfb5
 https://conda.anaconda.org/conda-forge/noarch/pytest-cov-4.0.0-pyhd8ed1ab_0.tar.bz2#c9e3f8bfdb9bfc34aa1836a6ed4b25d7
 https://conda.anaconda.org/conda-forge/noarch/pytest-doctestplus-0.9.0-pyhd8ed1ab_0.tar.bz2#aaccb79b0c5f1fc1781061d88ed50d45
-https://conda.anaconda.org/conda-forge/noarch/pytest-filter-subpackage-0.1.2-pyhd8ed1ab_0.conda#7139e5e6a0f6f5b56420e1ac6432fd9
+https://conda.anaconda.org/conda-forge/noarch/pytest-filter-subpackage-0.1.2-pyhd8ed1ab_0.conda#7139e5e6a0f6f5b56420e1ac6432fd9b
 https://conda.anaconda.org/conda-forge/noarch/pytest-mock-3.6.1-pyhd8ed1ab_0.tar.bz2#95d022e1556adb78274d59bdf0939608
 https://conda.anaconda.org/conda-forge/noarch/pytest-openfiles-0.5.0-py_0.tar.bz2#ac290f6f849fe3a7fd8bbf0b4f7ac4b4
 https://conda.anaconda.org/conda-forge/noarch/pytest-remotedata-0.3.3-pyhd8ed1ab_0.tar.bz2#de84affd4615f52f9d378ea7851448d4
