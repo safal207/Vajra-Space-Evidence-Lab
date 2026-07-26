@@ -33,6 +33,8 @@ The official April 11 data, official imaging pipeline, exact scientific environm
 
 GitHub Actions independently built and pushed the image, pulled it by digest, imported `ehtim 1.1.0`, and started the official M87 pipeline help path successfully.
 
+See [`docs/m87-oci-environment.md`](docs/m87-oci-environment.md) for the environment identity, compatibility patch, verification chain, and remaining scientific limitations.
+
 The scientific reconstruction remains blocked until the expected FITS output and quantitative comparison contract are established.
 
 ## Immediate execution order
