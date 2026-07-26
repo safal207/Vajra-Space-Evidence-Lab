@@ -25,7 +25,7 @@ def test_m87_reproduction_plan_binds_exact_data_and_pipeline_hashes() -> None:
     data_objects = objects_by_path(data_manifest)
     imaging_objects = objects_by_path(imaging_manifest)
 
-    assert plan["status"] == "blocked"
+    assert plan["status"] == "partial"
     assert plan["source_releases"]["data"]["commit"] == data_manifest["source_commit"]
     assert plan["source_releases"]["data"]["tree_sha256"] == data_manifest["release_tree_sha256"]
     assert plan["source_releases"]["imaging"]["commit"] == imaging_manifest["source_commit"]
@@ -56,6 +56,9 @@ def test_m87_plan_binds_verified_oci_environment_and_exact_lock() -> None:
     assert environment["upstream_ehtim"]["tree_sha256"] == provenance["ehtim_tree_sha256"]
     assert environment["compatibility_patch"]["sha256"] == provenance["compatibility_patch_sha256"]
     assert environment["verification"]["workflow_run_id"] == provenance["workflow_run_id"]
+    assert environment["runtime_dependencies_discovered_by_execution"] == provenance[
+        "runtime_dependencies_discovered_by_execution"
+    ]
 
     lock_path = ROOT / environment["lock_path"]
     patch_path = ROOT / environment["compatibility_patch"]["path"]
@@ -69,18 +72,42 @@ def test_m87_plan_binds_verified_oci_environment_and_exact_lock() -> None:
     }
 
 
-def test_m87_plan_cannot_be_promoted_while_scientific_blockers_remain() -> None:
+def test_m87_plan_binds_exact_two_run_bootstrap_reproduction() -> None:
+    plan = json.loads((CASE / "eht-imaging-reproduction-plan.json").read_text(encoding="utf-8"))
+    result = json.loads((CASE / "m87-ehtim-bootstrap-reproduction.json").read_text(encoding="utf-8"))
+
+    output = plan["expected_outputs"][0]
+    reproduction = plan["reproduction_result"]
+
+    assert result["status"] == "exact_match"
+    assert result["repeatability"]["run_count"] == 2
+    assert result["repeatability"]["exact_fits_byte_match"] is True
+    assert result["repeatability"]["exact_canonical_pixel_match"] is True
+    assert output["sha256"] == result["repeatability"]["fits_sha256"]
+    assert output["canonical_pixel_sha256"] == result["repeatability"]["canonical_pixel_sha256"]
+    assert reproduction["workflow_run_id"] == result["github"]["run_id"]
+    assert reproduction["artifact_digest"] == result["artifact"]["digest"]
+    assert reproduction["exact_fits_byte_match"] is True
+    assert reproduction["exact_canonical_pixel_match"] is True
+    assert result["environment"]["oci_reference"] == plan["environment"]["oci_reference"]
+    assert result["sources"]["data_commit"] == plan["source_releases"]["data"]["commit"]
+    assert result["sources"]["imaging_commit"] == plan["source_releases"]["imaging"]["commit"]
+
+
+def test_m87_plan_remains_partial_until_independent_scientific_review() -> None:
     plan = json.loads((CASE / "eht-imaging-reproduction-plan.json").read_text(encoding="utf-8"))
     blocker_codes = {item["code"] for item in plan["blockers"]}
 
-    assert "container_digest_missing" not in blocker_codes
+    assert plan["status"] == "partial"
     assert blocker_codes == {
-        "expected_output_hash_missing",
-        "scientific_metrics_missing",
-        "randomness_contract_unverified",
+        "independent_output_confirmation_missing",
+        "scientific_metrics_review_missing",
+        "cross_runtime_determinism_unverified",
     }
-    assert plan["expected_outputs"][0]["sha256"] is None
-    assert "only after every remaining blocker is resolved" in plan["promotion_rule"]
+    assert plan["expected_outputs"][0]["sha256"] == (
+        "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad"
+    )
+    assert "complete scientific reproduction manifest" in plan["promotion_rule"]
 
 
 def test_m87_plan_matches_official_fiducial_script_parameters() -> None:
