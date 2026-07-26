@@ -12,7 +12,7 @@
       "kind": "claim",
       "id": "claim:m87:ring-image",
       "path": "claim-ring-image.json",
-      "sha256": "7498bbc9f73a45d6c6228192f8ba1d0d4e1a615ace55d12e0dc3a63fba20988f"
+      "sha256": "cfc0057531c95a6cbed00999ddc66fd67a069ad3deda4f467c7e8b310e614d58"
     },
     {
       "kind": "claim",
@@ -55,6 +55,12 @@
       "id": "evidence:m87:ehtim-bootstrap-reproduction",
       "path": "evidence-ehtim-bootstrap-reproduction.json",
       "sha256": "596a2733a7006fd875e3be460a3ac4249206724a4d68776fe3599a934e7fec89"
+    },
+    {
+      "kind": "evidence",
+      "id": "evidence:m87:ehtim-podman-runtime-confirmation",
+      "path": "evidence-ehtim-podman-runtime-confirmation.json",
+      "sha256": "2f62cab9486cd748cf062716c441b7b658bd8f3c1c045167856d98772cf7d458"
     },
     {
       "kind": "observation",
