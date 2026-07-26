@@ -16,15 +16,22 @@ ID_FIELDS = {
     "instrument": "instrument_id",
     "transformation": "transformation_id",
     "assumption": "assumption_id",
+    "falsification": "falsification_id",
 }
 
 REFERENCE_FIELDS = {
-    "claim": ("evidence_refs", "assumption_refs", "alternative_claim_refs"),
+    "claim": (
+        "evidence_refs",
+        "assumption_refs",
+        "alternative_claim_refs",
+        "falsification_criteria_refs",
+    ),
     "evidence": ("instrument_ref", "transformation_refs"),
     "observation": ("instrument_ref",),
     "instrument": ("calibration_evidence_refs",),
     "transformation": ("input_refs", "output_ref"),
     "assumption": ("evidence_refs",),
+    "falsification": ("target_claim_ref",),
 }
 
 
@@ -49,16 +56,37 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _append_refs(
+    refs: list[tuple[str, str]],
+    field_path: str,
+    value: Any,
+) -> None:
+    if value is None:
+        return
+    values = value if isinstance(value, list) else [value]
+    for ref in values:
+        if isinstance(ref, str):
+            refs.append((field_path, ref))
+
+
 def _iter_refs(kind: str, obj: dict[str, Any]) -> list[tuple[str, str]]:
     refs: list[tuple[str, str]] = []
     for field in REFERENCE_FIELDS[kind]:
-        value = obj.get(field)
-        if value is None:
-            continue
-        values = value if isinstance(value, list) else [value]
-        for ref in values:
-            if isinstance(ref, str):
-                refs.append((field, ref))
+        _append_refs(refs, field, obj.get(field))
+
+    if kind == "falsification":
+        tests = obj.get("tests")
+        if isinstance(tests, list):
+            for test_index, test in enumerate(tests):
+                if not isinstance(test, dict):
+                    continue
+                for field in ("required_input_refs", "result_evidence_refs"):
+                    _append_refs(
+                        refs,
+                        f"tests.{test_index}.{field}",
+                        test.get(field),
+                    )
+
     return refs
 
 
