@@ -6,12 +6,22 @@ on:
     paths:
       - .github/workflows/reproduce-m87-ehtim.yml
       - scripts/analyze_m87_fits.py
+      - scripts/analyze_m87_eht_features.py
+      - scripts/compare_m87_image_features.py
       - scripts/compare_m87_reproduction_runs.py
+      - src/vajra_space/image_comparison.py
+      - cases/m87-black-hole/m87-image-comparison-contract.json
+      - schemas/image-comparison.schema.json
   pull_request:
     paths:
       - .github/workflows/reproduce-m87-ehtim.yml
       - scripts/analyze_m87_fits.py
+      - scripts/analyze_m87_eht_features.py
+      - scripts/compare_m87_image_features.py
       - scripts/compare_m87_reproduction_runs.py
+      - src/vajra_space/image_comparison.py
+      - cases/m87-black-hole/m87-image-comparison-contract.json
+      - schemas/image-comparison.schema.json
 
 permissions:
   contents: read
@@ -36,6 +46,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install Vajra comparison tools
+        run: pip install -e .
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -136,13 +149,35 @@ jobs:
               >"$OUTPUT_DIR/${run_id}.metrics.stdout.log" \
               2>"$OUTPUT_DIR/${run_id}.metrics.stderr.log"
             test -s "$OUTPUT_DIR/${run_id}.metrics.json"
+
+            docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges \
+              --user 10001:10001 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=536870912 \
+              -e HOME=/tmp/home \
+              -e MPLCONFIGDIR=/tmp/matplotlib \
+              -e OPENBLAS_NUM_THREADS=1 \
+              -e OMP_NUM_THREADS=1 \
+              -v "$OUTPUT_DIR:/workspace/outputs:rw" \
+              -v "$GITHUB_WORKSPACE:/vajra:ro" \
+              -w /workspace \
+              "$OCI_REFERENCE" \
+              python /vajra/scripts/analyze_m87_eht_features.py \
+                "/workspace/outputs/${run_id}.fits" \
+                --output "/workspace/outputs/${run_id}.eht-features.json" \
+              >"$OUTPUT_DIR/${run_id}.eht-features.stdout.log" \
+              2>"$OUTPUT_DIR/${run_id}.eht-features.stderr.log"
+            test -s "$OUTPUT_DIR/${run_id}.eht-features.json"
             echo "Completed ${run_id} at $(date -u +%FT%TZ)"
           }
 
           run_reconstruction run1
           run_reconstruction run2
 
-      - name: Compare repeated outputs
+      - name: Compare repeated outputs and Paper VI morphology contract
         shell: bash
         run: |
           set -euo pipefail
@@ -155,6 +190,56 @@ jobs:
             --oci-reference "$OCI_REFERENCE" \
             --data-commit "$DATA_COMMIT" \
             --imaging-commit "$IMAGING_COMMIT"
+
+          python scripts/compare_m87_image_features.py \
+            "$OUTPUT_DIR/run1.eht-features.json" \
+            --contract cases/m87-black-hole/m87-image-comparison-contract.json \
+            --schema schemas/image-comparison.schema.json \
+            --output "$OUTPUT_DIR/run1.eht-comparison.json"
+
+          python scripts/compare_m87_image_features.py \
+            "$OUTPUT_DIR/run2.eht-features.json" \
+            --contract cases/m87-black-hole/m87-image-comparison-contract.json \
+            --schema schemas/image-comparison.schema.json \
+            --output "$OUTPUT_DIR/run2.eht-comparison.json"
+
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          output_dir = Path(os.environ["OUTPUT_DIR"])
+          run1_features = json.loads((output_dir / "run1.eht-features.json").read_text())
+          run2_features = json.loads((output_dir / "run2.eht-features.json").read_text())
+          run1_comparison = json.loads((output_dir / "run1.eht-comparison.json").read_text())
+          run2_comparison = json.loads((output_dir / "run2.eht-comparison.json").read_text())
+
+          if run1_features["metrics"] != run2_features["metrics"]:
+              raise SystemExit("Paper-derived M87 metrics differ between byte-identical FITS runs")
+          if run1_comparison["status"] != "pass" or run2_comparison["status"] != "pass":
+              raise SystemExit("Paper-derived image comparison contract did not pass")
+          if run1_comparison["comparators"] != run2_comparison["comparators"]:
+              raise SystemExit("Comparator results differ between repeated runs")
+
+          report = {
+              "report_version": 1,
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "status": "paper_derived_contract_pass",
+              "feature_method_id": run1_features["method"]["method_id"],
+              "contract_id": run1_comparison["contract_id"],
+              "contract_status": run1_comparison["contract_status"],
+              "metrics_equal_between_runs": True,
+              "comparators_equal_between_runs": True,
+              "metrics": run1_features["metrics"],
+              "comparators": run1_comparison["comparators"],
+              "limitations": run1_comparison["limitations"],
+          }
+          (output_dir / "m87-eht-feature-repeatability.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
 
           python - <<'PY'
           import json
@@ -197,6 +282,7 @@ jobs:
 
           sha256sum "$OUTPUT_DIR"/* > "$OUTPUT_DIR/artifact-files.sha256"
           cat "$OUTPUT_DIR/m87-reproduction-report.json"
+          cat "$OUTPUT_DIR/m87-eht-feature-repeatability.json"
 
       - name: Upload bootstrap reproduction evidence
         if: always()
