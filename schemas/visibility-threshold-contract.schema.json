@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/visibility-threshold-contract.schema.json",
+  "title": "Vajra Visibility Threshold Preregistration Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "version",
+    "registration_status",
+    "created_at",
+    "evaluation_authorized",
+    "scope",
+    "method_binding",
+    "thresholds",
+    "review",
+    "limitations"
+  ],
+  "properties": {
+    "contract_id": {"type": "string", "minLength": 1},
+    "version": {"type": "integer", "minimum": 1},
+    "registration_status": {
+      "type": "string",
+      "enum": ["draft", "registered", "reviewed", "rejected", "retired"]
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "registered_at": {"type": ["string", "null"], "format": "date-time"},
+    "evaluation_authorized": {"type": "boolean"},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_claim_ref", "purpose", "allowed_interpretation", "blocked_interpretation"],
+      "properties": {
+        "subject_claim_ref": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string", "minLength": 1},
+        "allowed_interpretation": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "blocked_interpretation": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "method_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method_id", "library", "declared_version", "report_schema", "source_report_refs"],
+      "properties": {
+        "method_id": {"type": "string", "minLength": 1},
+        "library": {"type": "string", "minLength": 1},
+        "declared_version": {"type": "string", "minLength": 1},
+        "report_schema": {"type": "string", "minLength": 1},
+        "source_report_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "thresholds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/threshold"}
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewer_identity", "reviewed_at", "review_artifact_ref", "independence_statement"],
+      "properties": {
+        "status": {"type": "string", "enum": ["pending", "approved", "rejected"]},
+        "reviewer_identity": {"type": ["string", "null"]},
+        "reviewed_at": {"type": ["string", "null"], "format": "date-time"},
+        "review_artifact_ref": {"type": ["string", "null"]},
+        "independence_statement": {"type": ["string", "null"]}
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "threshold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "threshold_id",
+        "band_id",
+        "observable",
+        "metric",
+        "comparison",
+        "minimum",
+        "maximum",
+        "degrees_of_freedom_assumption",
+        "uncertainty_model",
+        "rationale",
+        "source_refs",
+        "preregistered_before_evaluation"
+      ],
+      "properties": {
+        "threshold_id": {"type": "string", "minLength": 1},
+        "band_id": {"type": "string", "minLength": 1},
+        "observable": {"type": "string", "enum": ["vis", "amp", "cphase", "logcamp"]},
+        "metric": {"type": "string", "const": "reduced_chi_squared"},
+        "comparison": {"type": "string", "enum": ["maximum", "minimum", "interval"]},
+        "minimum": {"type": ["number", "null"], "minimum": 0},
+        "maximum": {"type": ["number", "null"], "minimum": 0},
+        "degrees_of_freedom_assumption": {"type": ["string", "null"]},
+        "uncertainty_model": {"type": ["string", "null"]},
+        "rationale": {"type": ["string", "null"]},
+        "source_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "preregistered_before_evaluation": {"type": "boolean"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"comparison": {"const": "maximum"}}},
+          "then": {"properties": {"minimum": {"type": "null"}}}
+        },
+        {
+          "if": {"properties": {"comparison": {"const": "minimum"}}},
+          "then": {"properties": {"maximum": {"type": "null"}}}
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"registration_status": {"const": "draft"}}},
+      "then": {
+        "properties": {
+          "evaluation_authorized": {"const": false},
+          "registered_at": {"type": "null"},
+          "review": {"properties": {"status": {"const": "pending"}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"registration_status": {"const": "reviewed"}}},
+      "then": {
+        "properties": {
+          "evaluation_authorized": {"const": true},
+          "registered_at": {"type": "string", "format": "date-time"},
+          "review": {"properties": {"status": {"const": "approved"}}},
+          "thresholds": {
+            "items": {
+              "anyOf": [
+                {"properties": {"minimum": {"type": "number"}}},
+                {"properties": {"maximum": {"type": "number"}}}
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
