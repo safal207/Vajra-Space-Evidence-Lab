@@ -1,0 +1,47 @@
+{
+  "bootstrap_metrics": {
+    "diameter_microarcseconds": 38.499999999999616,
+    "fwhm_microarcseconds": 15.99999999999984,
+    "orientation_degrees_diagnostic": -26.215049146408752,
+    "pixel_scale_microarcseconds": 1.99999999999998,
+    "rotational_asymmetry_l1": 0.6253183888812504,
+    "shape": [
+      64,
+      64
+    ],
+    "sum_jy": 0.5962851629458021
+  },
+  "created_at": "2026-07-26T20:14:10.775844+00:00",
+  "environment": {
+    "attestation_sha256": "9ccc119added4dae0a02af64d3a18e20d018ccbf432fc7b2b2efcdd357d935a1",
+    "confirmation_runtime": "podman",
+    "manifest_id": "reproduction:m87:eht-imaging:2017-101:podman",
+    "manifest_sha256": "c474907bd57ba916a4e30ef2d0fef75869cd6dfc0ab2773ededefe3147be50cf",
+    "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+    "prior_runtime": "docker"
+  },
+  "independence_scope": "Different OCI runtime using the same image digest and GitHub-hosted infrastructure. This is not an independent operator, independent dataset, or independent scientific method.",
+  "output": {
+    "canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+    "fits_sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+    "matches_prior_docker_fits": true,
+    "matches_prior_docker_pixels": true,
+    "size_bytes": 37440
+  },
+  "report_version": 1,
+  "runtime_conformance": {
+    "declared_persistent_workspace_writable": true,
+    "effective_capabilities_zero": true,
+    "network_disabled": true,
+    "root_filesystem_read_only": true,
+    "timeout_terminated_execution": true
+  },
+  "status": "runtime_diverse_exact_match",
+  "workflow": {
+    "artifact_digest": "sha256:90e710f117bd4bb10896b6d8f84c5de9f171118afce0b5dc873a69917ce183ac",
+    "commit": "964fbad4bacd5ab238c1fa393d6c73cb30c4e72e",
+    "repository": "safal207/Vajra-Space-Evidence-Lab",
+    "run_id": 30218457488,
+    "run_url": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30218457488"
+  }
+}
