@@ -61,6 +61,6 @@
     "prior_runtime": "docker",
     "candidate_runtime": "podman",
     "expected_canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
-    "independence_scope": "runtime-diverse confirmation on GitHub-hosted infrastructure; not an independent operator or independent scientific method"
+    "independence_scope": "runtime-diverse confirmation on GitHub-hosted infrastructure; not an independent operator and not an independent scientific method"
   }
 }
