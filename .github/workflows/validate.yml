@@ -12,6 +12,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Verify M87 environment bindings
+        run: python scripts/verify_m87_environment_bindings.py --output m87-binding-report.json
+      - name: Upload M87 binding report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-binding-report
+          path: m87-binding-report.json
+          if-no-files-found: warn
+          retention-days: 30
       - run: pip install -e .[dev] check-jsonschema
       - run: check-jsonschema --check-metaschema schemas/*.json
       - run: pytest -q
