@@ -1,0 +1,104 @@
+{
+  "plan_id": "reproduction-plan:m87:eht-imaging:2017-101",
+  "status": "blocked",
+  "claim_ref": "claim:m87:ring-image",
+  "selected_pipeline": "eht-imaging",
+  "scientific_scope": "Reconstruct the April 11, 2017 M87 Stokes I image from the officially released low- and high-band UVFITS data using the EHT fiducial eht-imaging pipeline.",
+  "source_releases": {
+    "data": {
+      "product_code": "2019-D01-01",
+      "repository": "https://github.com/eventhorizontelescope/2019-D01-01.git",
+      "commit": "27ae76aacb9067a83388395c3826012b97aac371",
+      "tree_sha256": "9134b5f261bd6936d9e25547eca722be89b325b587fe22d06ba980b0de31a896"
+    },
+    "imaging": {
+      "product_code": "2019-D01-02",
+      "repository": "https://github.com/eventhorizontelescope/2019-D01-02.git",
+      "commit": "80d230e76c08edd31548e7cfe61dc7cf94300780",
+      "tree_sha256": "0379aeb9ba0ce5a02f3134bd5da90c1d03a836433946d8fa33e3d0c65dde96af",
+      "pipeline_path": "eht-imaging/eht-imaging_pipeline.py",
+      "pipeline_sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f",
+      "declared_eht_imaging_version": "1.1.0"
+    }
+  },
+  "inputs": [
+    {
+      "role": "low_band_uvfits",
+      "path": "data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+      "sha256": "697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298",
+      "size_bytes": 650880
+    },
+    {
+      "role": "high_band_uvfits",
+      "path": "data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+      "sha256": "618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5",
+      "size_bytes": 702720
+    },
+    {
+      "role": "pipeline_code",
+      "path": "imaging/eht-imaging/eht-imaging_pipeline.py",
+      "sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f",
+      "size_bytes": 17133
+    }
+  ],
+  "command": [
+    "python",
+    "imaging/eht-imaging/eht-imaging_pipeline.py",
+    "-i",
+    "data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+    "-i2",
+    "data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+    "-o",
+    "outputs/SR1_M87_2017_101.fits"
+  ],
+  "fiducial_parameters": {
+    "compact_flux_jy": 0.6,
+    "prior_fwhm_microarcseconds": 40.0,
+    "fractional_systematic_noise": 0.02,
+    "pixels": 64,
+    "field_of_view_microarcseconds": 128.0,
+    "max_iterations": 100,
+    "stopping_criterion": 0.0001,
+    "gain_tolerance": [0.02, 0.2],
+    "zero_baseline_cut_wavelengths": 100000000.0,
+    "reverse_taper_microarcseconds": 5.0,
+    "regularization": {
+      "simple": 100.0,
+      "tv": 1.0,
+      "tv2": 1.0,
+      "l1": 0.0,
+      "flux": 10000.0
+    },
+    "initial_data_weights": {
+      "amp": 0.2,
+      "cphase": 1.0,
+      "logcamp": 1.0
+    }
+  },
+  "expected_outputs": [
+    {
+      "path": "outputs/SR1_M87_2017_101.fits",
+      "sha256": null,
+      "comparison": "Exact output hash must be established in a pinned environment before this plan becomes executable."
+    }
+  ],
+  "blockers": [
+    {
+      "code": "container_digest_missing",
+      "message": "No independently verified OCI image digest yet pins Python, eht-imaging 1.1.0, numpy, scipy, astropy, matplotlib, and native dependencies."
+    },
+    {
+      "code": "expected_output_hash_missing",
+      "message": "The expected FITS SHA-256 has not yet been generated and independently confirmed from a pinned environment."
+    },
+    {
+      "code": "scientific_metrics_missing",
+      "message": "Ring diameter, width, asymmetry, orientation, and data-consistency tolerances are not yet encoded as machine-readable comparators."
+    },
+    {
+      "code": "randomness_contract_unverified",
+      "message": "The pipeline does not declare a random seed; deterministic behavior across dependency and BLAS implementations must be tested."
+    }
+  ],
+  "promotion_rule": "Convert this plan into a schemas/reproduction.schema.json manifest only after every blocker is resolved and the expected output contract is independently reviewed."
+}
