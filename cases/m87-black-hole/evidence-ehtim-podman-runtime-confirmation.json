@@ -1,0 +1,16 @@
+{
+  "evidence_id": "evidence:m87:ehtim-podman-runtime-confirmation",
+  "evidence_type": "reproduction",
+  "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30218457488",
+  "source_hash": "90e710f117bd4bb10896b6d8f84c5de9f171118afce0b5dc873a69917ce183ac",
+  "collected_at": "2026-07-26T20:14:10Z",
+  "instrument_ref": "instrument:eht:network",
+  "transformation_refs": [
+    "transformation:m87:image-reconstruction"
+  ],
+  "uncertainty": {
+    "description": "The same official April 11 reconstruction produced byte-identical FITS and canonical-pixel hashes through Podman after the Docker reproduction, while network, read-only-root, dropped-capability, timeout, and persistent-workspace controls were exercised. This confirms runtime diversity only; the OCI image, GitHub-hosted infrastructure, dataset, pipeline, and scientific method were not independent.",
+    "value": null,
+    "unit": null
+  }
+}
