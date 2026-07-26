@@ -72,6 +72,7 @@ https://conda.anaconda.org/conda-forge/linux-64/nss-3.100-hca3bf56_0.conda#949c4
 https://conda.anaconda.org/conda-forge/linux-64/numpy-1.16.6-py36h2aa4a07_0.tar.bz2#d80b1d713815f07ef3fa989643ed82e1
 https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.0-h7d73246_0.tar.bz2#93c291532f899698f193e82f8bd7a009
 https://conda.anaconda.org/conda-forge/linux-64/openssl-1.1.1w-hd590300_0.conda#301e70057a3bd399640bb16bbdf87995
+https://conda.anaconda.org/conda-forge/linux-64/pandas-0.25.3-py36hb3f55d8_0.tar.bz2#0a0231eeaa87524976a4e3684e294bff
 https://conda.anaconda.org/conda-forge/linux-64/pcre-8.45-h9c3ff4c_0.tar.bz2#c05d1820a6d34ff07aaaab7a9b7eddaa
 https://conda.anaconda.org/conda-forge/linux-64/pillow-8.3.2-py36h676a545_0.tar.bz2#38f5006cc5d5743ba92859bbee17fef1
 https://conda.anaconda.org/conda-forge/linux-64/pluggy-1.0.0-py36h5fab9bb_1.tar.bz2#8cb2c916d28b55bee23a253ebaeb8208
@@ -137,6 +138,7 @@ https://conda.anaconda.org/conda-forge/noarch/pytest-mock-3.6.1-pyhd8ed1ab_0.tar
 https://conda.anaconda.org/conda-forge/noarch/pytest-openfiles-0.5.0-py_0.tar.bz2#ac290f6f849fe3a7fd8bbf0b4f7ac4b4
 https://conda.anaconda.org/conda-forge/noarch/pytest-remotedata-0.3.3-pyhd8ed1ab_0.tar.bz2#de84affd4615f52f9d378ea7851448d4
 https://conda.anaconda.org/conda-forge/noarch/python-dateutil-2.8.2-pyhd8ed1ab_0.tar.bz2#dd999d1cc9f79e67dbb855c8924c7984
+https://conda.anaconda.org/conda-forge/noarch/pytz-2023.3.post1-pyhd8ed1ab_0.conda#c93346b446cd08c169d843ae5fc0da97
 https://conda.anaconda.org/conda-forge/noarch/six-1.16.0-pyh6c4a22f_0.tar.bz2#e5f25f8dbc060e9a8d912e432202afc2
 https://conda.anaconda.org/conda-forge/noarch/sortedcontainers-2.4.0-pyhd8ed1ab_0.tar.bz2#6d6552722448103793743dabfbda532d
 https://conda.anaconda.org/conda-forge/noarch/toml-0.10.2-pyhd8ed1ab_0.tar.bz2#f832c45a477c78bebd107098db465095
