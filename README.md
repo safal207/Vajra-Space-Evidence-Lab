@@ -48,6 +48,28 @@ Podman confirmation artifact digest:
 
 `sha256:90e710f117bd4bb10896b6d8f84c5de9f171118afce0b5dc873a69917ce183ac`
 
+## Public attestation signature
+
+The Podman reproduction attestation is publicly verifiable with Ed25519:
+
+- signed attestation: `cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json`
+- signed file SHA-256: `b13106e43dabab4c0051cf7dc1780aed46e8656aa7b18ad3d03332ce98516061`
+- key ID: `vajra-m87-podman-ceremony-2026-07-26`
+- public-key fingerprint: `sha256:7b2b0152eb08c728e7d11e519703aeb300cdb9cc1f83fdeef5f5bb00ffff28a1`
+- key status: `retired`
+- signer registry: `trust/signer-registry.json`
+- registry SHA-256: `06e305777985b97d09083dfa8c0579f285b59a503e9dcbdbbd239bc31e2fbba7`
+
+Verify without private material:
+
+```bash
+python scripts/ed25519_attestation.py verify \
+  cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json \
+  --registry trust/signer-registry.json
+```
+
+The signature proves integrity and signer-key control. It does not independently prove scientific truth, trusted time, or signer independence.
+
 ## Evidence status
 
 The machine-readable `REC` claim — that a ring-like image can be reconstructed under the declared pipeline and parameters — is currently:
@@ -64,16 +86,20 @@ The broader physical interpretation of M87\* remains separate from this reconstr
 
 - [`docs/m87-oci-environment.md`](docs/m87-oci-environment.md)
 - [`docs/m87-podman-confirmation.md`](docs/m87-podman-confirmation.md)
+- [`docs/attestation-signatures.md`](docs/attestation-signatures.md)
 - [`cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json`](cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json)
 - [`cases/m87-black-hole/m87-ehtim-podman-confirmation.json`](cases/m87-black-hole/m87-ehtim-podman-confirmation.json)
 - [`cases/m87-black-hole/m87-ehtim-podman-manifest.json`](cases/m87-black-hole/m87-ehtim-podman-manifest.json)
+- [`cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json`](cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json)
+- [`trust/signer-registry.json`](trust/signer-registry.json)
 - [`cases/m87-black-hole/evidence-bundle.json`](cases/m87-black-hole/evidence-bundle.json)
 
 ## Immediate execution order
 
 1. Independent operator or external-infrastructure reproduction
 2. Reviewed scientific image-comparison contract
-3. Publicly verifiable Ed25519 attestations
-4. Materially independent confirmation objects
-5. Complete M87\* Evidence Card
-6. Space-safety reference cases
+3. Alternate platform or numerical-library confirmation
+4. Independent trust anchoring or transparency log
+5. Materially independent confirmation objects
+6. Complete M87\* Evidence Card
+7. Space-safety reference cases
