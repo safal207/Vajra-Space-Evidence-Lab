@@ -1,0 +1,41 @@
+{
+  "allowed_response_claims": [
+    "The pinned workflow computed all eight requested vis, amp, cphase, and logcamp diagnostics for the two bands and two observed FITS execution families.",
+    "The exact observed reduced-chi-squared values and cross-run deltas may be reported as measurements."
+  ],
+  "audit_mode": "gating",
+  "authority": {
+    "may_promote_evidence_level": false,
+    "may_refute_alternatives": false,
+    "mode": "audit_only",
+    "reason": "LTP inspects the path and response boundary; it does not issue scientific authority."
+  },
+  "blocked_response_claims": [
+    "The reconstructed image satisfies an independently reviewed absolute scientific fit threshold.",
+    "The diagnostic refutes calibration-artifact, imaging-prior, jet-only, variability-bias, or non-Kerr alternatives.",
+    "The diagnostic authorizes promotion of the M87 reconstruction claim above S3."
+  ],
+  "claim_boundary": "Tool facts about executed diagnostics are supported. Absolute-fit acceptance, alternative refutation, and evidence-level promotion remain blocked because thresholds and independent authority are absent.",
+  "evidence_grade": "E3_MACHINE_VERIFIABLE_ARTIFACT",
+  "ltp_skill_commit": "9f905e278bf172a8557dbdd0651a3524d92f06a6",
+  "profile": "org.ltp.agent-trace-auditor.v0.1",
+  "required_next_action": "Register and independently review observable-specific thresholds before evaluating falsification tests or changing the S3 evidence level.",
+  "schema_version": 1,
+  "subject_id": "claim:m87:ring-image",
+  "tool_facts": {
+    "compliance_verdict": "PASS",
+    "identity_binding": "ok",
+    "inspect_report_sha256": "ac7a3d21379a1aaea7384d5363c9f5d99b965d48b939c7b59877264bf9c75367",
+    "replay_command_exit_code": 0,
+    "replay_determinism": "ok",
+    "replay_output_empty": true,
+    "replay_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_artifact_digest": "sha256:4c3ffa2d2424227df4264615e9e9b8a506a9ffec9e0b4d836a601faf6f5861be",
+    "source_manifest_sha256": "0577029fdfaad03c0633312ee646b64abfdf0ff121beff4aec056887d981ec19",
+    "trace_hash_root": "a09269d24775d7dc1b7b21c876920465cb09497293562346d56118dd342fbcdc",
+    "trace_integrity": "verified",
+    "trace_sha256": "f32f39bfe7783480361a73f81fd7d447957e112088e832f918ce6f510c0fdfd9"
+  },
+  "transition_id": "m87-visibility-30221599082",
+  "verdict": "ADMISSIBLE"
+}
