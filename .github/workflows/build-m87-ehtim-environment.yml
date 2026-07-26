@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      BASE_TAG: mambaorg/micromamba:1.5.10-bookworm-slim
+      BASE_TAG: mambaorg/micromamba:1-bookworm-slim
       EHTIM_COMMIT: 22ae35f307921a4d423aa69f6aed6e93a74ecbc0
       IMAGE: ghcr.io/safal207/vajra-m87-ehtim
     steps:
@@ -33,8 +33,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          digest="$(docker buildx imagetools inspect "$BASE_TAG" | awk '/^Digest:/ {print $2; exit}')"
-          test "${digest#sha256:}" != "$digest"
+          inspect="$(docker buildx imagetools inspect "$BASE_TAG")"
+          printf '%s\n' "$inspect"
+          digest="$(printf '%s\n' "$inspect" | awk '$1 == "Digest:" {print $2; exit}')"
+          test -n "$digest"
+          case "$digest" in sha256:*) ;; *) exit 1 ;; esac
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
           echo "reference=$BASE_TAG@$digest" >> "$GITHUB_OUTPUT"
 
