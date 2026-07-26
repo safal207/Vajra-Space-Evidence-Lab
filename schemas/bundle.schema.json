@@ -17,7 +17,7 @@
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["claim", "evidence", "observation", "instrument", "transformation", "assumption"]
+            "enum": ["claim", "evidence", "observation", "instrument", "transformation", "assumption", "falsification"]
           },
           "id": {"type": "string", "minLength": 1},
           "path": {"type": "string", "minLength": 1},
