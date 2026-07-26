@@ -10,9 +10,19 @@ VISIBILITY = ROOT / "cases/m87-black-hole/visibility"
 TRACE = ROOT / "cases/m87-black-hole/ltp/m87-visibility-audit.jsonl"
 
 
+def normalize_javascript_numbers(value: object) -> object:
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, list):
+        return [normalize_javascript_numbers(item) for item in value]
+    if isinstance(value, dict):
+        return {key: normalize_javascript_numbers(item) for key, item in value.items()}
+    return value
+
+
 def canonical_json_bytes(value: object) -> bytes:
     return json.dumps(
-        value,
+        normalize_javascript_numbers(value),
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,
