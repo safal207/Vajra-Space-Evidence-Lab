@@ -47,7 +47,9 @@ def _validate_json(path: Path, schema_path: Path) -> dict[str, Any]:
     return value
 
 
-def load_bundle_registry(bundle_path: Path) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+def load_bundle_registry(
+    bundle_path: Path,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
     bundle = read_json(bundle_path)
     registry: dict[str, dict[str, Any]] = {}
     for entry in bundle["objects"]:
@@ -116,7 +118,9 @@ def build_m87_reconstruction_card(
     if not bundle_result.valid:
         raise ValueError(
             "Invalid M87 evidence bundle: "
-            + "; ".join(f"{item.path}: {item.message}" for item in bundle_result.issues)
+            + "; ".join(
+                f"{item.path}: {item.message}" for item in bundle_result.issues
+            )
         )
 
     assessment = _validate_json(assessment_path, assessment_schema_path)
@@ -147,8 +151,17 @@ def build_m87_reconstruction_card(
 
     bootstrap = read_json(case_dir / "m87-ehtim-bootstrap-reproduction.json")
     podman = read_json(case_dir / "m87-ehtim-podman-confirmation.json")
-    morphology = read_json(case_dir / "m87-eht-paper-morphology-run-30219587273.json")
+    morphology = read_json(
+        case_dir / "m87-eht-paper-morphology-run-30219587273.json"
+    )
     stability = read_json(case_dir / "m87-cross-run-stability-report.json")
+
+    transformation_summaries = {
+        summary["ref"]: summary
+        for summary in (
+            _object_summary(entry) for entry in transformation_entries
+        )
+    }
 
     return {
         "card_id": "evidence-card:m87:ring-image:v1",
@@ -156,8 +169,9 @@ def build_m87_reconstruction_card(
         "status": "scoped_complete",
         "title": "M87 Ring-Image Reconstruction Evidence Card",
         "scope": (
-            "This card assesses only the REC claim that a ring-like image can be reconstructed "
-            "from the declared calibrated VLBI inputs, code, parameters, and comparison contracts."
+            "This card assesses only the REC claim that a ring-like image can be "
+            "reconstructed from the declared calibrated VLBI inputs, code, parameters, "
+            "and comparison contracts."
         ),
         "generated_from": {
             "bundle": {
@@ -184,7 +198,7 @@ def build_m87_reconstruction_card(
             key=lambda item: item["ref"],
         ),
         "transformations": sorted(
-            {_object_summary(entry)["ref"]: _object_summary(entry) for entry in transformation_entries}.values(),
+            transformation_summaries.values(),
             key=lambda item: item["ref"],
         ),
         "assumptions": sorted(
@@ -204,16 +218,22 @@ def build_m87_reconstruction_card(
             "execution_families": [
                 {
                     "family": "docker-podman-exact-family",
-                    "fits_sha256": bootstrap["output"]["fits_sha256"],
-                    "canonical_pixel_sha256": bootstrap["output"]["canonical_pixel_sha256"],
-                    "docker_workflow_run_id": bootstrap["workflow"]["run_id"],
+                    "fits_sha256": bootstrap["repeatability"]["fits_sha256"],
+                    "canonical_pixel_sha256": bootstrap["repeatability"][
+                        "canonical_pixel_sha256"
+                    ],
+                    "docker_workflow_run_id": bootstrap["github"]["run_id"],
                     "podman_workflow_run_id": podman["workflow"]["run_id"],
-                    "exact_runtime_match": podman["output"]["matches_prior_docker_fits"],
+                    "exact_runtime_match": podman["output"][
+                        "matches_prior_docker_fits"
+                    ],
                 },
                 {
                     "family": "later-github-run",
                     "fits_sha256": morphology["output"]["fits_sha256"],
-                    "canonical_pixel_sha256": morphology["output"]["canonical_pixel_sha256"],
+                    "canonical_pixel_sha256": morphology["output"][
+                        "canonical_pixel_sha256"
+                    ],
                     "workflow_run_id": morphology["workflow"]["run_id"],
                     "exactly_matches_first_family": False,
                 },
@@ -234,13 +254,16 @@ def build_m87_reconstruction_card(
             },
             "public_signature": podman["signature"],
         },
-        "open_requirements": sorted(set(bundle.get("missing", [])) | {
-            "independent review of the Paper VI-derived feature extractor and thresholds",
-            "independent operator or external-infrastructure reproduction",
-            "investigation of cross-run numerical drift",
-            "alternate CPU architecture or numerical-library execution",
-            "visibility-domain and closure-quantity comparison",
-        }),
+        "open_requirements": sorted(
+            set(bundle.get("missing", []))
+            | {
+                "independent review of the Paper VI-derived feature extractor and thresholds",
+                "independent operator or external-infrastructure reproduction",
+                "investigation of cross-run numerical drift",
+                "alternate CPU architecture or numerical-library execution",
+                "visibility-domain and closure-quantity comparison",
+            }
+        ),
         "limitations": [
             "The card is scoped to the REC reconstruction claim and does not assess the broader Kerr black-hole inference.",
             "Exact FITS and canonical-pixel hashes vary across workflow execution families despite fixed OCI, data, and code.",
@@ -285,19 +308,22 @@ def render_evidence_card_markdown(card: dict[str, Any]) -> str:
     lines.extend(["", "## Reproduction", ""])
     morphology = card["reproduction"]["morphology"]
     metrics = morphology["metrics"]
-    lines.extend([
-        f"- Paper-derived morphology contract: `{morphology['status']}`",
-        f"- Mean diameter: `{metrics['mean_diameter_microarcseconds']:.4f} μas`",
-        f"- Mean radial FWHM: `{metrics['mean_fwhm_microarcseconds']:.4f} μas`",
-        f"- Fractional width: `{metrics['fractional_width']:.5f}`",
-        f"- Circularity fractional spread: `{metrics['circularity_fractional_spread']:.5f}`",
-        f"- Cross-run stability: `{card['reproduction']['cross_run_stability']['status']}`",
-    ])
+    lines.extend(
+        [
+            f"- Paper-derived morphology contract: `{morphology['status']}`",
+            f"- Mean diameter: `{metrics['mean_diameter_microarcseconds']:.4f} μas`",
+            f"- Mean radial FWHM: `{metrics['mean_fwhm_microarcseconds']:.4f} μas`",
+            f"- Fractional width: `{metrics['fractional_width']:.5f}`",
+            f"- Circularity fractional spread: `{metrics['circularity_fractional_spread']:.5f}`",
+            f"- Cross-run stability: `{card['reproduction']['cross_run_stability']['status']}`",
+        ]
+    )
 
     lines.extend(["", "## Competing alternatives", ""])
     for item in card["alternatives"]:
         lines.append(
-            f"- **`{item['claim_ref']}`** — `{item['claim_type']}` / `{item['status']}`: {item['text']}"
+            f"- **`{item['claim_ref']}`** — `{item['claim_type']}` / "
+            f"`{item['status']}`: {item['text']}"
         )
 
     lines.extend(["", "## Open requirements", ""])
