@@ -70,7 +70,7 @@
     },
     "bundle": {
       "path": "evidence-bundle.json",
-      "sha256": "e05dfd9987c6b8648c8d1b3799163ba8201fe5965a17c235bf63c3dff715396c"
+      "sha256": "7ab66c984ed5ea41114daa9e07a4981778908e84aec4a8ad92f465284f397648"
     }
   },
   "limitations": [
@@ -94,7 +94,6 @@
     "independent operator or external-infrastructure reproduction",
     "independent review of the Paper VI-derived feature extractor and thresholds",
     "investigation of cross-run numerical drift",
-    "machine-readable falsification criteria",
     "materially independent confirmation objects",
     "pinned calibration pipeline commits and execution environment",
     "visibility-domain and closure-quantity comparison"
