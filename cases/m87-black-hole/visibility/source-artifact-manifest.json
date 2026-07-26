@@ -1,0 +1,49 @@
+{
+  "artifact": {
+    "created_at": "2026-07-26T21:42:47Z",
+    "digest": "sha256:4c3ffa2d2424227df4264615e9e9b8a506a9ffec9e0b4d836a601faf6f5861be",
+    "name": "m87-visibility-domain-diagnostic"
+  },
+  "files": [
+    {
+      "path": "reference.visibility-fit.json",
+      "sha256": "303dbc94d4ea0c4a845eafe5edb02710431a77473e224b9d7d5bd488af025192",
+      "size_bytes": 3721
+    },
+    {
+      "path": "candidate.visibility-fit.json",
+      "sha256": "3032264d9d2a62c908d41b2f488eeaff7e9248270eff178df7582a37f68eea11",
+      "size_bytes": 3718
+    },
+    {
+      "path": "m87-visibility-cross-run.json",
+      "sha256": "aa4b9c1fd100b77165465317ac374a60de62496d4f97b913499d795ad51c865c",
+      "size_bytes": 3647
+    }
+  ],
+  "interpretation_boundary": {
+    "allowed_claims": [
+      "The pinned workflow computed all eight requested vis, amp, cphase, and logcamp diagnostics for the two bands and two observed FITS execution families.",
+      "The exact observed reduced-chi-squared values and cross-run deltas may be reported as measurements."
+    ],
+    "blocked_claims": [
+      "The reconstructed image satisfies an independently reviewed absolute scientific fit threshold.",
+      "The diagnostic refutes calibration-artifact, imaging-prior, jet-only, variability-bias, or non-Kerr alternatives.",
+      "The diagnostic authorizes promotion of the M87 reconstruction claim above S3."
+    ],
+    "status": "thresholds_not_registered"
+  },
+  "limitations": [
+    "The reports inherit observable definitions, uncertainty handling, data selection, and transform behavior from ehtim 1.1.0.",
+    "No observable-specific scientific acceptance thresholds or reviewed degrees-of-freedom assumptions are registered.",
+    "The reports compare final FITS images and do not replay every intermediate self-calibration state."
+  ],
+  "schema_version": 1,
+  "source_kind": "github_actions_artifact",
+  "workflow": {
+    "head_sha": "b183c73a9270f87b8f1cba48ae864ee53cdfe9b2",
+    "name": "compare-m87-visibility-domain",
+    "run_id": 30221599082,
+    "url": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30221599082"
+  }
+}
