@@ -1,0 +1,113 @@
+name: build-m87-evidence-card
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/build-m87-evidence-card.yml
+      - scripts/build_m87_evidence_card.py
+      - src/vajra_space/evidence_card.py
+      - src/vajra_space/scoring.py
+      - schemas/evidence-assessment.schema.json
+      - schemas/evidence-card.schema.json
+      - cases/m87-black-hole/**
+      - tests/test_m87_evidence_card.py
+  pull_request:
+    paths:
+      - .github/workflows/build-m87-evidence-card.yml
+      - scripts/build_m87_evidence_card.py
+      - src/vajra_space/evidence_card.py
+      - src/vajra_space/scoring.py
+      - schemas/evidence-assessment.schema.json
+      - schemas/evidence-card.schema.json
+      - cases/m87-black-hole/**
+      - tests/test_m87_evidence_card.py
+
+permissions:
+  contents: read
+
+jobs:
+  build-card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project and validators
+        run: pip install -e .[dev] check-jsonschema
+
+      - name: Validate assessment and card schemas
+        run: |
+          check-jsonschema --check-metaschema \
+            schemas/evidence-assessment.schema.json \
+            schemas/evidence-card.schema.json
+          check-jsonschema \
+            --schemafile schemas/evidence-assessment.schema.json \
+            cases/m87-black-hole/claim-ring-image-assessment.json
+
+      - name: Validate source evidence bundle
+        run: |
+          vajra-space validate-bundle \
+            cases/m87-black-hole/evidence-bundle.json \
+            --schema schemas/bundle.schema.json \
+            --json > m87-card-build/bundle-validation.json
+        shell: bash
+
+      - name: Generate scoped M87 Evidence Card
+        shell: bash
+        run: |
+          mkdir -p m87-card-build
+          python scripts/build_m87_evidence_card.py \
+            --json-output m87-card-build/M87-RECONSTRUCTION-EVIDENCE-CARD.json \
+            --markdown-output m87-card-build/M87-RECONSTRUCTION-EVIDENCE-CARD.md \
+            > m87-card-build/generator-output.json
+
+          check-jsonschema \
+            --schemafile schemas/evidence-card.schema.json \
+            m87-card-build/M87-RECONSTRUCTION-EVIDENCE-CARD.json
+
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path("m87-card-build")
+          card = json.loads((root / "M87-RECONSTRUCTION-EVIDENCE-CARD.json").read_text())
+          claim = card["subject_claim"]
+          assert claim["declared_evidence_level"] == "S3"
+          assert claim["calculated_evidence_level"] == "S3"
+          assert card["status"] == "scoped_complete"
+          assert card["reproduction"]["morphology"]["status"] == "pass"
+          assert card["reproduction"]["cross_run_stability"]["status"] == "pass"
+
+          files = sorted(path for path in root.iterdir() if path.is_file())
+          manifest = {
+              "manifest_version": 1,
+              "files": [
+                  {
+                      "path": path.name,
+                      "size_bytes": path.stat().st_size,
+                      "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                  }
+                  for path in files
+              ],
+          }
+          (root / "artifact-manifest.json").write_text(
+              json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Run Evidence Card tests
+        run: pytest -q tests/test_m87_evidence_card.py
+
+      - name: Upload M87 Evidence Card
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-reconstruction-evidence-card
+          path: m87-card-build
+          if-no-files-found: error
+          retention-days: 30
