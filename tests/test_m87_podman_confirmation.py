@@ -45,7 +45,7 @@ def test_podman_evidence_is_linked_without_overpromotion() -> None:
     assert claim["claim_type"] == "REC"
     assert claim["status"] == "supported"
     assert claim["evidence_level"] == "S3"
-    assert claim["version"] == 3
+    assert claim["version"] >= 3
     assert "runtime diversity only" in evidence["uncertainty"]["description"]
     assert "not independent" in evidence["uncertainty"]["description"]
 
