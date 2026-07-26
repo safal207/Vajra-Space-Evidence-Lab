@@ -25,6 +25,7 @@ jobs:
       BASE_TAG: mambaorg/micromamba:1-bookworm-slim
       EHTIM_COMMIT: 22ae35f307921a4d423aa69f6aed6e93a74ecbc0
       IMAGE: ghcr.io/safal207/vajra-m87-ehtim
+      PATCH_PATH: containers/m87-ehtim/patches/ehtim-1.1.0-python3-parloop.patch
     steps:
       - uses: actions/checkout@v4
 
@@ -79,8 +80,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
-      - name: Hash exact eht-imaging 1.1.0 source tree
-        id: ehtim
+      - name: Hash exact upstream tree and compatibility patch
+        id: source
         shell: bash
         run: |
           set -euo pipefail
@@ -88,7 +89,10 @@ jobs:
           git -C /tmp/eht-imaging checkout --detach "$EHTIM_COMMIT"
           test "$(git -C /tmp/eht-imaging rev-parse HEAD)" = "$EHTIM_COMMIT"
           tree_sha256="$(git -C /tmp/eht-imaging archive --format=tar HEAD | sha256sum | awk '{print $1}')"
+          patch_sha256="$(sha256sum "$PATCH_PATH" | awk '{print $1}')"
+          git -C /tmp/eht-imaging apply --check "$GITHUB_WORKSPACE/$PATCH_PATH"
           echo "tree_sha256=$tree_sha256" >> "$GITHUB_OUTPUT"
+          echo "patch_sha256=$patch_sha256" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -112,7 +116,8 @@ jobs:
           build-args: |
             BASE_IMAGE=${{ steps.base.outputs.reference }}
             EHTIM_COMMIT=${{ env.EHTIM_COMMIT }}
-            EHTIM_TREE_SHA256=${{ steps.ehtim.outputs.tree_sha256 }}
+            EHTIM_TREE_SHA256=${{ steps.source.outputs.tree_sha256 }}
+            EHTIM_PATCH_SHA256=${{ steps.source.outputs.patch_sha256 }}
 
       - name: Pull and smoke-test published image by digest
         shell: bash
@@ -147,7 +152,9 @@ jobs:
               'base_reference': '${{ steps.base.outputs.reference }}',
               'ehtim_repository': 'https://github.com/achael/eht-imaging.git',
               'ehtim_commit': '${{ env.EHTIM_COMMIT }}',
-              'ehtim_tree_sha256': '${{ steps.ehtim.outputs.tree_sha256 }}',
+              'ehtim_tree_sha256': '${{ steps.source.outputs.tree_sha256 }}',
+              'compatibility_patch_path': '${{ env.PATCH_PATH }}',
+              'compatibility_patch_sha256': '${{ steps.source.outputs.patch_sha256 }}',
               'environment_lock_sha256': hashlib.sha256(lock.read_bytes()).hexdigest(),
               'oci_image': '${{ env.IMAGE }}',
               'oci_digest': '${{ steps.build.outputs.digest }}',
