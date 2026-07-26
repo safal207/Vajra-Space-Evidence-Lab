@@ -119,6 +119,7 @@ jobs:
             --input "$GITHUB_WORKSPACE/cases/m87-black-hole/ltp/m87-visibility-audit.jsonl" \
             > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/replay.json" \
             2> "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/replay.stderr.log"
+          printf '0\n' > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/replay.exit-code.txt"
 
       - name: Build evidence-backed LTP receipt
         run: |
@@ -130,6 +131,7 @@ jobs:
           root = Path("artifacts/ltp-m87-visibility")
           report_path = root / "inspect.json"
           replay_path = root / "replay.json"
+          replay_exit_path = root / "replay.exit-code.txt"
           trace_path = Path("cases/m87-black-hole/ltp/m87-visibility-audit.jsonl")
           manifest_path = Path("cases/m87-black-hole/visibility/source-artifact-manifest.json")
           report = json.loads(report_path.read_text(encoding="utf-8"))
@@ -161,7 +163,9 @@ jobs:
                   "trace_sha256": sha256(trace_path),
                   "trace_hash_root": report["input"]["hash_root"],
                   "inspect_report_sha256": sha256(report_path),
-                  "replay_report_sha256": sha256(replay_path),
+                  "replay_command_exit_code": int(replay_exit_path.read_text(encoding="utf-8").strip()),
+                  "replay_output_empty": replay_path.stat().st_size == 0,
+                  "replay_output_sha256": sha256(replay_path),
                   "source_manifest_sha256": sha256(manifest_path),
                   "source_artifact_digest": manifest["artifact"]["digest"]
               },
@@ -175,6 +179,9 @@ jobs:
               encoding="utf-8",
           )
           PY
+
+      - name: Verify committed receipt matches fresh generation byte-for-byte
+        run: cmp cases/m87-black-hole/ltp/m87-visibility-ltp-receipt.json artifacts/ltp-m87-visibility/receipt.json
 
       - name: Upload LTP audit evidence
         uses: actions/upload-artifact@v4
