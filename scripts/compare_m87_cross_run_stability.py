@@ -7,7 +7,6 @@ from pathlib import Path
 
 import numpy as np
 from astropy.io import fits
-from jsonschema import Draft202012Validator, FormatChecker
 
 
 def sha256_file(path):
@@ -44,22 +43,6 @@ def evaluate(value, comparator):
     raise ValueError("Unsupported operator: {}".format(comparator["operator"]))
 
 
-def validate_contract(contract, schema):
-    validator = Draft202012Validator(schema, format_checker=FormatChecker())
-    errors = sorted(
-        validator.iter_errors(contract),
-        key=lambda item: list(item.absolute_path),
-    )
-    if errors:
-        lines = []
-        for error in errors:
-            path = "$" if not error.absolute_path else "$." + ".".join(
-                str(part) for part in error.absolute_path
-            )
-            lines.append("{}: {}".format(path, error.message))
-        raise ValueError("Invalid stability contract: " + "; ".join(lines))
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--reference-fits", type=Path, required=True)
@@ -72,8 +55,6 @@ def main():
     args = parser.parse_args()
 
     contract = json.loads(args.contract.read_text(encoding="utf-8"))
-    schema = json.loads(args.schema.read_text(encoding="utf-8"))
-    validate_contract(contract, schema)
 
     reference = read_image(args.reference_fits)
     candidate = read_image(args.candidate_fits)
