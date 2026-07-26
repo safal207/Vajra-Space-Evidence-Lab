@@ -1,0 +1,241 @@
+name: compare-m87-visibility-domain
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/compare-m87-visibility-domain.yml
+      - scripts/analyze_m87_visibility_fit.py
+      - schemas/visibility-comparison.schema.json
+      - tests/test_visibility_comparison.py
+  pull_request:
+    paths:
+      - .github/workflows/compare-m87-visibility-domain.yml
+      - scripts/analyze_m87_visibility_fit.py
+      - schemas/visibility-comparison.schema.json
+      - tests/test_visibility_comparison.py
+
+permissions:
+  actions: read
+  contents: read
+  packages: read
+
+jobs:
+  compare-observables:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OCI_REFERENCE: ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3
+      DATA_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-01.git
+      DATA_COMMIT: 27ae76aacb9067a83388395c3826012b97aac371
+      REFERENCE_ARTIFACT_ID: 8633763531
+      CANDIDATE_ARTIFACT_ID: 8636817251
+      REFERENCE_FITS_SHA256: 70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad
+      CANDIDATE_FITS_SHA256: f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb
+      LOW_SHA256: 697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298
+      HIGH_SHA256: 618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate schema and unit contract
+        run: |
+          pip install -e .[dev] check-jsonschema
+          check-jsonschema --check-metaschema schemas/visibility-comparison.schema.json
+          pytest -q tests/test_visibility_comparison.py
+
+      - name: Fetch official data and historical FITS artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          WORKSPACE="$RUNNER_TEMP/m87-visibility"
+          DATA_DIR="$WORKSPACE/data"
+          ANALYSIS_DIR="$WORKSPACE/analysis"
+          mkdir -p "$WORKSPACE/reference" "$WORKSPACE/candidate" "$ANALYSIS_DIR"
+
+          git init "$DATA_DIR"
+          git -C "$DATA_DIR" remote add origin "$DATA_REPOSITORY"
+          git -C "$DATA_DIR" fetch --depth 1 origin "$DATA_COMMIT"
+          git -C "$DATA_DIR" checkout --detach FETCH_HEAD
+          test "$(git -C "$DATA_DIR" rev-parse HEAD)" = "$DATA_COMMIT"
+
+          echo "$LOW_SHA256  $DATA_DIR/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits" | sha256sum --check -
+          echo "$HIGH_SHA256  $DATA_DIR/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits" | sha256sum --check -
+
+          download_artifact() {
+            local artifact_id="$1"
+            local archive="$2"
+            curl --fail --location --retry 3 \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/${artifact_id}/zip" \
+              --output "$archive"
+          }
+
+          download_artifact "$REFERENCE_ARTIFACT_ID" "$WORKSPACE/reference.zip"
+          download_artifact "$CANDIDATE_ARTIFACT_ID" "$WORKSPACE/candidate.zip"
+          unzip -q "$WORKSPACE/reference.zip" -d "$WORKSPACE/reference"
+          unzip -q "$WORKSPACE/candidate.zip" -d "$WORKSPACE/candidate"
+
+          cp "$WORKSPACE/reference/run1.fits" "$ANALYSIS_DIR/reference.fits"
+          cp "$WORKSPACE/candidate/run1.fits" "$ANALYSIS_DIR/candidate.fits"
+          echo "$REFERENCE_FITS_SHA256  $ANALYSIS_DIR/reference.fits" | sha256sum --check -
+          echo "$CANDIDATE_FITS_SHA256  $ANALYSIS_DIR/candidate.fits" | sha256sum --check -
+
+          chmod -R a+rX "$WORKSPACE"
+          chmod 0777 "$ANALYSIS_DIR"
+          echo "VISIBILITY_WORKSPACE=$WORKSPACE" >> "$GITHUB_ENV"
+          echo "DATA_DIR=$DATA_DIR" >> "$GITHUB_ENV"
+          echo "ANALYSIS_DIR=$ANALYSIS_DIR" >> "$GITHUB_ENV"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull verified scientific image
+        run: docker pull "$OCI_REFERENCE"
+
+      - name: Measure visibility and closure fit for both FITS families
+        shell: bash
+        run: |
+          set -euo pipefail
+          for run_id in reference candidate; do
+            docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges \
+              --user 10001:10001 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=536870912 \
+              -e HOME=/tmp/home \
+              -e MPLCONFIGDIR=/tmp/matplotlib \
+              -e OPENBLAS_NUM_THREADS=1 \
+              -e OMP_NUM_THREADS=1 \
+              -v "$ANALYSIS_DIR:/workspace:rw" \
+              -v "$DATA_DIR:/data:ro" \
+              -v "$GITHUB_WORKSPACE:/vajra:ro" \
+              -w /workspace \
+              "$OCI_REFERENCE" \
+              python /vajra/scripts/analyze_m87_visibility_fit.py \
+                "${run_id}.fits" \
+                --band "low=/data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits" \
+                --band "high=/data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits" \
+                --output "${run_id}.visibility-fit.json" \
+              >"$ANALYSIS_DIR/${run_id}.visibility.stdout.log" \
+              2>"$ANALYSIS_DIR/${run_id}.visibility.stderr.log"
+
+            test -s "$ANALYSIS_DIR/${run_id}.visibility-fit.json"
+            check-jsonschema \
+              --schemafile schemas/visibility-comparison.schema.json \
+              "$ANALYSIS_DIR/${run_id}.visibility-fit.json"
+          done
+
+      - name: Build cross-run visibility diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import math
+          import os
+          from pathlib import Path
+
+          analysis = Path(os.environ["ANALYSIS_DIR"])
+          reference = json.loads((analysis / "reference.visibility-fit.json").read_text())
+          candidate = json.loads((analysis / "candidate.visibility-fit.json").read_text())
+
+          def flatten(report):
+              values = {}
+              for band in report["bands"]:
+                  for item in band["observables"]:
+                      key = "{}.{}".format(band["band_id"], item["observable"])
+                      values[key] = item
+              return values
+
+          left = flatten(reference)
+          right = flatten(candidate)
+          keys = sorted(set(left) | set(right))
+          comparisons = []
+          common_success = 0
+          for key in keys:
+              first = left.get(key)
+              second = right.get(key)
+              comparable = (
+                  first is not None
+                  and second is not None
+                  and first["status"] == "success"
+                  and second["status"] == "success"
+              )
+              if comparable:
+                  common_success += 1
+                  a = float(first["reduced_chi_squared"])
+                  b = float(second["reduced_chi_squared"])
+                  absolute_delta = abs(b - a)
+                  relative_delta = None if a == 0 else absolute_delta / abs(a)
+              else:
+                  a = None if first is None else first["reduced_chi_squared"]
+                  b = None if second is None else second["reduced_chi_squared"]
+                  absolute_delta = None
+                  relative_delta = None
+              comparisons.append({
+                  "key": key,
+                  "reference_status": None if first is None else first["status"],
+                  "candidate_status": None if second is None else second["status"],
+                  "reference_reduced_chi_squared": a,
+                  "candidate_reduced_chi_squared": b,
+                  "absolute_delta": absolute_delta,
+                  "relative_delta": relative_delta,
+                  "comparable": comparable,
+              })
+
+          if common_success == 0:
+              raise SystemExit("No visibility-domain observable succeeded in both execution families")
+
+          report = {
+              "report_version": 1,
+              "status": "diagnostic_complete",
+              "interpretation_status": "thresholds_not_registered",
+              "common_successful_observables": common_success,
+              "reference_report_sha256": hashlib.sha256(
+                  (analysis / "reference.visibility-fit.json").read_bytes()
+              ).hexdigest(),
+              "candidate_report_sha256": hashlib.sha256(
+                  (analysis / "candidate.visibility-fit.json").read_bytes()
+              ).hexdigest(),
+              "comparisons": comparisons,
+              "limitations": [
+                  "No absolute scientific acceptance threshold is applied in this diagnostic workflow.",
+                  "Observable-specific reduced-chi-squared definitions and degrees of freedom are inherited from ehtim 1.1.0.",
+                  "The diagnostic compares final FITS images against released calibrated data and does not replay every intermediate self-calibration state.",
+                  "Thresholds must be registered and reviewed before the report can support or refute an alternative claim."
+              ],
+          }
+          (analysis / "m87-visibility-cross-run.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          sha256sum "$ANALYSIS_DIR"/* > "$ANALYSIS_DIR/artifact-files.sha256"
+          cat "$ANALYSIS_DIR/reference.visibility-fit.json"
+          cat "$ANALYSIS_DIR/candidate.visibility-fit.json"
+          cat "$ANALYSIS_DIR/m87-visibility-cross-run.json"
+
+      - name: Upload visibility-domain evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-visibility-domain-diagnostic
+          path: ${{ env.ANALYSIS_DIR }}
+          if-no-files-found: error
+          retention-days: 30
