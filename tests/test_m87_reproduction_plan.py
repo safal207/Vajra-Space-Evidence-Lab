@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,6 +11,10 @@ CASE = ROOT / "cases/m87-black-hole"
 
 def objects_by_path(manifest: dict) -> dict[str, dict]:
     return {item["path"]: item for item in manifest["objects"]}
+
+
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_m87_reproduction_plan_binds_exact_data_and_pipeline_hashes() -> None:
@@ -38,18 +43,44 @@ def test_m87_reproduction_plan_binds_exact_data_and_pipeline_hashes() -> None:
     ]["sha256"]
 
 
-def test_m87_plan_cannot_be_promoted_while_critical_blockers_remain() -> None:
+def test_m87_plan_binds_verified_oci_environment_and_exact_lock() -> None:
+    plan = json.loads((CASE / "eht-imaging-reproduction-plan.json").read_text(encoding="utf-8"))
+    provenance = json.loads((CASE / "m87-ehtim-environment-provenance.json").read_text(encoding="utf-8"))
+    environment = plan["environment"]
+
+    assert environment["oci_reference"] == provenance["oci_reference"]
+    assert environment["base_reference"] == provenance["base_reference"]
+    assert environment["platform"] == provenance["platform"]
+    assert environment["lock_sha256"] == provenance["environment_lock_sha256"]
+    assert environment["upstream_ehtim"]["commit"] == provenance["ehtim_commit"]
+    assert environment["upstream_ehtim"]["tree_sha256"] == provenance["ehtim_tree_sha256"]
+    assert environment["compatibility_patch"]["sha256"] == provenance["compatibility_patch_sha256"]
+    assert environment["verification"]["workflow_run_id"] == provenance["workflow_run_id"]
+
+    lock_path = ROOT / environment["lock_path"]
+    patch_path = ROOT / environment["compatibility_patch"]["path"]
+    assert sha256_file(lock_path) == provenance["environment_lock_sha256"]
+    assert sha256_file(patch_path) == provenance["compatibility_patch_sha256"]
+    assert provenance["verification"] == {
+        "build_and_push": "success",
+        "ehtim_version_import": "success",
+        "official_pipeline_help": "success",
+        "pull_by_digest": "success",
+    }
+
+
+def test_m87_plan_cannot_be_promoted_while_scientific_blockers_remain() -> None:
     plan = json.loads((CASE / "eht-imaging-reproduction-plan.json").read_text(encoding="utf-8"))
     blocker_codes = {item["code"] for item in plan["blockers"]}
 
-    assert {
-        "container_digest_missing",
+    assert "container_digest_missing" not in blocker_codes
+    assert blocker_codes == {
         "expected_output_hash_missing",
         "scientific_metrics_missing",
         "randomness_contract_unverified",
-    } <= blocker_codes
+    }
     assert plan["expected_outputs"][0]["sha256"] is None
-    assert "only after every blocker is resolved" in plan["promotion_rule"]
+    assert "only after every remaining blocker is resolved" in plan["promotion_rule"]
 
 
 def test_m87_plan_matches_official_fiducial_script_parameters() -> None:
