@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
-      OCI_REFERENCE: ghcr.io/safal207/vajra-m87-ehtim@sha256:ced397b05da668df2d07c28ecf8139dde719e9c5f0f7551857d3b63a41076ee5
+      OCI_REFERENCE: ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3
       DATA_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-01.git
       DATA_COMMIT: 27ae76aacb9067a83388395c3826012b97aac371
       IMAGING_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-02.git
