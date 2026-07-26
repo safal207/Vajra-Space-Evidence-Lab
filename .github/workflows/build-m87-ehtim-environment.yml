@@ -1,0 +1,145 @@
+name: build-m87-ehtim-environment
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - containers/m87-ehtim/**
+      - .github/workflows/build-m87-ehtim-environment.yml
+  pull_request:
+    paths:
+      - containers/m87-ehtim/**
+      - .github/workflows/build-m87-ehtim-environment.yml
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  lock-build-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      BASE_TAG: mambaorg/micromamba:1.5.10-bookworm-slim
+      EHTIM_COMMIT: 22ae35f307921a4d423aa69f6aed6e93a74ecbc0
+      IMAGE: ghcr.io/safal207/vajra-m87-ehtim
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Resolve immutable base-image digest
+        id: base
+        shell: bash
+        run: |
+          set -euo pipefail
+          digest="$(docker buildx imagetools inspect "$BASE_TAG" | awk '/^Digest:/ {print $2; exit}')"
+          test "${digest#sha256:}" != "$digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "reference=$BASE_TAG@$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Solve explicit Conda environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --user root \
+            -v "$GITHUB_WORKSPACE:/work" \
+            "${{ steps.base.outputs.reference }}" \
+            bash -lc '
+              set -euo pipefail
+              micromamba create --yes --name lock -f /work/containers/m87-ehtim/environment.seed.yml
+              micromamba list --name lock --explicit > /work/containers/m87-ehtim/explicit-linux-64.txt
+            '
+          test -s containers/m87-ehtim/explicit-linux-64.txt
+
+      - name: Hash exact eht-imaging 1.1.0 source tree
+        id: ehtim
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none https://github.com/achael/eht-imaging.git /tmp/eht-imaging
+          git -C /tmp/eht-imaging checkout --detach "$EHTIM_COMMIT"
+          test "$(git -C /tmp/eht-imaging rev-parse HEAD)" = "$EHTIM_COMMIT"
+          tree_sha256="$(git -C /tmp/eht-imaging archive --format=tar HEAD | sha256sum | awk '{print $1}')"
+          echo "tree_sha256=$tree_sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish digest-addressed OCI image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: containers/m87-ehtim
+          file: containers/m87-ehtim/Dockerfile
+          push: true
+          platforms: linux/amd64
+          provenance: mode=max
+          sbom: true
+          tags: |
+            ${{ env.IMAGE }}:sha-${{ github.sha }}
+          build-args: |
+            BASE_IMAGE=${{ steps.base.outputs.reference }}
+            EHTIM_COMMIT=${{ env.EHTIM_COMMIT }}
+            EHTIM_TREE_SHA256=${{ steps.ehtim.outputs.tree_sha256 }}
+
+      - name: Pull and smoke-test published image by digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref="$IMAGE@${{ steps.build.outputs.digest }}"
+          docker pull "$ref"
+          docker run --rm "$ref" python -c 'import pkg_resources, ehtim; assert pkg_resources.get_distribution("ehtim").version == "1.1.0"; print("ehtim-1.1.0-ready")'
+
+          git clone --depth 1 https://github.com/eventhorizontelescope/2019-D01-02.git /tmp/eht-imaging-release
+          git -C /tmp/eht-imaging-release fetch --depth 1 origin 80d230e76c08edd31548e7cfe61dc7cf94300780
+          git -C /tmp/eht-imaging-release checkout --detach 80d230e76c08edd31548e7cfe61dc7cf94300780
+          docker run --rm \
+            -v /tmp/eht-imaging-release:/release:ro \
+            "$ref" \
+            python /release/eht-imaging/eht-imaging_pipeline.py --help >/tmp/pipeline-help.txt
+          grep -F "Fiducial eht-imaging script for M87" /tmp/pipeline-help.txt
+
+      - name: Write environment provenance report
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          lock = Path('containers/m87-ehtim/explicit-linux-64.txt')
+          report = {
+              'report_version': 1,
+              'base_tag': '${{ env.BASE_TAG }}',
+              'base_digest': '${{ steps.base.outputs.digest }}',
+              'base_reference': '${{ steps.base.outputs.reference }}',
+              'ehtim_repository': 'https://github.com/achael/eht-imaging.git',
+              'ehtim_commit': '${{ env.EHTIM_COMMIT }}',
+              'ehtim_tree_sha256': '${{ steps.ehtim.outputs.tree_sha256 }}',
+              'environment_lock_sha256': hashlib.sha256(lock.read_bytes()).hexdigest(),
+              'oci_image': '${{ env.IMAGE }}',
+              'oci_digest': '${{ steps.build.outputs.digest }}',
+              'platform': 'linux/amd64',
+              'workflow_repository': '${{ github.repository }}',
+              'workflow_commit': '${{ github.sha }}',
+          }
+          Path('m87-ehtim-environment-provenance.json').write_text(
+              json.dumps(report, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          PY
+
+      - name: Upload lock and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ehtim-environment
+          path: |
+            containers/m87-ehtim/explicit-linux-64.txt
+            m87-ehtim-environment-provenance.json
+          if-no-files-found: error
+          retention-days: 30
