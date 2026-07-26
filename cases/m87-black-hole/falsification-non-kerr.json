@@ -1,0 +1,57 @@
+{
+  "falsification_id": "falsification:m87:non-kerr-compact-object:v1",
+  "target_claim_ref": "claim:m87:non-kerr-compact-object",
+  "status": "planned",
+  "tests": [
+    {
+      "test_id": "test:m87:non-kerr-compact-object:forward-model-comparison",
+      "question": "Do preregistered non-Kerr compact-object models predict the measured morphology and interferometric observables better than Kerr model families after complexity penalties?",
+      "observable": "Held-out predictive fit and morphology consistency for Kerr and specified non-Kerr forward-model ensembles.",
+      "method": "Generate comparable radiative-transfer ensembles under registered Kerr and non-Kerr metrics; fit training observables and evaluate held-out visibility, closure, morphology, and polarization targets.",
+      "required_input_refs": [
+        "evidence:m87:calibrated-release-2019-D01-01",
+        "evidence:m87:paper-derived-morphology-stability",
+        "assumption:m87:gr-model"
+      ],
+      "missing_prerequisites": [
+        "registered non-Kerr metric families",
+        "comparable plasma and radiative-transfer priors",
+        "held-out observable contract",
+        "complexity-aware model-comparison rule"
+      ],
+      "support_condition": "A specified non-Kerr family provides materially better held-out predictions or uniquely explains observables that Kerr families fail under comparable assumptions.",
+      "refutation_condition": "The specified non-Kerr family fails preregistered observables or is excluded within declared parameter bounds while Kerr families remain viable.",
+      "inconclusive_condition": "Plasma uncertainties dominate metric differences, priors are not comparable, or the test excludes only a narrow non-Kerr family.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    },
+    {
+      "test_id": "test:m87:non-kerr-compact-object:multi-epoch-prediction",
+      "question": "Do non-Kerr and Kerr families make distinguishable preregistered predictions for future multi-epoch morphology or polarization?",
+      "observable": "Future epoch measurements that separate registered model-family prediction intervals.",
+      "method": "Freeze prediction distributions before acquiring or unblinding later-epoch data; evaluate coverage and model discrimination with a registered scoring rule.",
+      "required_input_refs": [],
+      "missing_prerequisites": [
+        "registered future-epoch prediction distributions",
+        "later independent EHT observations",
+        "time-dependent uncertainty model",
+        "registered scoring rule"
+      ],
+      "support_condition": "Later observations fall inside a non-Kerr prediction region and outside the Kerr prediction region under the registered scoring rule.",
+      "refutation_condition": "Later observations exclude the specified non-Kerr prediction region while remaining consistent with Kerr predictions.",
+      "inconclusive_condition": "Prediction intervals overlap strongly or later observations lack sufficient sensitivity.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    }
+  ],
+  "independence_requirements": [
+    "Metric families and parameter priors must be fixed before evaluation.",
+    "Plasma and radiative-transfer assumptions must be matched as fairly as possible across model families.",
+    "At least one observable must be held out or genuinely future.",
+    "Refutation applies only to explicitly registered non-Kerr families and parameter ranges."
+  ],
+  "limitations": [
+    "No finite test can refute the unrestricted class of all non-Kerr compact objects.",
+    "Image morphology alone is strongly entangled with plasma and radiative-transfer assumptions."
+  ]
+}
