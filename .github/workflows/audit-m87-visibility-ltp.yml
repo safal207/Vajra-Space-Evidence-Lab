@@ -54,12 +54,14 @@ jobs:
         run: python -m pytest -q tests/test_m87_ltp_trace.py
 
       - name: Run strict LTP agents-profile inspection
+        id: inspect
         env:
           LTP_INSPECT_FROZEN_TIME: "2026-07-26T21:42:47.000Z"
           LTP_BUILD: "9f905e278bf172a8557dbdd0651a3524d92f06a6"
         run: |
           mkdir -p artifacts/ltp-m87-visibility
           cd .ltp
+          set +e
           pnpm -w ltp:inspect -- trace \
             --strict \
             --quiet \
@@ -70,6 +72,21 @@ jobs:
             --input "$GITHUB_WORKSPACE/cases/m87-black-hole/ltp/m87-visibility-audit.jsonl" \
             > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/inspect.json" \
             2> "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/inspect.stderr.log"
+          inspect_exit=$?
+          set -e
+          printf '%s\n' "$inspect_exit" > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/inspect.exit-code.txt"
+          echo "exit_code=$inspect_exit" >> "$GITHUB_OUTPUT"
+
+      - name: Upload raw LTP inspection diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ltp-visibility-inspection-diagnostics
+          path: artifacts/ltp-m87-visibility
+          if-no-files-found: error
+
+      - name: Require successful strict inspection
+        run: test "${{ steps.inspect.outputs.exit_code }}" = "0"
 
       - name: Assert LTP integrity and claim-boundary route
         run: |
