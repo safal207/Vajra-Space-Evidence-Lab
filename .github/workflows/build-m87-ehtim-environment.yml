@@ -14,7 +14,7 @@ on:
       - .github/workflows/build-m87-ehtim-environment.yml
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -79,6 +79,21 @@ jobs:
             containers/m87-ehtim/explicit-linux-64.txt
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Commit refreshed exact lock on trusted branch push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/agent/foundation-v0.3.0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- containers/m87-ehtim/explicit-linux-64.txt; then
+            echo "Exact lock is already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add containers/m87-ehtim/explicit-linux-64.txt
+          git commit -m "Refresh exact M87 Conda lock [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Hash exact upstream tree and compatibility patch
         id: source
