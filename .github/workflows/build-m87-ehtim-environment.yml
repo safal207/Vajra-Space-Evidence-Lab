@@ -122,19 +122,39 @@ jobs:
       - name: Pull and smoke-test published image by digest
         shell: bash
         run: |
-          set -euo pipefail
-          ref="$IMAGE@${{ steps.build.outputs.digest }}"
-          docker pull "$ref"
-          docker run --rm "$ref" python -c 'import pkg_resources, ehtim; assert pkg_resources.get_distribution("ehtim").version == "1.1.0"; print("ehtim-1.1.0-ready")'
+          set +e
+          {
+            set -euo pipefail
+            ref="$IMAGE@${{ steps.build.outputs.digest }}"
+            echo "OCI_REF=$ref"
+            docker pull "$ref"
+            docker run --rm "$ref" python -c 'import pkg_resources, ehtim; assert pkg_resources.get_distribution("ehtim").version == "1.1.0"; print("ehtim-1.1.0-ready")'
 
-          git clone --depth 1 https://github.com/eventhorizontelescope/2019-D01-02.git /tmp/eht-imaging-release
-          git -C /tmp/eht-imaging-release fetch --depth 1 origin 80d230e76c08edd31548e7cfe61dc7cf94300780
-          git -C /tmp/eht-imaging-release checkout --detach 80d230e76c08edd31548e7cfe61dc7cf94300780
-          docker run --rm \
-            -v /tmp/eht-imaging-release:/release:ro \
-            "$ref" \
-            python /release/eht-imaging/eht-imaging_pipeline.py --help >/tmp/pipeline-help.txt
-          grep -F "Fiducial eht-imaging script for M87" /tmp/pipeline-help.txt
+            git clone --depth 1 https://github.com/eventhorizontelescope/2019-D01-02.git /tmp/eht-imaging-release
+            git -C /tmp/eht-imaging-release fetch --depth 1 origin 80d230e76c08edd31548e7cfe61dc7cf94300780
+            git -C /tmp/eht-imaging-release checkout --detach 80d230e76c08edd31548e7cfe61dc7cf94300780
+            docker run --rm \
+              -v /tmp/eht-imaging-release:/release:ro \
+              "$ref" \
+              python /release/eht-imaging/eht-imaging_pipeline.py --help >pipeline-help.txt
+            cat pipeline-help.txt
+            grep -F "Fiducial eht-imaging script for M87" pipeline-help.txt
+          } >m87-ehtim-smoke.log 2>&1
+          rc=$?
+          set -e
+          cat m87-ehtim-smoke.log
+          exit "$rc"
+
+      - name: Upload OCI smoke diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ehtim-smoke-diagnostics
+          path: |
+            m87-ehtim-smoke.log
+            pipeline-help.txt
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Write environment provenance report
         shell: bash
