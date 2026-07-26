@@ -148,8 +148,33 @@ It is **not S4**. The feature extractor and stability limits are not independent
 
 The broader physical interpretation of M87\* remains separate from this reconstruction claim.
 
+## Published scoped Evidence Card
+
+The first generated Evidence Card is now committed in both machine-readable and human-readable form:
+
+- [JSON Evidence Card](cases/m87-black-hole/M87-RECONSTRUCTION-EVIDENCE-CARD.json)
+- [Markdown Evidence Card](cases/m87-black-hole/M87-RECONSTRUCTION-EVIDENCE-CARD.md)
+- assessment input: `cases/m87-black-hole/claim-ring-image-assessment.json`
+- calculated level: `S3`
+- JSON SHA-256: `1916ef3013ce7c759c05678bc9037df7ff1dcbebf53715d200061bd282d74ad7`
+- Markdown SHA-256: `a6f38474cf9c431d18e34559bd6da376f50d93029a9c6647965f92a325577b99`
+- build workflow run: `30220526003`
+- build artifact digest: `sha256:c14a2d7b1f91a416c51581a4d919b719f5c2eb50962b73cca8a791891a2f05d7`
+
+The card is generated from the validated hash-linked bundle and a machine-readable assessment. CI rejects publication if:
+
+- the bundle is invalid;
+- the assessment schema is invalid;
+- the calculated level differs from the claim level;
+- the generated card violates its schema;
+- committed JSON or Markdown drifts from fresh generation.
+
+The card is deliberately scoped to the `REC` reconstruction claim. It is not a Kerr-black-hole verdict.
+
 ## Reference files
 
+- [`cases/m87-black-hole/M87-RECONSTRUCTION-EVIDENCE-CARD.md`](cases/m87-black-hole/M87-RECONSTRUCTION-EVIDENCE-CARD.md)
+- [`cases/m87-black-hole/M87-RECONSTRUCTION-EVIDENCE-CARD.json`](cases/m87-black-hole/M87-RECONSTRUCTION-EVIDENCE-CARD.json)
 - [`docs/m87-oci-environment.md`](docs/m87-oci-environment.md)
 - [`docs/m87-podman-confirmation.md`](docs/m87-podman-confirmation.md)
 - [`docs/m87-image-comparison.md`](docs/m87-image-comparison.md)
@@ -165,12 +190,13 @@ The broader physical interpretation of M87\* remains separate from this reconstr
 
 ## Immediate execution order
 
-1. Independent review of the Paper VI-derived feature extractor and tolerances
-2. Independent operator or external-infrastructure reproduction
-3. Investigation of cross-run numerical drift
-4. Alternate CPU architecture or numerical-library confirmation
-5. Visibility-domain and closure-quantity comparison
-6. Independent trust anchoring or transparency log
-7. Materially independent confirmation objects
-8. Complete M87\* Evidence Card
-9. Space-safety reference cases
+1. Machine-readable falsification criteria for competing alternatives
+2. Independent review of the Paper VI-derived feature extractor and tolerances
+3. Independent operator or external-infrastructure reproduction
+4. Investigation of cross-run numerical drift
+5. Alternate CPU architecture or numerical-library confirmation
+6. Visibility-domain and closure-quantity comparison
+7. Independent trust anchoring or transparency log
+8. Materially independent confirmation objects
+9. Physical-inference Evidence Card
+10. Space-safety reference cases
