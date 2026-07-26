@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/evidence-card.schema.json",
+  "title": "Vajra Scoped Evidence Card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "card_id",
+    "version",
+    "status",
+    "title",
+    "scope",
+    "generated_from",
+    "subject_claim",
+    "observations",
+    "transformations",
+    "assumptions",
+    "evidence",
+    "alternatives",
+    "reproduction",
+    "open_requirements",
+    "limitations"
+  ],
+  "properties": {
+    "card_id": {"type": "string", "minLength": 1},
+    "version": {"type": "integer", "minimum": 1},
+    "status": {"type": "string", "enum": ["scoped_complete", "incomplete", "superseded"]},
+    "title": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "generated_from": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle", "assessment"],
+      "properties": {
+        "bundle": {"$ref": "#/$defs/fileRef"},
+        "assessment": {"$ref": "#/$defs/fileRef"}
+      }
+    },
+    "subject_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_ref",
+        "text",
+        "claim_type",
+        "status",
+        "declared_evidence_level",
+        "calculated_evidence_level",
+        "version",
+        "calculation_reasons"
+      ],
+      "properties": {
+        "claim_ref": {"type": "string", "minLength": 1},
+        "text": {"type": "string", "minLength": 1},
+        "claim_type": {"type": "string", "enum": ["OBS", "REC", "INF", "SIM", "PRED", "SPEC"]},
+        "status": {"type": "string", "minLength": 1},
+        "declared_evidence_level": {"type": "string", "enum": ["S0", "S1", "S2", "S3", "S4", "S5"]},
+        "calculated_evidence_level": {"type": "string", "enum": ["S0", "S1", "S2", "S3", "S4", "S5"]},
+        "version": {"type": "integer", "minimum": 1},
+        "calculation_reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "observations": {"type": "array", "items": {"$ref": "#/$defs/objectSummary"}},
+    "transformations": {"type": "array", "items": {"$ref": "#/$defs/objectSummary"}},
+    "assumptions": {"type": "array", "items": {"$ref": "#/$defs/objectSummary"}},
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidenceSummary"}},
+    "alternatives": {"type": "array", "items": {"$ref": "#/$defs/alternativeSummary"}},
+    "reproduction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "execution_families", "morphology", "cross_run_stability", "public_signature"],
+      "properties": {
+        "status": {"type": "string", "enum": ["success", "partial", "blocked", "mismatch"]},
+        "execution_families": {"type": "array", "items": {"type": "object"}},
+        "morphology": {"type": "object"},
+        "cross_run_stability": {"type": "object"},
+        "public_signature": {"type": "object"}
+      }
+    },
+    "open_requirements": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "fileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+      }
+    },
+    "objectSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "statement", "source_path", "source_sha256"],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "source_path": {"type": "string", "minLength": 1},
+        "source_sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+      }
+    },
+    "evidenceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "evidence_type", "source_uri", "source_hash", "uncertainty"],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1},
+        "evidence_type": {"type": "string", "minLength": 1},
+        "source_uri": {"type": "string", "minLength": 1},
+        "source_hash": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+        "uncertainty": {"type": "string", "minLength": 1}
+      }
+    },
+    "alternativeSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_ref", "text", "status", "claim_type"],
+      "properties": {
+        "claim_ref": {"type": "string", "minLength": 1},
+        "text": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "minLength": 1},
+        "claim_type": {"type": "string", "enum": ["SPEC", "INF", "REC", "OBS", "PRED", "SIM"]}
+      }
+    }
+  }
+}
