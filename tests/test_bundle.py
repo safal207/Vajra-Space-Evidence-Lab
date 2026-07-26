@@ -67,10 +67,81 @@ def make_bundle(tmp_path: Path) -> Path:
     return tmp_path / "bundle.json"
 
 
+def add_falsification_object(
+    bundle_path: Path,
+    target_input_ref: str = "observation:test",
+) -> None:
+    base = bundle_path.parent
+    claim_path = base / "claim.json"
+    claim = json.loads(claim_path.read_text(encoding="utf-8"))
+    claim["version"] = 2
+    claim["falsification_criteria_refs"] = ["falsification:test:v1"]
+    claim_hash = write_json(claim_path, claim)
+
+    falsification = {
+        "falsification_id": "falsification:test:v1",
+        "target_claim_ref": "claim:test",
+        "status": "planned",
+        "tests": [
+            {
+                "test_id": "test:falsification:test",
+                "question": "Can the target claim be challenged?",
+                "observable": "A registered comparison result.",
+                "method": "Evaluate a declared input against a registered condition.",
+                "required_input_refs": [target_input_ref],
+                "missing_prerequisites": [],
+                "support_condition": "The result supports the target.",
+                "refutation_condition": "The result refutes the target.",
+                "inconclusive_condition": "The result is insufficient.",
+                "evaluation_status": "not_evaluated",
+                "result_evidence_refs": [],
+            }
+        ],
+        "independence_requirements": ["Use an independently controlled evaluation."],
+        "limitations": ["This fixture does not establish a scientific result."],
+    }
+    falsification_hash = write_json(base / "falsification.json", falsification)
+
+    bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
+    bundle["objects"][2]["sha256"] = claim_hash
+    bundle["objects"].append(
+        {
+            "kind": "falsification",
+            "id": "falsification:test:v1",
+            "path": "falsification.json",
+            "sha256": falsification_hash,
+        }
+    )
+    write_json(bundle_path, bundle)
+
+
 def test_valid_bundle_passes(tmp_path: Path) -> None:
     bundle = make_bundle(tmp_path)
     result = validate_bundle_file(bundle, ROOT / "schemas/bundle.schema.json")
     assert result.valid, result.issues
+
+
+def test_registered_falsification_graph_passes(tmp_path: Path) -> None:
+    bundle = make_bundle(tmp_path)
+    add_falsification_object(bundle)
+
+    result = validate_bundle_file(bundle, ROOT / "schemas/bundle.schema.json")
+
+    assert result.valid, result.issues
+
+
+def test_nested_falsification_reference_is_validated(tmp_path: Path) -> None:
+    bundle = make_bundle(tmp_path)
+    add_falsification_object(bundle, target_input_ref="observation:missing")
+
+    result = validate_bundle_file(bundle, ROOT / "schemas/bundle.schema.json")
+
+    assert not result.valid
+    assert any(
+        issue.code == "dangling_reference"
+        and issue.path == "$[falsification:test:v1].tests.0.required_input_refs"
+        for issue in result.issues
+    )
 
 
 def test_dangling_reference_fails(tmp_path: Path) -> None:
