@@ -1,0 +1,198 @@
+{
+  "alternatives": [
+    {
+      "claim_ref": "claim:m87:calibration-artifact",
+      "claim_type": "SPEC",
+      "status": "not_assessed",
+      "text": "The ring-scale signature is primarily produced by shared calibration error rather than source structure."
+    },
+    {
+      "claim_ref": "claim:m87:imaging-prior-artifact",
+      "claim_type": "SPEC",
+      "status": "not_assessed",
+      "text": "Sparse Fourier coverage and imaging priors force a ring-like reconstruction that is not required by the calibrated observables."
+    },
+    {
+      "claim_ref": "claim:m87:jet-only-morphology",
+      "claim_type": "SPEC",
+      "status": "not_assessed",
+      "text": "The compact structure can be explained by jet-base emission without requiring a black-hole shadow interpretation."
+    },
+    {
+      "claim_ref": "claim:m87:non-kerr-compact-object",
+      "claim_type": "SPEC",
+      "status": "not_assessed",
+      "text": "The central source is an ultracompact object not described by the Kerr black-hole solution."
+    },
+    {
+      "claim_ref": "claim:m87:variability-bias",
+      "claim_type": "SPEC",
+      "status": "not_assessed",
+      "text": "Source variability interacting with Earth-rotation synthesis materially biases the reconstructed static morphology."
+    }
+  ],
+  "assumptions": [
+    {
+      "ref": "assumption:m87:gr-model",
+      "source_path": "assumption.json",
+      "source_sha256": "0c103806a9661befed3c7fbe60d225c221f442d22109a2529f8d7df82256f088",
+      "statement": "The reconstructed ring and central brightness depression may be interpreted using general-relativistic compact-object and radiative-transfer models within their declared parameter and plasma assumptions."
+    }
+  ],
+  "card_id": "evidence-card:m87:ring-image:v1",
+  "evidence": [
+    {
+      "evidence_type": "reproduction",
+      "ref": "evidence:m87:ehtim-bootstrap-reproduction",
+      "source_hash": "426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+      "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30208439097",
+      "uncertainty": "The official released April 11 eht-imaging pipeline produced byte-identical FITS and canonical-pixel hashes in two executions inside one pinned linux/amd64 OCI workflow, and Podman later reproduced that exact output. A subsequent GitHub-hosted workflow using the same OCI image, data, and pipeline produced a different FITS and canonical-pixel hash, revealing cross-run numerical or undeclared-randomness drift. Therefore the exact hash identifies this execution family but is not a universal expected output. Independent cross-run evidence must use explicit semantic image and morphology comparators. Independent operator, platform, method, and full physical-interpretation confirmation remain unavailable."
+    },
+    {
+      "evidence_type": "reproduction",
+      "ref": "evidence:m87:ehtim-podman-runtime-confirmation",
+      "source_hash": "90e710f117bd4bb10896b6d8f84c5de9f171118afce0b5dc873a69917ce183ac",
+      "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30218457488",
+      "uncertainty": "The same official April 11 reconstruction produced byte-identical FITS and canonical-pixel hashes through Podman after the Docker reproduction, while network, read-only-root, dropped-capability, timeout, and persistent-workspace controls were exercised. This confirms runtime diversity only; the OCI image, GitHub-hosted infrastructure, dataset, pipeline, and scientific method were not independent."
+    },
+    {
+      "evidence_type": "reproduction",
+      "ref": "evidence:m87:paper-derived-morphology-stability",
+      "source_hash": "a1789cb268b5c259dace78f8e3297e189960cf4973232f87842fac2f2d438e29",
+      "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30219938594",
+      "uncertainty": "Two historical reconstruction artifacts produced different FITS and canonical-pixel hashes under the same OCI image, data, and pipeline, so universal bitwise determinism is not established. A fresh CI workflow independently downloaded both artifacts, re-extracted Paper VI-derived morphology in the verified scientific image, and passed an engineering-derived stability contract: pixel correlation 0.9999496, relative L1/L2 drift below one percent, diameter delta 0.0597 microarcseconds, FWHM delta 0.0200 microarcseconds, fractional-width delta 0.00104, and circularity delta 0.00252. The feature extractor and stability thresholds are Vajra implementations derived from published prose and are not official EHT code or independently reviewed tolerances."
+    }
+  ],
+  "generated_from": {
+    "assessment": {
+      "path": "claim-ring-image-assessment.json",
+      "sha256": "c1c84580e5d7547e0f6f9750c96bb19af08d4ee062511d02db06dd6cac61d66d"
+    },
+    "bundle": {
+      "path": "evidence-bundle.json",
+      "sha256": "e05dfd9987c6b8648c8d1b3799163ba8201fe5965a17c235bf63c3dff715396c"
+    }
+  },
+  "limitations": [
+    "The card is scoped to the REC reconstruction claim and does not assess the broader Kerr black-hole inference.",
+    "Exact FITS and canonical-pixel hashes vary across workflow execution families despite fixed OCI, data, and code.",
+    "Paper VI-derived feature extraction and cross-run tolerances are Vajra implementations and are not independently reviewed EHT code.",
+    "Docker and Podman runtime diversity does not constitute independent scientific confirmation.",
+    "The Ed25519 signature proves attestation integrity and key control, not scientific truth or trusted time."
+  ],
+  "observations": [
+    {
+      "ref": "observation:m87:ring-scale-structure",
+      "source_path": "observation.json",
+      "source_sha256": "5a9ad3b9ee13046b5fcbb7f66eb6c2a10471d17374e8b50a3f3117fa2f6f45b0",
+      "statement": "Calibrated 2017 EHT visibility and closure measurements contain horizon-scale structure from the compact radio source at the center of M87; image-domain ring morphology is a downstream reconstruction, not a direct detector frame."
+    }
+  ],
+  "open_requirements": [
+    "alternate CPU architecture or numerical-library execution",
+    "byte-for-byte equivalence with the CyVerse DOI endpoint",
+    "independent operator or external-infrastructure reproduction",
+    "independent review of the Paper VI-derived feature extractor and thresholds",
+    "investigation of cross-run numerical drift",
+    "machine-readable falsification criteria",
+    "materially independent confirmation objects",
+    "pinned calibration pipeline commits and execution environment",
+    "visibility-domain and closure-quantity comparison"
+  ],
+  "reproduction": {
+    "cross_run_stability": {
+      "artifact_digest": "sha256:a1789cb268b5c259dace78f8e3297e189960cf4973232f87842fac2f2d438e29",
+      "contract_id": "image-stability:m87:cross-run:v0.1",
+      "contract_status": "engineering_derived",
+      "measurements": {
+        "image": {
+          "maximum_absolute_pixel_difference": 2.2729204484107793e-05,
+          "mean_absolute_pixel_difference": 1.334236186355791e-06,
+          "pixel_correlation": 0.9999496395928357,
+          "relative_l1_difference": 0.009165130643725325,
+          "relative_l2_difference": 0.009147046302421028,
+          "rmse": 2.9141354237206137e-06
+        },
+        "morphology": {
+          "circularity_absolute_delta": 0.002521399059673149,
+          "fractional_width_absolute_delta": 0.0010392494338228864,
+          "mean_diameter_absolute_delta_microarcseconds": 0.05972222222222001,
+          "mean_fwhm_absolute_delta_microarcseconds": 0.019961773119737458
+        }
+      },
+      "status": "pass",
+      "workflow_run_id": 30219938594
+    },
+    "execution_families": [
+      {
+        "canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+        "docker_workflow_run_id": 30208439097,
+        "exact_runtime_match": true,
+        "family": "docker-podman-exact-family",
+        "fits_sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+        "podman_workflow_run_id": 30218457488
+      },
+      {
+        "canonical_pixel_sha256": "340b629a40a0e222c40a937ff517a442395541f9f78962d0b6c65356c87cf99e",
+        "exactly_matches_first_family": false,
+        "family": "later-github-run",
+        "fits_sha256": "f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb",
+        "workflow_run_id": 30219587273
+      }
+    ],
+    "morphology": {
+      "contract_id": "image-comparison:m87:eht-paper-derived:v0.1",
+      "contract_status": "paper_derived",
+      "metrics": {
+        "azimuth_profile_count": 360,
+        "circularity_fractional_spread": 0.03289117037605474,
+        "diameter_standard_deviation_microarcseconds": 1.350867776653215,
+        "fractional_width": 0.379406526411929,
+        "fwhm_standard_deviation_microarcseconds": 0.8976289438300893,
+        "maximum_peak_radius_microarcseconds": 22.25,
+        "mean_diameter_microarcseconds": 41.07083333333333,
+        "mean_fwhm_microarcseconds": 15.582542211843267,
+        "minimum_peak_radius_microarcseconds": 18.75,
+        "valid_width_profile_count": 360
+      },
+      "status": "pass"
+    },
+    "public_signature": {
+      "algorithm": "ed25519",
+      "fingerprint": "sha256:7b2b0152eb08c728e7d11e519703aeb300cdb9cc1f83fdeef5f5bb00ffff28a1",
+      "key_id": "vajra-m87-podman-ceremony-2026-07-26",
+      "key_status": "retired",
+      "registry_path": "trust/signer-registry.json",
+      "registry_sha256": "06e305777985b97d09083dfa8c0579f285b59a503e9dcbdbbd239bc31e2fbba7",
+      "signed_attestation_path": "cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json",
+      "signed_attestation_sha256": "b13106e43dabab4c0051cf7dc1780aed46e8656aa7b18ad3d03332ce98516061"
+    },
+    "status": "success"
+  },
+  "scope": "This card assesses only the REC claim that a ring-like image can be reconstructed from the declared calibrated VLBI inputs, code, parameters, and comparison contracts.",
+  "status": "scoped_complete",
+  "subject_claim": {
+    "calculated_evidence_level": "S3",
+    "calculation_reasons": [
+      "S1: traceable provenance and at least one observation exist.",
+      "S2: data and method are inspectable.",
+      "S3: result reproduced from pinned code, environment, and declared uncertainty."
+    ],
+    "claim_ref": "claim:m87:ring-image",
+    "claim_type": "REC",
+    "declared_evidence_level": "S3",
+    "status": "supported",
+    "text": "A ring-like image can be reconstructed from calibrated VLBI measurements under declared algorithms and parameters.",
+    "version": 4
+  },
+  "title": "M87 Ring-Image Reconstruction Evidence Card",
+  "transformations": [
+    {
+      "ref": "transformation:m87:image-reconstruction",
+      "source_path": "transformation.json",
+      "source_sha256": "c6e34aabe439cc6e852ac591f63c421e1939aa6e4e9330d82fc8b35d2ffb1132",
+      "statement": "M87 image reconstruction from calibrated VLBI observables: Apply independently developed CLEAN and regularized maximum-likelihood imaging pipelines to calibrated VLBI observables; assess robustness with blind teams, synthetic-data reconstructions, parameter surveys, and cross-method comparison."
+    }
+  ],
+  "version": 1
+}
