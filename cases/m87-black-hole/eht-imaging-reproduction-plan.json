@@ -1,6 +1,6 @@
 {
   "plan_id": "reproduction-plan:m87:eht-imaging:2017-101",
-  "status": "blocked",
+  "status": "partial",
   "claim_ref": "claim:m87:ring-image",
   "selected_pipeline": "eht-imaging",
   "scientific_scope": "Reconstruct the April 11, 2017 M87 Stokes I image from the officially released low- and high-band UVFITS data using the EHT fiducial eht-imaging pipeline.",
@@ -105,26 +105,35 @@
       "logcamp": 1.0
     }
   },
+  "reproduction_result": {
+    "path": "cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json",
+    "workflow_run_id": 30208439097,
+    "artifact_digest": "sha256:426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+    "run_count": 2,
+    "exact_fits_byte_match": true,
+    "exact_canonical_pixel_match": true
+  },
   "expected_outputs": [
     {
       "path": "outputs/SR1_M87_2017_101.fits",
-      "sha256": null,
-      "comparison": "Exact output hash must be generated in the verified OCI environment and independently confirmed before this plan becomes executable."
+      "sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+      "canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+      "comparison": "Observed identically in two repeated runs inside the same pinned OCI environment. This is a bootstrap expected output, not yet an independently confirmed reference output."
     }
   ],
   "blockers": [
     {
-      "code": "expected_output_hash_missing",
-      "message": "The expected FITS SHA-256 has not yet been generated and independently confirmed from the verified OCI environment."
+      "code": "independent_output_confirmation_missing",
+      "message": "The FITS and canonical-pixel hashes have not yet been reproduced by an independent operator or execution infrastructure."
     },
     {
-      "code": "scientific_metrics_missing",
-      "message": "Ring diameter, width, asymmetry, orientation, and data-consistency tolerances are not yet encoded as machine-readable comparators."
+      "code": "scientific_metrics_review_missing",
+      "message": "Bootstrap ring diameter, width, asymmetry, and orientation diagnostics have not yet been validated against the official EHT feature-extraction and image-ensemble methodology."
     },
     {
-      "code": "randomness_contract_unverified",
-      "message": "The pipeline does not declare a random seed; deterministic behavior across repeated runs and numerical-library implementations must be tested."
+      "code": "cross_runtime_determinism_unverified",
+      "message": "Exact repeatability is demonstrated within one pinned linux/amd64 OCI environment, but cross-runner, cross-platform, and alternate BLAS implementations remain untested."
     }
   ],
-  "promotion_rule": "Convert this plan into a schemas/reproduction.schema.json manifest only after every remaining blocker is resolved and the expected output contract is independently reviewed."
+  "promotion_rule": "Promote to a complete scientific reproduction manifest only after independent output confirmation, reviewed scientific comparators, and declared cross-runtime stability limits are available."
 }
