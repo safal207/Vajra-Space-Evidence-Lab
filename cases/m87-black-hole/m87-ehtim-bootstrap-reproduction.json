@@ -1,0 +1,73 @@
+{
+  "report_version": 1,
+  "status": "exact_match",
+  "scope": "Bootstrap reproduction of the official April 11, 2017 EHT eht-imaging pipeline inside one pinned OCI environment.",
+  "github": {
+    "repository": "safal207/Vajra-Space-Evidence-Lab",
+    "workflow": "reproduce-m87-ehtim",
+    "run_id": 30208439097,
+    "commit": "b4fc6b18c780dfe868a42ce1a8fd676c0ca14587"
+  },
+  "artifact": {
+    "name": "m87-ehtim-bootstrap-reproduction",
+    "artifact_id": 8633763531,
+    "digest": "sha256:426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+    "retention_expires_at": "2026-08-25T15:34:55Z"
+  },
+  "environment": {
+    "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+    "platform": "linux/amd64",
+    "container_network": "none",
+    "read_only_root": true,
+    "capabilities": "all_dropped",
+    "no_new_privileges": true,
+    "uid_gid": "10001:10001",
+    "thread_contract": {
+      "OPENBLAS_NUM_THREADS": 1,
+      "OMP_NUM_THREADS": 1,
+      "MKL_NUM_THREADS": 1,
+      "PYTHONHASHSEED": 0
+    }
+  },
+  "sources": {
+    "data_repository": "https://github.com/eventhorizontelescope/2019-D01-01.git",
+    "data_commit": "27ae76aacb9067a83388395c3826012b97aac371",
+    "low_uvfits_sha256": "697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298",
+    "high_uvfits_sha256": "618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5",
+    "imaging_repository": "https://github.com/eventhorizontelescope/2019-D01-02.git",
+    "imaging_commit": "80d230e76c08edd31548e7cfe61dc7cf94300780",
+    "pipeline_sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f"
+  },
+  "repeatability": {
+    "run_count": 2,
+    "exact_fits_byte_match": true,
+    "exact_canonical_pixel_match": true,
+    "fits_sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+    "canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+    "run1_metrics_sha256": "897004d4d7d5501193a219af39a602c2bd5db8abbbc90e2558fe5f455142ff3e",
+    "run2_metrics_sha256": "d92876061caf3aa3a57244a2f91131eb166e7671c154569085d000f0cd030efc",
+    "metrics_file_difference": "The metric JSON files differ only in their declared FITS filenames; all scientific diagnostic values are equal."
+  },
+  "bootstrap_diagnostics": {
+    "shape": [64, 64],
+    "finite_pixel_count": 4096,
+    "total_flux_jy_approx": 0.5962851629458021,
+    "maximum_pixel_value": 0.001583366570911843,
+    "centroid_x_pixels": 31.518937397348168,
+    "centroid_y_pixels": 31.738856213334888,
+    "pixel_scale_microarcseconds": 1.99999999999998,
+    "ring_diameter_microarcseconds_bootstrap": 38.499999999999616,
+    "radial_fwhm_microarcseconds_bootstrap": 15.99999999999984,
+    "orientation_degrees_diagnostic": -26.215049146408752,
+    "rotational_asymmetry_l1_diagnostic": 0.6253183888812504
+  },
+  "conclusion": {
+    "reproduced": "The official released eht-imaging pipeline executes end-to-end from the pinned April 11 public UVFITS inputs and produces a byte-identical FITS image in two repeated runs inside the same pinned OCI environment.",
+    "not_yet_proven": [
+      "The generated FITS bytes have not yet been independently reproduced outside this GitHub Actions runner and OCI execution path.",
+      "The bootstrap ring diagnostics are not yet validated against the official EHT feature-extraction or image-ensemble methodology.",
+      "Cross-platform, cross-BLAS, and independent-operator determinism have not yet been demonstrated.",
+      "This reproduction alone does not establish the full physical inference that M87* is a Kerr black hole."
+    ]
+  }
+}
