@@ -39,6 +39,9 @@ jobs:
       - name: Install project and validators
         run: pip install -e .[dev] check-jsonschema
 
+      - name: Prepare build directory
+        run: mkdir -p m87-card-build
+
       - name: Validate assessment and card schemas
         run: |
           check-jsonschema --check-metaschema \
@@ -49,17 +52,16 @@ jobs:
             cases/m87-black-hole/claim-ring-image-assessment.json
 
       - name: Validate source evidence bundle
+        shell: bash
         run: |
           vajra-space validate-bundle \
             cases/m87-black-hole/evidence-bundle.json \
             --schema schemas/bundle.schema.json \
             --json > m87-card-build/bundle-validation.json
-        shell: bash
 
       - name: Generate scoped M87 Evidence Card
         shell: bash
         run: |
-          mkdir -p m87-card-build
           python scripts/build_m87_evidence_card.py \
             --json-output m87-card-build/M87-RECONSTRUCTION-EVIDENCE-CARD.json \
             --markdown-output m87-card-build/M87-RECONSTRUCTION-EVIDENCE-CARD.md \
