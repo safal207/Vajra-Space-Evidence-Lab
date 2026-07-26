@@ -1,0 +1,22 @@
+{
+  "keys": [
+    {
+      "algorithm": "ed25519",
+      "fingerprint": "sha256:7b2b0152eb08c728e7d11e519703aeb300cdb9cc1f83fdeef5f5bb00ffff28a1",
+      "key_id": "vajra-m87-podman-ceremony-2026-07-26",
+      "notes": "Private key material was generated transiently for this signature and was not retained or committed. Retirement prevents this key from authorizing future attestations.",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEABEqUPY7FZfYFhoXpTccXi3lRmDQFfySeg8RamqSFDe8=\n-----END PUBLIC KEY-----\n",
+      "retired_at": "2026-07-26T20:20:01Z",
+      "revocation_mode": null,
+      "revoked_at": null,
+      "status": "retired",
+      "superseded_by": null,
+      "trust_scope": "One-time offline ceremony key for the M87 Podman runtime-confirmation attestation.",
+      "valid_from": "2026-07-26T20:19:00Z",
+      "valid_until": null
+    }
+  ],
+  "registry_version": 1,
+  "trust_scope": "Repository-published Ed25519 keys for Vajra reproduction attestations. Registry trust is anchored in the Git history and repository governance.",
+  "updated_at": "2026-07-26T20:20:01Z"
+}

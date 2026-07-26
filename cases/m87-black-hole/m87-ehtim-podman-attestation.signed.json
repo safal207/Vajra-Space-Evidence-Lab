@@ -1,0 +1,40 @@
+{
+  "attestation_sha256": "9ccc119added4dae0a02af64d3a18e20d018ccbf432fc7b2b2efcdd357d935a1",
+  "attestation_version": 1,
+  "authentication": {
+    "algorithm": "ed25519",
+    "expires_at": null,
+    "key_id": "vajra-m87-podman-ceremony-2026-07-26",
+    "public_key_fingerprint": "sha256:7b2b0152eb08c728e7d11e519703aeb300cdb9cc1f83fdeef5f5bb00ffff28a1",
+    "registry_version": 1,
+    "signature": "GzYEc8x3sasShJioSoFpDO5G/A5Q4dBTkkPa7Tv7nk48S0HqDAaTmem81yXevGCZHnHHEBNDczmZSNrRR0lsBA==",
+    "signed_at": "2026-07-26T20:20:00Z"
+  },
+  "duration_ms": 31189,
+  "expected_exit_code": 0,
+  "finished_at": "2026-07-26T20:14:10.355664+00:00",
+  "issues": [],
+  "manifest_id": "reproduction:m87:eht-imaging:2017-101:podman",
+  "manifest_sha256": "c474907bd57ba916a4e30ef2d0fef75869cd6dfc0ab2773ededefe3147be50cf",
+  "manifest_version": 1,
+  "observed_exit_code": 0,
+  "observed_outputs": [
+    {
+      "exists": true,
+      "path": "outputs/SR1_M87_2017_101_podman.fits",
+      "sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+      "size_bytes": 37440
+    }
+  ],
+  "runtime": {
+    "binary": "/usr/bin/podman",
+    "container_runtime": "podman",
+    "execution_mode": "container",
+    "image": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3"
+  },
+  "started_at": "2026-07-26T20:13:39.166636+00:00",
+  "status": "success",
+  "stderr_sha256": "3e64f9b6b40895774d9cf64c5134ccde170ca5fff67348736b2ae47ce3d81c8b",
+  "stdout_sha256": "82642dbd0543204180b3c3ecf287c3b51ba8934556fac7457da38782210dc79d",
+  "workspace": "/home/runner/work/_temp/m87-podman-workspace"
+}

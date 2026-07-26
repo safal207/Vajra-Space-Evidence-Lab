@@ -1,0 +1,16 @@
+{
+  "evidence_id": "evidence:m87:ehtim-bootstrap-reproduction",
+  "evidence_type": "reproduction",
+  "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30208439097",
+  "source_hash": "426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+  "collected_at": "2026-07-26T15:34:55Z",
+  "instrument_ref": "instrument:eht:network",
+  "transformation_refs": [
+    "transformation:m87:image-reconstruction"
+  ],
+  "uncertainty": {
+    "description": "The official released April 11 eht-imaging pipeline produced byte-identical FITS and canonical-pixel hashes in two executions inside one pinned linux/amd64 OCI workflow, and Podman later reproduced that exact output. A subsequent GitHub-hosted workflow using the same OCI image, data, and pipeline produced a different FITS and canonical-pixel hash, revealing cross-run numerical or undeclared-randomness drift. Therefore the exact hash identifies this execution family but is not a universal expected output. Independent cross-run evidence must use explicit semantic image and morphology comparators. Independent operator, platform, method, and full physical-interpretation confirmation remain unavailable.",
+    "value": null,
+    "unit": null
+  }
+}

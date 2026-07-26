@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/signer-registry.schema.json",
+  "title": "Vajra Attestation Signer Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_version", "updated_at", "keys"],
+  "properties": {
+    "registry_version": {"type": "integer", "minimum": 1},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "trust_scope": {"type": "string"},
+    "keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key_id",
+          "algorithm",
+          "public_key_pem",
+          "fingerprint",
+          "status",
+          "valid_from"
+        ],
+        "properties": {
+          "key_id": {"type": "string", "minLength": 1},
+          "algorithm": {"type": "string", "const": "ed25519"},
+          "public_key_pem": {"type": "string", "minLength": 1},
+          "fingerprint": {
+            "type": "string",
+            "pattern": "^sha256:[a-fA-F0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "retired", "revoked"]
+          },
+          "valid_from": {"type": "string", "format": "date-time"},
+          "valid_until": {"type": ["string", "null"], "format": "date-time"},
+          "retired_at": {"type": ["string", "null"], "format": "date-time"},
+          "revoked_at": {"type": ["string", "null"], "format": "date-time"},
+          "revocation_mode": {
+            "type": ["string", "null"],
+            "enum": ["prospective", "retroactive", null]
+          },
+          "superseded_by": {"type": ["string", "null"]},
+          "trust_scope": {"type": "string"},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}

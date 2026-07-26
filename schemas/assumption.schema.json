@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/assumption.schema.json",
+  "title": "Vajra Space Assumption",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assumption_id", "statement", "scope", "testability", "impact_if_false"],
+  "properties": {
+    "assumption_id": {"type": "string", "minLength": 1},
+    "statement": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "testability": {"type": "string", "enum": ["testable", "partially_testable", "currently_untestable"]},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "impact_if_false": {"type": "string", "minLength": 1}
+  }
+}

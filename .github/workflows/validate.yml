@@ -1,0 +1,55 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify M87 environment bindings
+        run: python scripts/verify_m87_environment_bindings.py --output m87-binding-report.json
+      - name: Upload M87 binding report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-binding-report
+          path: m87-binding-report.json
+          if-no-files-found: warn
+          retention-days: 30
+      - run: pip install -e .[dev] check-jsonschema
+      - run: check-jsonschema --check-metaschema schemas/*.json
+      - name: Publicly verify signed M87 Podman attestation
+        shell: bash
+        run: |
+          set -o pipefail
+          python scripts/ed25519_attestation.py verify \
+            cases/m87-black-hole/m87-ehtim-podman-attestation.signed.json \
+            --registry trust/signer-registry.json \
+            2>&1 | tee signature-verification-report.json
+      - name: Upload signature verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signature-verification-report
+          path: signature-verification-report.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Run test suite
+        shell: bash
+        run: |
+          set -o pipefail
+          pytest -q --tb=short 2>&1 | tee pytest-report.txt
+      - name: Upload pytest diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: pytest-report.txt
+          if-no-files-found: warn
+          retention-days: 30

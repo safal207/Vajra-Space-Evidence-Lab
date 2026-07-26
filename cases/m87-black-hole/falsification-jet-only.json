@@ -1,0 +1,56 @@
+{
+  "falsification_id": "falsification:m87:jet-only-morphology:v1",
+  "target_claim_ref": "claim:m87:jet-only-morphology",
+  "status": "planned",
+  "tests": [
+    {
+      "test_id": "test:m87:jet-only-morphology:visibility-fit",
+      "question": "Can a preregistered jet-base model without a shadow-like central depression explain the calibrated visibility amplitudes and closure quantities as well as the ring-like model family?",
+      "observable": "Out-of-sample visibility and closure-quantity predictive performance of jet-only and ring-capable model families.",
+      "method": "Fit preregistered jet-only and ring-capable forward models to a training subset; compare predictions on held-out baselines, times, or frequency channels using a reviewed model-comparison rule.",
+      "required_input_refs": [
+        "evidence:m87:calibrated-release-2019-D01-01",
+        "observation:m87:ring-scale-structure"
+      ],
+      "missing_prerequisites": [
+        "registered jet-only forward-model family",
+        "registered ring-capable comparison family",
+        "held-out visibility and closure-quantity split",
+        "reviewed model-comparison threshold"
+      ],
+      "support_condition": "Jet-only models match or outperform ring-capable models on held-out observables without introducing an equivalent central depression.",
+      "refutation_condition": "Jet-only models fail reviewed held-out data-consistency thresholds while ring-capable models pass.",
+      "inconclusive_condition": "Model families have unequal flexibility, held-out data are not independent, or calibration uncertainty dominates the comparison.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    },
+    {
+      "test_id": "test:m87:jet-only-morphology:multiwavelength-consistency",
+      "question": "Does one jet-only physical model simultaneously explain horizon-scale millimeter structure and independently observed jet behavior?",
+      "observable": "Joint predictive consistency across EHT-scale observables and independently measured larger-scale or multiwavelength jet constraints.",
+      "method": "Register a joint physical model and predict observables not used in fitting, including orientation, polarization, spectrum, or time variability where available.",
+      "required_input_refs": [],
+      "missing_prerequisites": [
+        "machine-readable independent jet observations",
+        "registered joint jet-only model",
+        "cross-instrument uncertainty model",
+        "preregistered predictive observables"
+      ],
+      "support_condition": "A jet-only model makes successful independent predictions across scales without requiring shadow-like structure.",
+      "refutation_condition": "Jet-only models that fit one scale systematically fail preregistered independent observables while ring-capable models remain consistent.",
+      "inconclusive_condition": "The joint model is tuned after observing test data or cross-instrument uncertainties are not comparable.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    }
+  ],
+  "independence_requirements": [
+    "At least one test dataset must not be used for model fitting.",
+    "Model flexibility and parameter counts must be accounted for.",
+    "Multiwavelength observations must have independent instrument provenance.",
+    "Prediction targets and acceptance rules must be registered before evaluation."
+  ],
+  "limitations": [
+    "Failure of a particular jet-only family does not refute every conceivable jet-dominated explanation.",
+    "Successful ring-capable models do not uniquely identify a Kerr geometry."
+  ]
+}

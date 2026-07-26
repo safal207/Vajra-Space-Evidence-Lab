@@ -1,0 +1,8 @@
+{
+  "assumption_id": "assumption:m87:gr-model",
+  "statement": "The reconstructed ring and central brightness depression may be interpreted using general-relativistic compact-object and radiative-transfer models within their declared parameter and plasma assumptions.",
+  "scope": "Inference from calibrated interferometric observables and reconstructed morphology to a Kerr black-hole shadow interpretation.",
+  "testability": "partially_testable",
+  "evidence_refs": [],
+  "impact_if_false": "The ring-scale observation and reconstruction may remain valid while the black-hole model, mass inference, or physical interpretation changes."
+}

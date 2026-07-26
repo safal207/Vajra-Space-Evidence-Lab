@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/visibility-threshold-evaluation.schema.json",
+  "title": "Vajra Visibility Threshold Evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluation_version",
+    "status",
+    "verdict",
+    "contract_id",
+    "contract_sha256",
+    "report_sha256",
+    "authority",
+    "results",
+    "issues"
+  ],
+  "properties": {
+    "evaluation_version": {"type": "integer", "const": 1},
+    "status": {"type": "string", "enum": ["blocked", "complete", "partial", "error"]},
+    "verdict": {"type": "string", "enum": ["not_evaluated", "accept", "reject", "inconclusive"]},
+    "contract_id": {"type": "string", "minLength": 1},
+    "contract_sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "report_sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registration_status", "review_status", "evaluation_authorized"],
+      "properties": {
+        "registration_status": {"type": "string", "minLength": 1},
+        "review_status": {"type": "string", "minLength": 1},
+        "evaluation_authorized": {"type": "boolean"}
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "threshold_id",
+          "band_id",
+          "observable",
+          "observed_value",
+          "comparison",
+          "minimum",
+          "maximum",
+          "outcome"
+        ],
+        "properties": {
+          "threshold_id": {"type": "string", "minLength": 1},
+          "band_id": {"type": "string", "minLength": 1},
+          "observable": {"type": "string", "minLength": 1},
+          "observed_value": {"type": ["number", "null"], "minimum": 0},
+          "comparison": {"type": "string", "enum": ["maximum", "minimum", "interval"]},
+          "minimum": {"type": ["number", "null"], "minimum": 0},
+          "maximum": {"type": ["number", "null"], "minimum": 0},
+          "outcome": {"type": "string", "enum": ["pass", "fail", "not_evaluated", "missing_observation"]}
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "minLength": 1},
+          "message": {"type": "string", "minLength": 1},
+          "threshold_id": {"type": ["string", "null"]}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "blocked"}}},
+      "then": {
+        "properties": {
+          "verdict": {"const": "not_evaluated"},
+          "results": {"maxItems": 0},
+          "issues": {"minItems": 1}
+        }
+      }
+    }
+  ]
+}

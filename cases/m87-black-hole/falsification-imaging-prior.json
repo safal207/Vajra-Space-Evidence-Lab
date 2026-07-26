@@ -1,0 +1,61 @@
+{
+  "falsification_id": "falsification:m87:imaging-prior-artifact:v1",
+  "target_claim_ref": "claim:m87:imaging-prior-artifact",
+  "status": "partially_evaluable",
+  "tests": [
+    {
+      "test_id": "test:m87:imaging-prior-artifact:method-diversity",
+      "question": "Is ring morphology required by the calibrated observables across materially different reconstruction methods and prior families?",
+      "observable": "Morphology and data-consistency agreement across CLEAN, regularized maximum-likelihood, and additional methods with contrasting priors.",
+      "method": "Execute pinned implementations over a preregistered grid of prior families and hyperparameters; compare visibility-domain residuals, closure quantities, and morphology without selecting only ring-like outputs.",
+      "required_input_refs": [
+        "evidence:m87:calibrated-release-2019-D01-01",
+        "transformation:m87:image-reconstruction",
+        "evidence:m87:paper-derived-morphology-stability"
+      ],
+      "missing_prerequisites": [
+        "pinned additional independent imaging implementation",
+        "visibility-domain and closure-quantity comparator",
+        "preregistered hyperparameter and prior grid",
+        "independent review of morphology thresholds"
+      ],
+      "support_condition": "Comparable data fit is achieved by non-ring reconstructions while ring morphology appears only under a narrow or ring-favoring prior family.",
+      "refutation_condition": "Materially different methods and prior families that fit the observables within reviewed tolerances consistently recover compatible ring morphology.",
+      "inconclusive_condition": "Methods share numerical or code dependencies, hyperparameter selection is outcome-driven, or data-consistency tolerances are absent.",
+      "evaluation_status": "pending_data",
+      "result_evidence_refs": [
+        "evidence:m87:ehtim-bootstrap-reproduction",
+        "evidence:m87:paper-derived-morphology-stability"
+      ]
+    },
+    {
+      "test_id": "test:m87:imaging-prior-artifact:synthetic-recovery",
+      "question": "Do the reconstruction methods distinguish ring and non-ring source ensembles under the actual array coverage and noise?",
+      "observable": "False-positive and false-negative rates for ring morphology across preregistered synthetic source ensembles.",
+      "method": "Blindly reconstruct synthetic ring, crescent, disk, multi-component, and jet-dominated models with the observed sampling and plausible systematics; score results with the same morphology and visibility contracts.",
+      "required_input_refs": [
+        "transformation:m87:image-reconstruction"
+      ],
+      "missing_prerequisites": [
+        "registered synthetic source ensemble",
+        "blind assignment and evaluation procedure",
+        "reviewed false-positive and false-negative thresholds"
+      ],
+      "support_condition": "Non-ring source classes are frequently reconstructed as rings or ring classes are not distinguishable under the declared comparison contract.",
+      "refutation_condition": "Ring and non-ring source classes are separated with reviewed error rates and M87 falls within the ring-recovery regime.",
+      "inconclusive_condition": "The synthetic ensemble omits plausible morphologies or the evaluation is not blind.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    }
+  ],
+  "independence_requirements": [
+    "At least one reconstruction implementation must be materially independent of eht-imaging.",
+    "The prior and hyperparameter grid must be registered before final M87 comparisons.",
+    "Data-fit and morphology criteria must both be reported, including failures.",
+    "Synthetic labels must remain hidden from reconstruction operators until outputs are frozen."
+  ],
+  "limitations": [
+    "Agreement among methods with shared assumptions does not establish full independence.",
+    "Refuting a prior-induced ring does not by itself determine the compact object's physical nature."
+  ]
+}

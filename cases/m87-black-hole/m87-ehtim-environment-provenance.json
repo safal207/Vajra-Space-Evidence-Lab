@@ -1,0 +1,32 @@
+{
+  "artifact_digest": "sha256:6eb4ab747ced2c25e96d15509cb39942cf987e0f7f7f74ad08b43cce8756dc18",
+  "base_digest": "sha256:e3797091302382ea841498bc93a7b0a50f7c1448333d5e946d2d1608d0c5f43d",
+  "base_reference": "mambaorg/micromamba:1-bookworm-slim@sha256:e3797091302382ea841498bc93a7b0a50f7c1448333d5e946d2d1608d0c5f43d",
+  "base_tag": "mambaorg/micromamba:1-bookworm-slim",
+  "compatibility_patch_path": "containers/m87-ehtim/patches/ehtim-1.1.0-python3-parloop.patch",
+  "compatibility_patch_sha256": "7b432916770f1e45108329aff59b4200e148b864e564ab669a5a841402e7d167",
+  "ehtim_commit": "22ae35f307921a4d423aa69f6aed6e93a74ecbc0",
+  "ehtim_repository": "https://github.com/achael/eht-imaging.git",
+  "ehtim_tree_sha256": "efea21644ef3dc837b878431bf1081c4e7e1570084a690e57cfa2ec0714fe5ef",
+  "environment_lock_path": "containers/m87-ehtim/explicit-linux-64.txt",
+  "environment_lock_sha256": "e4f061d38ccc642dd55cf4e4d100319749e632b001c1b0c5c0ceb5bf10061448",
+  "lock_sync_commit": "ed27564cde677bd956794799bf8ccf1dbe16516a",
+  "oci_digest": "sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+  "oci_image": "ghcr.io/safal207/vajra-m87-ehtim",
+  "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+  "platform": "linux/amd64",
+  "report_version": 2,
+  "runtime_dependencies_discovered_by_execution": {
+    "pandas": "0.25.3",
+    "pytz": "2023.3.post1"
+  },
+  "verification": {
+    "build_and_push": "success",
+    "ehtim_version_import": "success",
+    "official_pipeline_help": "success",
+    "pull_by_digest": "success"
+  },
+  "workflow_commit": "9029e361311811ecc9b87d4daa0545f044d6e822",
+  "workflow_repository": "safal207/Vajra-Space-Evidence-Lab",
+  "workflow_run_id": 30208007320
+}

@@ -1,0 +1,16 @@
+{
+  "evidence_id": "evidence:m87:paper-derived-morphology-stability",
+  "evidence_type": "reproduction",
+  "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30219938594",
+  "source_hash": "a1789cb268b5c259dace78f8e3297e189960cf4973232f87842fac2f2d438e29",
+  "collected_at": "2026-07-26T20:54:36Z",
+  "instrument_ref": "instrument:eht:network",
+  "transformation_refs": [
+    "transformation:m87:image-reconstruction"
+  ],
+  "uncertainty": {
+    "description": "Two historical reconstruction artifacts produced different FITS and canonical-pixel hashes under the same OCI image, data, and pipeline, so universal bitwise determinism is not established. A fresh CI workflow independently downloaded both artifacts, re-extracted Paper VI-derived morphology in the verified scientific image, and passed an engineering-derived stability contract: pixel correlation 0.9999496, relative L1/L2 drift below one percent, diameter delta 0.0597 microarcseconds, FWHM delta 0.0200 microarcseconds, fractional-width delta 0.00104, and circularity delta 0.00252. The feature extractor and stability thresholds are Vajra implementations derived from published prose and are not official EHT code or independently reviewed tolerances.",
+    "value": null,
+    "unit": null
+  }
+}

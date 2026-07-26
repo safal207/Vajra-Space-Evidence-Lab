@@ -1,0 +1,139 @@
+{
+  "plan_id": "reproduction-plan:m87:eht-imaging:2017-101",
+  "status": "partial",
+  "claim_ref": "claim:m87:ring-image",
+  "selected_pipeline": "eht-imaging",
+  "scientific_scope": "Reconstruct the April 11, 2017 M87 Stokes I image from the officially released low- and high-band UVFITS data using the EHT fiducial eht-imaging pipeline.",
+  "source_releases": {
+    "data": {
+      "product_code": "2019-D01-01",
+      "repository": "https://github.com/eventhorizontelescope/2019-D01-01.git",
+      "commit": "27ae76aacb9067a83388395c3826012b97aac371",
+      "tree_sha256": "9134b5f261bd6936d9e25547eca722be89b325b587fe22d06ba980b0de31a896"
+    },
+    "imaging": {
+      "product_code": "2019-D01-02",
+      "repository": "https://github.com/eventhorizontelescope/2019-D01-02.git",
+      "commit": "80d230e76c08edd31548e7cfe61dc7cf94300780",
+      "tree_sha256": "0379aeb9ba0ce5a02f3134bd5da90c1d03a836433946d8fa33e3d0c65dde96af",
+      "pipeline_path": "eht-imaging/eht-imaging_pipeline.py",
+      "pipeline_sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f",
+      "declared_eht_imaging_version": "1.1.0"
+    }
+  },
+  "environment": {
+    "provenance_path": "cases/m87-black-hole/m87-ehtim-environment-provenance.json",
+    "platform": "linux/amd64",
+    "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+    "base_reference": "mambaorg/micromamba:1-bookworm-slim@sha256:e3797091302382ea841498bc93a7b0a50f7c1448333d5e946d2d1608d0c5f43d",
+    "lock_path": "containers/m87-ehtim/explicit-linux-64.txt",
+    "lock_sha256": "e4f061d38ccc642dd55cf4e4d100319749e632b001c1b0c5c0ceb5bf10061448",
+    "upstream_ehtim": {
+      "repository": "https://github.com/achael/eht-imaging.git",
+      "commit": "22ae35f307921a4d423aa69f6aed6e93a74ecbc0",
+      "tree_sha256": "efea21644ef3dc837b878431bf1081c4e7e1570084a690e57cfa2ec0714fe5ef"
+    },
+    "compatibility_patch": {
+      "path": "containers/m87-ehtim/patches/ehtim-1.1.0-python3-parloop.patch",
+      "sha256": "7b432916770f1e45108329aff59b4200e148b864e564ab669a5a841402e7d167",
+      "scope": "Python 3 syntax compatibility only; no scientific calculations or fiducial parameters are changed."
+    },
+    "runtime_dependencies_discovered_by_execution": {
+      "pandas": "0.25.3",
+      "pytz": "2023.3.post1"
+    },
+    "verification": {
+      "build_and_push": "success",
+      "pull_by_digest": "success",
+      "ehtim_version_import": "success",
+      "official_pipeline_help": "success",
+      "workflow_run_id": 30208007320,
+      "artifact_digest": "sha256:6eb4ab747ced2c25e96d15509cb39942cf987e0f7f7f74ad08b43cce8756dc18"
+    }
+  },
+  "inputs": [
+    {
+      "role": "low_band_uvfits",
+      "path": "data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+      "sha256": "697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298",
+      "size_bytes": 650880
+    },
+    {
+      "role": "high_band_uvfits",
+      "path": "data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+      "sha256": "618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5",
+      "size_bytes": 702720
+    },
+    {
+      "role": "pipeline_code",
+      "path": "imaging/eht-imaging/eht-imaging_pipeline.py",
+      "sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f",
+      "size_bytes": 17133
+    }
+  ],
+  "command": [
+    "python",
+    "imaging/eht-imaging/eht-imaging_pipeline.py",
+    "-i",
+    "data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+    "-i2",
+    "data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+    "-o",
+    "outputs/SR1_M87_2017_101.fits"
+  ],
+  "fiducial_parameters": {
+    "compact_flux_jy": 0.6,
+    "prior_fwhm_microarcseconds": 40.0,
+    "fractional_systematic_noise": 0.02,
+    "pixels": 64,
+    "field_of_view_microarcseconds": 128.0,
+    "max_iterations": 100,
+    "stopping_criterion": 0.0001,
+    "gain_tolerance": [0.02, 0.2],
+    "zero_baseline_cut_wavelengths": 100000000.0,
+    "reverse_taper_microarcseconds": 5.0,
+    "regularization": {
+      "simple": 100.0,
+      "tv": 1.0,
+      "tv2": 1.0,
+      "l1": 0.0,
+      "flux": 10000.0
+    },
+    "initial_data_weights": {
+      "amp": 0.2,
+      "cphase": 1.0,
+      "logcamp": 1.0
+    }
+  },
+  "reproduction_result": {
+    "path": "cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json",
+    "workflow_run_id": 30208439097,
+    "artifact_digest": "sha256:426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+    "run_count": 2,
+    "exact_fits_byte_match": true,
+    "exact_canonical_pixel_match": true
+  },
+  "expected_outputs": [
+    {
+      "path": "outputs/SR1_M87_2017_101.fits",
+      "sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+      "canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+      "comparison": "Observed identically in two repeated runs inside the same pinned OCI environment. This is a bootstrap expected output, not yet an independently confirmed reference output."
+    }
+  ],
+  "blockers": [
+    {
+      "code": "independent_output_confirmation_missing",
+      "message": "The FITS and canonical-pixel hashes have not yet been reproduced by an independent operator or execution infrastructure."
+    },
+    {
+      "code": "scientific_metrics_review_missing",
+      "message": "Bootstrap ring diameter, width, asymmetry, and orientation diagnostics have not yet been validated against the official EHT feature-extraction and image-ensemble methodology."
+    },
+    {
+      "code": "cross_runtime_determinism_unverified",
+      "message": "Exact repeatability is demonstrated within one pinned linux/amd64 OCI environment, but cross-runner, cross-platform, and alternate BLAS implementations remain untested."
+    }
+  ],
+  "promotion_rule": "Promote to a complete scientific reproduction manifest only after independent output confirmation, reviewed scientific comparators, and declared cross-runtime stability limits are available."
+}

@@ -1,0 +1,59 @@
+{
+  "falsification_id": "falsification:m87:variability-bias:v1",
+  "target_claim_ref": "claim:m87:variability-bias",
+  "status": "planned",
+  "tests": [
+    {
+      "test_id": "test:m87:variability-bias:dynamic-imaging",
+      "question": "Does time-resolved reconstruction materially change or remove the static ring morphology inferred from Earth-rotation synthesis?",
+      "observable": "Differences between static and time-resolved reconstructions in closure fit, ring diameter, width, circularity, and temporal residual structure.",
+      "method": "Execute pinned dynamic-imaging and static-imaging methods on the same time-resolved observables; compare held-out closure quantities and morphology using registered temporal and image contracts.",
+      "required_input_refs": [
+        "evidence:m87:calibrated-release-2019-D01-01",
+        "transformation:m87:image-reconstruction",
+        "evidence:m87:paper-derived-morphology-stability"
+      ],
+      "missing_prerequisites": [
+        "pinned dynamic-imaging implementation",
+        "time-resolved observable contract",
+        "reviewed temporal regularization grid",
+        "held-out time-segment comparison"
+      ],
+      "support_condition": "Dynamic modeling yields substantially better held-out data fit and produces morphology outside the static reconstruction's reviewed stability region.",
+      "refutation_condition": "Dynamic and static methods produce compatible ring morphology and held-out fit within reviewed tolerances across time segments.",
+      "inconclusive_condition": "Temporal resolution is insufficient, dynamic regularization dominates the result, or both methods share the same static bias.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    },
+    {
+      "test_id": "test:m87:variability-bias:synthetic-variable-controls",
+      "question": "Can plausible source variability create a stable static ring when the instantaneous source lacks comparable ring morphology?",
+      "observable": "False stable-ring recovery rate from synthetic time-variable, non-ring instantaneous source sequences under the actual sampling schedule.",
+      "method": "Generate preregistered variable source movies, sample them with the observed time coverage, reconstruct them as static and dynamic sources, and score false ring recovery.",
+      "required_input_refs": [
+        "transformation:m87:image-reconstruction"
+      ],
+      "missing_prerequisites": [
+        "registered variable source-movie ensemble",
+        "observed sampling schedule model",
+        "blind static and dynamic reconstruction procedure",
+        "reviewed false-recovery threshold"
+      ],
+      "support_condition": "Plausible non-ring source movies frequently generate static ring morphology comparable to M87 above the reviewed false-recovery threshold.",
+      "refutation_condition": "The static pipeline rarely creates comparable rings from plausible non-ring movies and accurately recovers injected ring movies.",
+      "inconclusive_condition": "The variability ensemble does not cover plausible source dynamics or the sampling/systematic model is incomplete.",
+      "evaluation_status": "not_evaluated",
+      "result_evidence_refs": []
+    }
+  ],
+  "independence_requirements": [
+    "Dynamic and static algorithms should be independently implemented or dependency overlap must be disclosed.",
+    "Temporal regularization and source-movie ensembles must be registered before final evaluation.",
+    "At least one time segment or observable set must be held out.",
+    "False-recovery thresholds must be set before inspecting M87 results."
+  ],
+  "limitations": [
+    "Static-morphology stability does not prove that the source is time invariant.",
+    "Dynamic-model flexibility can improve fit without yielding a uniquely correct movie."
+  ]
+}

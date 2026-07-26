@@ -1,0 +1,9 @@
+{
+  "instrument_id": "instrument:eht:network",
+  "name": "Event Horizon Telescope 2017 global VLBI array",
+  "instrument_type": "interferometer",
+  "operator": "Event Horizon Telescope Collaboration",
+  "location": "Eight-station Earth-scale 1.3 mm VLBI array used for the April 2017 campaign",
+  "calibration_status": "declared",
+  "calibration_evidence_refs": []
+}

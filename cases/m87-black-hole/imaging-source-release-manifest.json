@@ -1,0 +1,27 @@
+{
+  "data_product_code": "2019-D01-02",
+  "declared_eht_imaging_version": "1.1.0",
+  "manifest_version": 1,
+  "object_count": 14,
+  "objects": [
+    {"path": "README.md", "sha256": "d7527494c2289c32da1480a9af502e04788e9a27218d85283b85ad064f46dfac", "size_bytes": 2981},
+    {"path": "difmap/CircMask_r30_x-0.002_y0.022.win", "sha256": "d223adc39984f54d88a62af542aabad3b168085a954e3d9cf2cca7a00e2d2421", "size_bytes": 1940},
+    {"path": "difmap/EHT_Difmap", "sha256": "1ee57eafae8da4c23d22c935f5370e0cc01e075935c458e3f2f27086afc44f6b", "size_bytes": 6923},
+    {"path": "difmap/README.md", "sha256": "8ce07f52792d1faa6ac81378bc1fa8ba3d87b39a42ca794e221549750b82bc18", "size_bytes": 2466},
+    {"path": "difmap/difmap.sh", "sha256": "2ee4d168ea471ec60edda5b94d21d093784eb4ebae2398e5cb405689d36f9328", "size_bytes": 1047},
+    {"path": "difmap/run.sh", "sha256": "10d255ca53222a2f1620079b8a4b544a5626ae423d47ed9b66cfd2d2cbec9f4c", "size_bytes": 810},
+    {"path": "eht-imaging/README.md", "sha256": "dc7d06956affd975bfd6c34fc03726a0890010c30ccf261b7b6e3dac4a57e225", "size_bytes": 2571},
+    {"path": "eht-imaging/eht-imaging_pipeline.py", "sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f", "size_bytes": 17133},
+    {"path": "eht-imaging/run.sh", "sha256": "1c148215465b5d3902e54707dd9890ec3c5400f0a1a16128dd6d56c19e0f8bec", "size_bytes": 998},
+    {"path": "run.sh", "sha256": "cac99278583787db0f7ccaf5a9cb709f6b441c7de02c75ada1afa1f6d55b7de9", "size_bytes": 1133},
+    {"path": "smili/README.md", "sha256": "2bd8bfae2dd3659f6fdf26eddcfd2c9d9bde9d43cb1272aa767892d098f79e96", "size_bytes": 5117},
+    {"path": "smili/example_driver.py", "sha256": "81d1e5c000be3ddae18dd997adaf256a55e0de504a823824ca76112f6315e21d", "size_bytes": 5739},
+    {"path": "smili/run.sh", "sha256": "f3869da25ca44738da7edc6e47dfedc0fa1101c62fb8aa355e4bb6ae6f32fb2b", "size_bytes": 770},
+    {"path": "smili/smili_imaging_pipeline.py", "sha256": "c5b1a2b9f9f5475597f7422c536227c6011e01a6adbe111d4f302703b1c6fa9c", "size_bytes": 18110}
+  ],
+  "primary_reference_doi": "10.3847/2041-8213/ab0e85",
+  "release_tree_sha256": "0379aeb9ba0ce5a02f3134bd5da90c1d03a836433946d8fa33e3d0c65dde96af",
+  "selected_pipeline": "eht-imaging",
+  "source_commit": "80d230e76c08edd31548e7cfe61dc7cf94300780",
+  "source_repository": "https://github.com/eventhorizontelescope/2019-D01-02.git"
+}

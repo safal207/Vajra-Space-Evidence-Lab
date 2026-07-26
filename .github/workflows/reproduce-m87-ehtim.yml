@@ -1,0 +1,294 @@
+name: reproduce-m87-ehtim
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/reproduce-m87-ehtim.yml
+      - scripts/analyze_m87_fits.py
+      - scripts/analyze_m87_eht_features.py
+      - scripts/compare_m87_image_features.py
+      - scripts/compare_m87_reproduction_runs.py
+      - src/vajra_space/image_comparison.py
+      - cases/m87-black-hole/m87-image-comparison-contract.json
+      - schemas/image-comparison.schema.json
+  pull_request:
+    paths:
+      - .github/workflows/reproduce-m87-ehtim.yml
+      - scripts/analyze_m87_fits.py
+      - scripts/analyze_m87_eht_features.py
+      - scripts/compare_m87_image_features.py
+      - scripts/compare_m87_reproduction_runs.py
+      - src/vajra_space/image_comparison.py
+      - cases/m87-black-hole/m87-image-comparison-contract.json
+      - schemas/image-comparison.schema.json
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  reproduce-twice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OCI_REFERENCE: ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3
+      DATA_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-01.git
+      DATA_COMMIT: 27ae76aacb9067a83388395c3826012b97aac371
+      IMAGING_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-02.git
+      IMAGING_COMMIT: 80d230e76c08edd31548e7cfe61dc7cf94300780
+      LOW_SHA256: 697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298
+      HIGH_SHA256: 618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5
+      PIPELINE_SHA256: 5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Vajra comparison tools
+        run: pip install -e .
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch and verify pinned scientific inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATA_DIR="$RUNNER_TEMP/m87-data"
+          IMAGING_DIR="$RUNNER_TEMP/m87-imaging"
+          OUTPUT_DIR="$RUNNER_TEMP/m87-output"
+
+          git init "$DATA_DIR"
+          git -C "$DATA_DIR" remote add origin "$DATA_REPOSITORY"
+          git -C "$DATA_DIR" fetch --depth 1 origin "$DATA_COMMIT"
+          git -C "$DATA_DIR" checkout --detach FETCH_HEAD
+          test "$(git -C "$DATA_DIR" rev-parse HEAD)" = "$DATA_COMMIT"
+
+          git init "$IMAGING_DIR"
+          git -C "$IMAGING_DIR" remote add origin "$IMAGING_REPOSITORY"
+          git -C "$IMAGING_DIR" fetch --depth 1 origin "$IMAGING_COMMIT"
+          git -C "$IMAGING_DIR" checkout --detach FETCH_HEAD
+          test "$(git -C "$IMAGING_DIR" rev-parse HEAD)" = "$IMAGING_COMMIT"
+
+          echo "$LOW_SHA256  $DATA_DIR/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits" | sha256sum --check -
+          echo "$HIGH_SHA256  $DATA_DIR/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits" | sha256sum --check -
+          echo "$PIPELINE_SHA256  $IMAGING_DIR/eht-imaging/eht-imaging_pipeline.py" | sha256sum --check -
+
+          mkdir -p "$OUTPUT_DIR"
+          chmod 0777 "$OUTPUT_DIR"
+          echo "DATA_DIR=$DATA_DIR" >> "$GITHUB_ENV"
+          echo "IMAGING_DIR=$IMAGING_DIR" >> "$GITHUB_ENV"
+          echo "OUTPUT_DIR=$OUTPUT_DIR" >> "$GITHUB_ENV"
+
+      - name: Pull verified OCI image by digest
+        run: docker pull "$OCI_REFERENCE"
+
+      - name: Run official April 11 reconstruction twice
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          run_reconstruction() {
+            local run_id="$1"
+            local output="/workspace/outputs/${run_id}.fits"
+            echo "Starting ${run_id} at $(date -u +%FT%TZ)"
+            timeout 7200 docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges \
+              --pids-limit 512 \
+              --user 10001:10001 \
+              --cpus 2 \
+              --shm-size 1g \
+              --tmpfs /tmp:rw,nosuid,nodev,size=1073741824 \
+              -e HOME=/tmp/home \
+              -e MPLCONFIGDIR=/tmp/matplotlib \
+              -e XDG_CACHE_HOME=/tmp/cache \
+              -e PYTHONHASHSEED=0 \
+              -e OPENBLAS_NUM_THREADS=1 \
+              -e OMP_NUM_THREADS=1 \
+              -e MKL_NUM_THREADS=1 \
+              -v "$DATA_DIR:/workspace/data:ro" \
+              -v "$IMAGING_DIR:/workspace/imaging:ro" \
+              -v "$OUTPUT_DIR:/workspace/outputs:rw" \
+              -v "$GITHUB_WORKSPACE:/vajra:ro" \
+              -w /workspace \
+              "$OCI_REFERENCE" \
+              python imaging/eht-imaging/eht-imaging_pipeline.py \
+                -i data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits \
+                -i2 data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits \
+                -o "$output" \
+              >"$OUTPUT_DIR/${run_id}.stdout.log" \
+              2>"$OUTPUT_DIR/${run_id}.stderr.log"
+            test -s "$OUTPUT_DIR/${run_id}.fits"
+
+            docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges \
+              --user 10001:10001 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=536870912 \
+              -e HOME=/tmp/home \
+              -e MPLCONFIGDIR=/tmp/matplotlib \
+              -v "$OUTPUT_DIR:/workspace/outputs:rw" \
+              -v "$GITHUB_WORKSPACE:/vajra:ro" \
+              -w /workspace \
+              "$OCI_REFERENCE" \
+              python /vajra/scripts/analyze_m87_fits.py \
+                "/workspace/outputs/${run_id}.fits" \
+                --output "/workspace/outputs/${run_id}.metrics.json" \
+              >"$OUTPUT_DIR/${run_id}.metrics.stdout.log" \
+              2>"$OUTPUT_DIR/${run_id}.metrics.stderr.log"
+            test -s "$OUTPUT_DIR/${run_id}.metrics.json"
+
+            docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges \
+              --user 10001:10001 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=536870912 \
+              -e HOME=/tmp/home \
+              -e MPLCONFIGDIR=/tmp/matplotlib \
+              -e OPENBLAS_NUM_THREADS=1 \
+              -e OMP_NUM_THREADS=1 \
+              -v "$OUTPUT_DIR:/workspace/outputs:rw" \
+              -v "$GITHUB_WORKSPACE:/vajra:ro" \
+              -w /workspace \
+              "$OCI_REFERENCE" \
+              python /vajra/scripts/analyze_m87_eht_features.py \
+                "/workspace/outputs/${run_id}.fits" \
+                --output "/workspace/outputs/${run_id}.eht-features.json" \
+              >"$OUTPUT_DIR/${run_id}.eht-features.stdout.log" \
+              2>"$OUTPUT_DIR/${run_id}.eht-features.stderr.log"
+            test -s "$OUTPUT_DIR/${run_id}.eht-features.json"
+            echo "Completed ${run_id} at $(date -u +%FT%TZ)"
+          }
+
+          run_reconstruction run1
+          run_reconstruction run2
+
+      - name: Compare repeated outputs and Paper VI morphology contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/compare_m87_reproduction_runs.py \
+            --run1-fits "$OUTPUT_DIR/run1.fits" \
+            --run2-fits "$OUTPUT_DIR/run2.fits" \
+            --run1-metrics "$OUTPUT_DIR/run1.metrics.json" \
+            --run2-metrics "$OUTPUT_DIR/run2.metrics.json" \
+            --output "$OUTPUT_DIR/m87-reproduction-report.json" \
+            --oci-reference "$OCI_REFERENCE" \
+            --data-commit "$DATA_COMMIT" \
+            --imaging-commit "$IMAGING_COMMIT"
+
+          python scripts/compare_m87_image_features.py \
+            "$OUTPUT_DIR/run1.eht-features.json" \
+            --contract cases/m87-black-hole/m87-image-comparison-contract.json \
+            --schema schemas/image-comparison.schema.json \
+            --output "$OUTPUT_DIR/run1.eht-comparison.json"
+
+          python scripts/compare_m87_image_features.py \
+            "$OUTPUT_DIR/run2.eht-features.json" \
+            --contract cases/m87-black-hole/m87-image-comparison-contract.json \
+            --schema schemas/image-comparison.schema.json \
+            --output "$OUTPUT_DIR/run2.eht-comparison.json"
+
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          output_dir = Path(os.environ["OUTPUT_DIR"])
+          run1_features = json.loads((output_dir / "run1.eht-features.json").read_text())
+          run2_features = json.loads((output_dir / "run2.eht-features.json").read_text())
+          run1_comparison = json.loads((output_dir / "run1.eht-comparison.json").read_text())
+          run2_comparison = json.loads((output_dir / "run2.eht-comparison.json").read_text())
+
+          if run1_features["metrics"] != run2_features["metrics"]:
+              raise SystemExit("Paper-derived M87 metrics differ between byte-identical FITS runs")
+          if run1_comparison["status"] != "pass" or run2_comparison["status"] != "pass":
+              raise SystemExit("Paper-derived image comparison contract did not pass")
+          if run1_comparison["comparators"] != run2_comparison["comparators"]:
+              raise SystemExit("Comparator results differ between repeated runs")
+
+          report = {
+              "report_version": 1,
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "status": "paper_derived_contract_pass",
+              "feature_method_id": run1_features["method"]["method_id"],
+              "contract_id": run1_comparison["contract_id"],
+              "contract_status": run1_comparison["contract_status"],
+              "metrics_equal_between_runs": True,
+              "comparators_equal_between_runs": True,
+              "metrics": run1_features["metrics"],
+              "comparators": run1_comparison["comparators"],
+              "limitations": run1_comparison["limitations"],
+          }
+          (output_dir / "m87-eht-feature-repeatability.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          report = {
+              "report_version": 1,
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "github": {
+                  "repository": os.environ["GITHUB_REPOSITORY"],
+                  "workflow": os.environ["GITHUB_WORKFLOW"],
+                  "run_id": int(os.environ["GITHUB_RUN_ID"]),
+                  "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+                  "commit": os.environ["GITHUB_SHA"],
+              },
+              "environment": {
+                  "oci_reference": os.environ["OCI_REFERENCE"],
+                  "platform": "linux/amd64",
+                  "container_network": "none",
+                  "read_only_root": True,
+                  "capabilities": "all_dropped",
+                  "no_new_privileges": True,
+                  "uid_gid": "10001:10001",
+              },
+              "sources": {
+                  "data_repository": os.environ["DATA_REPOSITORY"],
+                  "data_commit": os.environ["DATA_COMMIT"],
+                  "imaging_repository": os.environ["IMAGING_REPOSITORY"],
+                  "imaging_commit": os.environ["IMAGING_COMMIT"],
+                  "low_uvfits_sha256": os.environ["LOW_SHA256"],
+                  "high_uvfits_sha256": os.environ["HIGH_SHA256"],
+                  "pipeline_sha256": os.environ["PIPELINE_SHA256"],
+              },
+          }
+          output = Path(os.environ["OUTPUT_DIR"]) / "execution-context.json"
+          output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          PY
+
+          sha256sum "$OUTPUT_DIR"/* > "$OUTPUT_DIR/artifact-files.sha256"
+          cat "$OUTPUT_DIR/m87-reproduction-report.json"
+          cat "$OUTPUT_DIR/m87-eht-feature-repeatability.json"
+
+      - name: Upload bootstrap reproduction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ehtim-bootstrap-reproduction
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          retention-days: 30

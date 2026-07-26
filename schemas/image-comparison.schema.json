@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/image-comparison.schema.json",
+  "title": "Vajra Image Comparison Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "version",
+    "status",
+    "claim_ref",
+    "method",
+    "comparators",
+    "source_refs",
+    "limitations"
+  ],
+  "properties": {
+    "contract_id": {"type": "string", "minLength": 1},
+    "version": {"type": "integer", "minimum": 1},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "paper_derived", "independently_reviewed"]
+    },
+    "claim_ref": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "target_pixel_scale_microarcseconds",
+        "interpolation",
+        "center_smoothing_fwhm_microarcseconds",
+        "center_estimator",
+        "measurement_image",
+        "azimuth_samples",
+        "radial_step_microarcseconds"
+      ],
+      "properties": {
+        "method_id": {"type": "string", "minLength": 1},
+        "target_pixel_scale_microarcseconds": {"type": "number", "exclusiveMinimum": 0},
+        "interpolation": {"type": "string", "enum": ["linear"]},
+        "center_smoothing_fwhm_microarcseconds": {"type": "number", "minimum": 0},
+        "center_estimator": {"type": "string", "minLength": 1},
+        "measurement_image": {"type": "string", "enum": ["unblurred_resampled"]},
+        "azimuth_samples": {"type": "integer", "minimum": 36},
+        "radial_step_microarcseconds": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "comparators": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "comparator_id",
+          "metric_path",
+          "operator",
+          "required",
+          "provenance",
+          "interpretation"
+        ],
+        "properties": {
+          "comparator_id": {"type": "string", "minLength": 1},
+          "metric_path": {"type": "string", "minLength": 1},
+          "operator": {"type": "string", "enum": ["range", "max", "min"]},
+          "minimum": {"type": "number"},
+          "maximum": {"type": "number"},
+          "required": {"type": "boolean"},
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_ref", "source_location", "basis"],
+            "properties": {
+              "source_ref": {"type": "string", "minLength": 1},
+              "source_location": {"type": "string", "minLength": 1},
+              "basis": {"type": "string", "minLength": 1}
+            }
+          },
+          "interpretation": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"operator": {"const": "range"}}},
+            "then": {"required": ["minimum", "maximum"]}
+          },
+          {
+            "if": {"properties": {"operator": {"const": "max"}}},
+            "then": {"required": ["maximum"]}
+          },
+          {
+            "if": {"properties": {"operator": {"const": "min"}}},
+            "then": {"required": ["minimum"]}
+          }
+        ]
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_ref", "title", "uri", "sha256"],
+        "properties": {
+          "source_ref": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "uri": {"type": "string", "minLength": 1},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"}
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

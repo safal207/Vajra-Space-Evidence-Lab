@@ -1,0 +1,80 @@
+{
+  "candidate": {
+    "artifact_digest": "sha256:f1ade0ce48a5677c73254a17a5d69cf7afbbf9488272b2a8ab2ba8dbec1fe66c",
+    "artifact_id": 8636817251,
+    "canonical_pixel_sha256": "340b629a40a0e222c40a937ff517a442395541f9f78962d0b6c65356c87cf99e",
+    "fits_sha256": "f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb",
+    "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+    "workflow_run_id": 30219587273
+  },
+  "claim_ref": "claim:m87:ring-image",
+  "comparators": [
+    {
+      "basis": "A correlation above 0.999 requires the reconstructed image morphology to remain nearly identical despite byte-level drift.",
+      "comparator_id": "pixel-correlation",
+      "metric_path": "image.pixel_correlation",
+      "operator": "min",
+      "threshold": 0.999
+    },
+    {
+      "basis": "A two-percent relative L2 ceiling treats small numerical drift as acceptable while rejecting materially different images.",
+      "comparator_id": "relative-l2-difference",
+      "metric_path": "image.relative_l2_difference",
+      "operator": "max",
+      "threshold": 0.02
+    },
+    {
+      "basis": "A two-percent relative L1 ceiling limits total absolute pixel drift.",
+      "comparator_id": "relative-l1-difference",
+      "metric_path": "image.relative_l1_difference",
+      "operator": "max",
+      "threshold": 0.02
+    },
+    {
+      "basis": "A one-microarcsecond cross-run diameter tolerance is much narrower than the Paper VI 38–44 microarcsecond descriptive span.",
+      "comparator_id": "diameter-absolute-delta",
+      "metric_path": "morphology.mean_diameter_absolute_delta_microarcseconds",
+      "operator": "max",
+      "threshold": 1.0
+    },
+    {
+      "basis": "A one-microarcsecond FWHM tolerance detects substantial changes while accommodating small numerical drift.",
+      "comparator_id": "fwhm-absolute-delta",
+      "metric_path": "morphology.mean_fwhm_absolute_delta_microarcseconds",
+      "operator": "max",
+      "threshold": 1.0
+    },
+    {
+      "basis": "A 0.02 fractional-width tolerance is substantially smaller than the Paper VI upper range of approximately 0.5.",
+      "comparator_id": "fractional-width-absolute-delta",
+      "metric_path": "morphology.fractional_width_absolute_delta",
+      "operator": "max",
+      "threshold": 0.02
+    },
+    {
+      "basis": "A 0.02 circularity-spread tolerance is smaller than the approximately 0.05–0.06 reconstructed-image distribution peak discussed in Paper VI.",
+      "comparator_id": "circularity-absolute-delta",
+      "metric_path": "morphology.circularity_absolute_delta",
+      "operator": "max",
+      "threshold": 0.02
+    }
+  ],
+  "contract_id": "image-stability:m87:cross-run:v0.1",
+  "limitations": [
+    "These tolerances are engineering-derived by Vajra and have not been independently reviewed by the EHT Collaboration.",
+    "The comparison uses two GitHub-hosted workflow runs and the same OCI image, input data, pipeline, and scientific method.",
+    "Passing this contract establishes semantic cross-run stability, not universal bitwise determinism.",
+    "The contract does not identify whether drift originates from host CPU features, numerical libraries, thread scheduling, or undeclared pipeline randomness.",
+    "Passing supports the REC claim only and cannot promote the physical interpretation to S4."
+  ],
+  "reference": {
+    "artifact_digest": "sha256:426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+    "artifact_id": 8633763531,
+    "canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+    "fits_sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+    "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+    "workflow_run_id": 30208439097
+  },
+  "status": "engineering_derived",
+  "version": 1
+}

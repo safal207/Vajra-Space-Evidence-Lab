@@ -1,0 +1,156 @@
+name: compare-m87-cross-run-stability
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/compare-m87-cross-run-stability.yml
+      - scripts/analyze_m87_eht_features.py
+      - scripts/compare_m87_cross_run_stability.py
+      - cases/m87-black-hole/m87-cross-run-stability-contract.json
+      - schemas/image-stability.schema.json
+  pull_request:
+    paths:
+      - .github/workflows/compare-m87-cross-run-stability.yml
+      - scripts/analyze_m87_eht_features.py
+      - scripts/compare_m87_cross_run_stability.py
+      - cases/m87-black-hole/m87-cross-run-stability-contract.json
+      - schemas/image-stability.schema.json
+
+permissions:
+  actions: read
+  contents: read
+  packages: read
+
+jobs:
+  compare-historical-runs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OCI_REFERENCE: ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3
+      REFERENCE_ARTIFACT_ID: 8633763531
+      CANDIDATE_ARTIFACT_ID: 8636817251
+      REFERENCE_FITS_SHA256: 70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad
+      CANDIDATE_FITS_SHA256: f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate stability contract
+        run: |
+          pip install check-jsonschema
+          check-jsonschema \
+            --schemafile schemas/image-stability.schema.json \
+            cases/m87-black-hole/m87-cross-run-stability-contract.json
+
+      - name: Download historical reproduction artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          WORKSPACE="$RUNNER_TEMP/m87-cross-run"
+          mkdir -p "$WORKSPACE/reference" "$WORKSPACE/candidate" "$WORKSPACE/analysis"
+
+          download_artifact() {
+            local artifact_id="$1"
+            local archive="$2"
+            curl --fail --location --retry 3 \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/${artifact_id}/zip" \
+              --output "$archive"
+          }
+
+          download_artifact "$REFERENCE_ARTIFACT_ID" "$WORKSPACE/reference.zip"
+          download_artifact "$CANDIDATE_ARTIFACT_ID" "$WORKSPACE/candidate.zip"
+          unzip -q "$WORKSPACE/reference.zip" -d "$WORKSPACE/reference"
+          unzip -q "$WORKSPACE/candidate.zip" -d "$WORKSPACE/candidate"
+
+          cp "$WORKSPACE/reference/run1.fits" "$WORKSPACE/analysis/reference.fits"
+          cp "$WORKSPACE/candidate/run1.fits" "$WORKSPACE/analysis/candidate.fits"
+          echo "$REFERENCE_FITS_SHA256  $WORKSPACE/analysis/reference.fits" | sha256sum --check -
+          echo "$CANDIDATE_FITS_SHA256  $WORKSPACE/analysis/candidate.fits" | sha256sum --check -
+
+          chmod -R a+rX "$WORKSPACE"
+          chmod 0777 "$WORKSPACE/analysis"
+          echo "CROSS_RUN_WORKSPACE=$WORKSPACE" >> "$GITHUB_ENV"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull verified scientific image
+        run: docker pull "$OCI_REFERENCE"
+
+      - name: Extract Paper VI-derived features from both historical FITS files
+        shell: bash
+        run: |
+          set -euo pipefail
+          for run_id in reference candidate; do
+            docker run --rm \
+              --network none \
+              --read-only \
+              --cap-drop ALL \
+              --security-opt no-new-privileges \
+              --user 10001:10001 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=536870912 \
+              -e HOME=/tmp/home \
+              -e MPLCONFIGDIR=/tmp/matplotlib \
+              -e OPENBLAS_NUM_THREADS=1 \
+              -e OMP_NUM_THREADS=1 \
+              -v "$CROSS_RUN_WORKSPACE/analysis:/workspace:rw" \
+              -v "$GITHUB_WORKSPACE:/vajra:ro" \
+              -w /workspace \
+              "$OCI_REFERENCE" \
+              python /vajra/scripts/analyze_m87_eht_features.py \
+                "${run_id}.fits" \
+                --output "${run_id}.features.json" \
+              >"$CROSS_RUN_WORKSPACE/analysis/${run_id}.features.stdout.log" \
+              2>"$CROSS_RUN_WORKSPACE/analysis/${run_id}.features.stderr.log"
+            test -s "$CROSS_RUN_WORKSPACE/analysis/${run_id}.features.json"
+          done
+
+      - name: Evaluate cross-run semantic stability
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            --network none \
+            --read-only \
+            --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user 10001:10001 \
+            --tmpfs /tmp:rw,nosuid,nodev,size=536870912 \
+            -e HOME=/tmp/home \
+            -v "$CROSS_RUN_WORKSPACE/analysis:/workspace:rw" \
+            -v "$GITHUB_WORKSPACE:/vajra:ro" \
+            -w /workspace \
+            "$OCI_REFERENCE" \
+            python /vajra/scripts/compare_m87_cross_run_stability.py \
+              --reference-fits reference.fits \
+              --candidate-fits candidate.fits \
+              --reference-features reference.features.json \
+              --candidate-features candidate.features.json \
+              --contract /vajra/cases/m87-black-hole/m87-cross-run-stability-contract.json \
+              --schema /vajra/schemas/image-stability.schema.json \
+              --output m87-cross-run-stability-report.json
+
+          sha256sum "$CROSS_RUN_WORKSPACE/analysis"/* > "$CROSS_RUN_WORKSPACE/analysis/artifact-files.sha256"
+          cat "$CROSS_RUN_WORKSPACE/analysis/m87-cross-run-stability-report.json"
+
+      - name: Upload cross-run stability evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-cross-run-stability
+          path: ${{ env.CROSS_RUN_WORKSPACE }}/analysis
+          if-no-files-found: error
+          retention-days: 30

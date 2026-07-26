@@ -1,0 +1,15 @@
+{
+  "claim_id": "claim:m87:compact-radio-source",
+  "claim_text": "A compact radio source is observed at the center of M87.",
+  "claim_type": "OBS",
+  "status": "not_assessed",
+  "evidence_level": "S0",
+  "created_at": "2026-07-25T00:00:00Z",
+  "version": 1,
+  "supersedes": null,
+  "evidence_refs": [
+    "evidence:m87:calibrated-release-2019-D01-01"
+  ],
+  "assumption_refs": [],
+  "alternative_claim_refs": []
+}

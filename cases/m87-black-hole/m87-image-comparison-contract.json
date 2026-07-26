@@ -1,0 +1,81 @@
+{
+  "claim_ref": "claim:m87:ring-image",
+  "comparators": [
+    {
+      "comparator_id": "m87-ring-diameter-paper-vi",
+      "interpretation": "The extracted mean ring diameter falls inside the approximately 38–44 microarcsecond span reported for Top Set reconstructed images across methods and observing days.",
+      "maximum": 44.0,
+      "metric_path": "metrics.mean_diameter_microarcseconds",
+      "minimum": 38.0,
+      "operator": "range",
+      "provenance": {
+        "basis": "Descriptive range reported for reconstructed Top Set images; not a posterior credible interval for this single April 11 image.",
+        "source_location": "Paper VI, Section 7.2",
+        "source_ref": "eht-m87-paper-vi"
+      },
+      "required": true
+    },
+    {
+      "comparator_id": "m87-fractional-width-paper-vi",
+      "interpretation": "The mean FWHM of radial bright regions divided by mean ring diameter does not exceed the approximately 0.5 upper range reported for reconstructed images and crescent models.",
+      "maximum": 0.5,
+      "metric_path": "metrics.fractional_width",
+      "operator": "max",
+      "provenance": {
+        "basis": "Descriptive upper range; Paper VI notes substantial method and regularizer dependence in width.",
+        "source_location": "Paper VI, Sections 7.1–7.2",
+        "source_ref": "eht-m87-paper-vi"
+      },
+      "required": true
+    },
+    {
+      "comparator_id": "m87-circularity-spread-paper-vi",
+      "interpretation": "The standard deviation of diameters measured over azimuth divided by mean diameter remains within the approximately circular regime discussed for the reconstructed and GRMHD images.",
+      "maximum": 0.1,
+      "metric_path": "metrics.circularity_fractional_spread",
+      "operator": "max",
+      "provenance": {
+        "basis": "Reconstructed distributions peak near 0.05–0.06; the paper describes most comparison GRMHD images as having fractional spread at or below approximately 0.1.",
+        "source_location": "Paper VI, Section 7.4 and Figure 18 discussion",
+        "source_ref": "eht-m87-paper-vi"
+      },
+      "required": true
+    }
+  ],
+  "contract_id": "image-comparison:m87:eht-paper-derived:v0.1",
+  "limitations": [
+    "This is an independent implementation derived from the published prose and is not the original EHT image-feature extraction code.",
+    "The iterative center search, angular sampling density, radial sampling density, interpolation boundaries, and FWHM crossing implementation are explicit Vajra choices where the paper does not publish executable details.",
+    "The 38–44 microarcsecond diameter range summarizes Top Set images across methods and days; it is not an independently reviewed acceptance interval for a single fiducial April 11 reconstruction.",
+    "Fractional width is sensitive to imaging hyperparameters and the synthetic-data training beam; passing the width comparator does not independently validate those choices.",
+    "Central brightness contrast and position angle are not enforced in version 0.1 because the exact Paper IV extraction definition and FITS orientation convention have not yet been reproduced.",
+    "Passing this contract supports morphology consistency for the REC claim only and does not establish the Kerr black-hole interpretation."
+  ],
+  "method": {
+    "azimuth_samples": 360,
+    "center_estimator": "Iteratively minimize the standard deviation of radial peak radii on an image smoothed with a 2 microarcsecond FWHM Gaussian.",
+    "center_smoothing_fwhm_microarcseconds": 2.0,
+    "interpolation": "linear",
+    "measurement_image": "unblurred_resampled",
+    "method_id": "eht-paper-vi-section-7-case-b-derived-v0.1",
+    "radial_step_microarcseconds": 0.25,
+    "target_pixel_scale_microarcseconds": 0.5
+  },
+  "scope": "Paper-derived image-domain morphology comparison for the M87 REC claim. It does not compare visibilities, closure quantities, calibration quality, GRMHD inference, or black-hole parameters.",
+  "source_refs": [
+    {
+      "sha256": null,
+      "source_ref": "eht-m87-paper-iv",
+      "title": "First M87 Event Horizon Telescope Results. IV. Imaging the Central Supermassive Black Hole",
+      "uri": "https://arxiv.org/abs/1906.11241"
+    },
+    {
+      "sha256": null,
+      "source_ref": "eht-m87-paper-vi",
+      "title": "First M87 Event Horizon Telescope Results. VI. The Shadow and Mass of the Central Black Hole",
+      "uri": "https://arxiv.org/abs/1906.11243"
+    }
+  ],
+  "status": "paper_derived",
+  "version": 1
+}

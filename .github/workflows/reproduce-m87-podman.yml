@@ -1,0 +1,268 @@
+name: reproduce-m87-podman
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/reproduce-m87-podman.yml
+      - cases/m87-black-hole/m87-ehtim-podman-manifest.json
+      - schemas/reproduction.schema.json
+      - src/vajra_space/container_runtime.py
+      - scripts/execute_container_manifest.py
+      - tests/test_container_runtime.py
+  pull_request:
+    paths:
+      - .github/workflows/reproduce-m87-podman.yml
+      - cases/m87-black-hole/m87-ehtim-podman-manifest.json
+      - schemas/reproduction.schema.json
+      - src/vajra_space/container_runtime.py
+      - scripts/execute_container_manifest.py
+      - tests/test_container_runtime.py
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  podman-runtime-confirmation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OCI_REFERENCE: ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3
+      DATA_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-01.git
+      DATA_COMMIT: 27ae76aacb9067a83388395c3826012b97aac371
+      IMAGING_REPOSITORY: https://github.com/eventhorizontelescope/2019-D01-02.git
+      IMAGING_COMMIT: 80d230e76c08edd31548e7cfe61dc7cf94300780
+      EXPECTED_FITS_SHA256: 70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad
+      EXPECTED_PIXEL_SHA256: 432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project and Podman
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip install -e .[dev] check-jsonschema
+          if ! command -v podman >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y podman
+          fi
+          podman --version
+          podman info --format json > podman-info.json
+
+      - name: Log in to GitHub Container Registry
+        shell: bash
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GHCR_TOKEN" | podman login ghcr.io --username "${{ github.actor }}" --password-stdin
+
+      - name: Stage and verify pinned scientific workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORKSPACE="$RUNNER_TEMP/m87-podman-workspace"
+          DATA_DIR="$RUNNER_TEMP/m87-podman-data"
+          IMAGING_DIR="$RUNNER_TEMP/m87-podman-imaging"
+
+          git init "$DATA_DIR"
+          git -C "$DATA_DIR" remote add origin "$DATA_REPOSITORY"
+          git -C "$DATA_DIR" fetch --depth 1 origin "$DATA_COMMIT"
+          git -C "$DATA_DIR" checkout --detach FETCH_HEAD
+          test "$(git -C "$DATA_DIR" rev-parse HEAD)" = "$DATA_COMMIT"
+
+          git init "$IMAGING_DIR"
+          git -C "$IMAGING_DIR" remote add origin "$IMAGING_REPOSITORY"
+          git -C "$IMAGING_DIR" fetch --depth 1 origin "$IMAGING_COMMIT"
+          git -C "$IMAGING_DIR" checkout --detach FETCH_HEAD
+          test "$(git -C "$IMAGING_DIR" rev-parse HEAD)" = "$IMAGING_COMMIT"
+
+          mkdir -p "$WORKSPACE/data/uvfits" "$WORKSPACE/imaging/eht-imaging" "$WORKSPACE/outputs"
+          cp "$DATA_DIR/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits" "$WORKSPACE/data/uvfits/"
+          cp "$DATA_DIR/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits" "$WORKSPACE/data/uvfits/"
+          cp "$IMAGING_DIR/eht-imaging/eht-imaging_pipeline.py" "$WORKSPACE/imaging/eht-imaging/"
+          chmod -R a+rX "$WORKSPACE"
+          chmod 0777 "$WORKSPACE/outputs"
+
+          echo "697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298  $WORKSPACE/data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits" | sha256sum --check -
+          echo "618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5  $WORKSPACE/data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits" | sha256sum --check -
+          echo "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f  $WORKSPACE/imaging/eht-imaging/eht-imaging_pipeline.py" | sha256sum --check -
+
+          echo "PODMAN_WORKSPACE=$WORKSPACE" >> "$GITHUB_ENV"
+
+      - name: Validate executable manifest
+        run: |
+          vajra-space validate-reproduction-manifest \
+            cases/m87-black-hole/m87-ehtim-podman-manifest.json
+
+      - name: Pull image by immutable digest
+        run: podman pull "$OCI_REFERENCE"
+
+      - name: Prove Podman isolation contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          FLAGS=(
+            --rm
+            --network none
+            --read-only
+            --cap-drop ALL
+            --security-opt no-new-privileges
+            --user 10001:10001
+          )
+
+          podman run "${FLAGS[@]}" "$OCI_REFERENCE" python -c '
+          import socket
+          sock = socket.socket()
+          sock.settimeout(1)
+          try:
+              sock.connect(("1.1.1.1", 53))
+          except OSError:
+              raise SystemExit(0)
+          raise SystemExit(1)
+          '
+
+          podman run "${FLAGS[@]}" "$OCI_REFERENCE" python -c '
+          from pathlib import Path
+          try:
+              Path("/vajra-rootfs-probe").write_text("unexpected")
+          except OSError:
+              raise SystemExit(0)
+          raise SystemExit(1)
+          '
+
+          podman run "${FLAGS[@]}" "$OCI_REFERENCE" python -c '
+          fields = dict(
+              line.split(":", 1) for line in open("/proc/self/status") if ":" in line
+          )
+          assert int(fields["CapEff"].strip(), 16) == 0
+          '
+
+          podman run "${FLAGS[@]}" \
+            --volume "$PODMAN_WORKSPACE:/workspace:rw" \
+            --workdir /workspace \
+            "$OCI_REFERENCE" \
+            python -c 'from pathlib import Path; Path("outputs/conformance-probe.txt").write_text("workspace-writable\n")'
+          test "$(cat "$PODMAN_WORKSPACE/outputs/conformance-probe.txt")" = "workspace-writable"
+          rm "$PODMAN_WORKSPACE/outputs/conformance-probe.txt"
+
+          set +e
+          timeout 3 podman run "${FLAGS[@]}" "$OCI_REFERENCE" python -c 'import time; time.sleep(60)'
+          timeout_rc=$?
+          set -e
+          test "$timeout_rc" -eq 124
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = {
+              "report_version": 1,
+              "runtime": "podman",
+              "image": "${{ env.OCI_REFERENCE }}",
+              "network_disabled": True,
+              "root_filesystem_read_only": True,
+              "effective_capabilities_zero": True,
+              "declared_workspace_writable": True,
+              "timeout_terminated_execution": True,
+              "independence_scope": "runtime-diverse confirmation on the same GitHub-hosted infrastructure",
+          }
+          Path("podman-conformance-report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Execute M87 manifest through Podman
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/execute_container_manifest.py \
+            cases/m87-black-hole/m87-ehtim-podman-manifest.json \
+            --workspace "$PODMAN_WORKSPACE" \
+            --attestation "$PODMAN_WORKSPACE/outputs/podman-attestation.json" \
+            --execute
+
+          echo "$EXPECTED_FITS_SHA256  $PODMAN_WORKSPACE/outputs/SR1_M87_2017_101_podman.fits" | sha256sum --check -
+
+      - name: Analyze canonical pixels inside verified image
+        shell: bash
+        run: |
+          set -euo pipefail
+          podman run --rm \
+            --network none \
+            --read-only \
+            --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user 10001:10001 \
+            --volume "$PODMAN_WORKSPACE:/workspace:rw" \
+            --volume "$GITHUB_WORKSPACE:/vajra:ro" \
+            --workdir /workspace \
+            "$OCI_REFERENCE" \
+            python /vajra/scripts/analyze_m87_fits.py \
+              outputs/SR1_M87_2017_101_podman.fits \
+              --output outputs/podman-metrics.json
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          metrics = json.loads(
+              (Path(os.environ["PODMAN_WORKSPACE"]) / "outputs/podman-metrics.json").read_text()
+          )["metrics"]
+          assert metrics["file_sha256"] == os.environ["EXPECTED_FITS_SHA256"]
+          assert metrics["canonical_pixel_sha256"] == os.environ["EXPECTED_PIXEL_SHA256"]
+          PY
+
+      - name: Write runtime-diverse comparison report
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          workspace = Path(os.environ["PODMAN_WORKSPACE"])
+          metrics = json.loads((workspace / "outputs/podman-metrics.json").read_text())["metrics"]
+          attestation = json.loads((workspace / "outputs/podman-attestation.json").read_text())
+          report = {
+              "report_version": 1,
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "status": "runtime_diverse_exact_match",
+              "prior_runtime": "docker",
+              "confirmation_runtime": "podman",
+              "oci_reference": os.environ["OCI_REFERENCE"],
+              "fits_sha256": metrics["file_sha256"],
+              "canonical_pixel_sha256": metrics["canonical_pixel_sha256"],
+              "matches_prior_docker_fits": metrics["file_sha256"] == os.environ["EXPECTED_FITS_SHA256"],
+              "matches_prior_docker_pixels": metrics["canonical_pixel_sha256"] == os.environ["EXPECTED_PIXEL_SHA256"],
+              "podman_attestation_sha256": attestation["attestation_sha256"],
+              "github_run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "github_commit": os.environ["GITHUB_SHA"],
+              "independence_scope": "Different OCI runtime; same image digest and GitHub-hosted infrastructure. Not an independent operator or scientific method.",
+          }
+          (workspace / "outputs/podman-runtime-comparison.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+          sha256sum "$PODMAN_WORKSPACE/outputs"/* > "$PODMAN_WORKSPACE/outputs/artifact-files.sha256"
+          cat "$PODMAN_WORKSPACE/outputs/podman-runtime-comparison.json"
+
+      - name: Upload Podman confirmation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ehtim-podman-confirmation
+          path: |
+            ${{ env.PODMAN_WORKSPACE }}/outputs
+            podman-info.json
+            podman-conformance-report.json
+          if-no-files-found: error
+          retention-days: 30

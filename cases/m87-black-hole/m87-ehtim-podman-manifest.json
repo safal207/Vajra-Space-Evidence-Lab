@@ -1,0 +1,66 @@
+{
+  "manifest_id": "reproduction:m87:eht-imaging:2017-101:podman",
+  "version": 1,
+  "description": "Reproduce the official April 11, 2017 M87 eht-imaging FITS output through Podman and compare it with the verified Docker-run SHA-256.",
+  "execution_mode": "container",
+  "working_directory": ".",
+  "timeout_seconds": 7200,
+  "command": [
+    "python",
+    "imaging/eht-imaging/eht-imaging_pipeline.py",
+    "-i",
+    "data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+    "-i2",
+    "data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+    "-o",
+    "outputs/SR1_M87_2017_101_podman.fits"
+  ],
+  "expected_exit_code": 0,
+  "environment": {
+    "HOME": "/tmp/home",
+    "MPLCONFIGDIR": "/tmp/matplotlib",
+    "XDG_CACHE_HOME": "/tmp/cache",
+    "PYTHONHASHSEED": "0",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "container": {
+    "image": "ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3",
+    "runtime": "podman",
+    "user": "10001:10001",
+    "network": "none",
+    "read_only_root": true,
+    "drop_all_capabilities": true,
+    "no_new_privileges": true
+  },
+  "inputs": [
+    {
+      "path": "data/uvfits/SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+      "sha256": "697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298"
+    },
+    {
+      "path": "data/uvfits/SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+      "sha256": "618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5"
+    },
+    {
+      "path": "imaging/eht-imaging/eht-imaging_pipeline.py",
+      "sha256": "5b5ec6a3e33f786c9b032c617e524481028f90af330fc53f10cec514d491571f"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "outputs/SR1_M87_2017_101_podman.fits",
+      "required": true,
+      "sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad"
+    }
+  ],
+  "metadata": {
+    "claim_ref": "claim:m87:ring-image",
+    "prior_reproduction_evidence_ref": "evidence:m87:ehtim-bootstrap-reproduction",
+    "prior_runtime": "docker",
+    "candidate_runtime": "podman",
+    "expected_canonical_pixel_sha256": "432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2",
+    "independence_scope": "runtime-diverse confirmation on GitHub-hosted infrastructure; not an independent operator and not an independent scientific method"
+  }
+}

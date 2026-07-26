@@ -1,0 +1,50 @@
+name: ingest-m87-imaging-release
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - src/vajra_space/imaging_release.py
+      - scripts/ingest_m87_imaging_release.py
+      - .github/workflows/ingest-m87-imaging-release.yml
+  pull_request:
+    paths:
+      - src/vajra_space/imaging_release.py
+      - scripts/ingest_m87_imaging_release.py
+      - .github/workflows/ingest-m87-imaging-release.yml
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Vajra package
+        run: pip install -e .
+
+      - name: Fetch pinned official EHT imaging release
+        run: |
+          git init /tmp/eht-imaging-release
+          git -C /tmp/eht-imaging-release remote add origin https://github.com/eventhorizontelescope/2019-D01-02.git
+          git -C /tmp/eht-imaging-release fetch --depth 1 origin 80d230e76c08edd31548e7cfe61dc7cf94300780
+          git -C /tmp/eht-imaging-release checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/eht-imaging-release rev-parse HEAD)" = "80d230e76c08edd31548e7cfe61dc7cf94300780"
+
+      - name: Generate SHA-256 imaging release manifest
+        run: |
+          python scripts/ingest_m87_imaging_release.py \
+            /tmp/eht-imaging-release \
+            --output m87-imaging-release-manifest.json
+
+      - name: Upload imaging release manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-imaging-release-manifest
+          path: m87-imaging-release-manifest.json
+          if-no-files-found: error
+          retention-days: 30

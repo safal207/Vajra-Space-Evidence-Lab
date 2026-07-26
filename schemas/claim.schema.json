@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vajra-space.org/schemas/claim.schema.json",
+  "title": "Vajra Space Claim",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claim_id", "claim_text", "claim_type", "status", "evidence_level", "created_at", "version"],
+  "properties": {
+    "claim_id": {"type": "string", "minLength": 1},
+    "claim_text": {"type": "string", "minLength": 1},
+    "claim_type": {"type": "string", "enum": ["OBS", "REC", "INF", "SIM", "PRED", "SPEC"]},
+    "status": {"type": "string", "enum": ["not_assessed", "supported", "contested", "refuted", "superseded"]},
+    "evidence_level": {"type": "string", "enum": ["S0", "S1", "S2", "S3", "S4", "S5"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "version": {"type": "integer", "minimum": 1},
+    "supersedes": {"type": ["string", "null"]},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "assumption_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "alternative_claim_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "falsification_criteria_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}

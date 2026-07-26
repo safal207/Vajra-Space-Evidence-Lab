@@ -1,0 +1,191 @@
+name: audit-m87-visibility-ltp
+
+on:
+  pull_request:
+    paths:
+      - "cases/m87-black-hole/visibility/**"
+      - "cases/m87-black-hole/ltp/**"
+      - "tests/test_m87_ltp_trace.py"
+      - ".github/workflows/audit-m87-visibility-ltp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ltp-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out Vajra evidence repository
+        uses: actions/checkout@v4
+
+      - name: Check out pinned LTP inspector and skill
+        uses: actions/checkout@v4
+        with:
+          repository: safal207/L-THREAD-Liminal-Thread-Secure-Protocol-LTP-
+          ref: 9f905e278bf172a8557dbdd0651a3524d92f06a6
+          path: .ltp
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Vajra test dependencies
+        run: python -m pip install -e ".[dev]"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+
+      - name: Enable pinned pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.0 --activate
+          pnpm --version
+
+      - name: Install pinned LTP workspace
+        working-directory: .ltp
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify committed source reports and trace hash chain
+        run: python -m pytest -q tests/test_m87_ltp_trace.py
+
+      - name: Run strict LTP agents-profile inspection
+        id: inspect
+        env:
+          LTP_INSPECT_FROZEN_TIME: "2026-07-26T21:42:47.000Z"
+          LTP_BUILD: "9f905e278bf172a8557dbdd0651a3524d92f06a6"
+        run: |
+          mkdir -p artifacts/ltp-m87-visibility
+          cd .ltp
+          set +e
+          pnpm exec ts-node tools/ltp-inspect/inspect.ts trace \
+            --strict \
+            --quiet \
+            --format json \
+            --color never \
+            --profile agents \
+            --replay-check \
+            --input "$GITHUB_WORKSPACE/cases/m87-black-hole/ltp/m87-visibility-audit.jsonl" \
+            > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/inspect.json" \
+            2> "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/inspect.stderr.log"
+          inspect_exit=$?
+          set -e
+          printf '%s\n' "$inspect_exit" > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/inspect.exit-code.txt"
+          echo "exit_code=$inspect_exit" >> "$GITHUB_OUTPUT"
+
+      - name: Upload raw LTP inspection diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ltp-visibility-inspection-diagnostics
+          path: artifacts/ltp-m87-visibility
+          if-no-files-found: error
+
+      - name: Require successful strict inspection
+        run: test "${{ steps.inspect.outputs.exit_code }}" = "0"
+
+      - name: Assert LTP integrity and claim-boundary route
+        run: |
+          report=artifacts/ltp-m87-visibility/inspect.json
+          jq -e '
+            .contract.name == "ltp-inspect" and
+            .contract.version == "1.0" and
+            .input.type == "audit_log" and
+            .input.frames == 5 and
+            .compliance.profile == "agents" and
+            .compliance.trace_integrity == "verified" and
+            .compliance.identity_binding == "ok" and
+            .compliance.replay_determinism == "ok" and
+            .audit_summary.verdict == "PASS" and
+            .audit_summary.failed_checks == [] and
+            (.futures.admissible | map(.id)) == ["A-observed-diagnostics"] and
+            (.futures.blocked | map(.id)) == ["B-absolute-fit-threshold", "C-refute-alternatives"]
+          ' "$report"
+
+      - name: Replay the canonical trace
+        env:
+          LTP_INSPECT_FROZEN_TIME: "2026-07-26T21:42:47.000Z"
+          LTP_BUILD: "9f905e278bf172a8557dbdd0651a3524d92f06a6"
+        run: |
+          cd .ltp
+          pnpm exec ts-node tools/ltp-inspect/inspect.ts replay \
+            --quiet \
+            --format json \
+            --color never \
+            --input "$GITHUB_WORKSPACE/cases/m87-black-hole/ltp/m87-visibility-audit.jsonl" \
+            > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/replay.json" \
+            2> "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/replay.stderr.log"
+          printf '0\n' > "$GITHUB_WORKSPACE/artifacts/ltp-m87-visibility/replay.exit-code.txt"
+
+      - name: Build evidence-backed LTP receipt
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path("artifacts/ltp-m87-visibility")
+          report_path = root / "inspect.json"
+          replay_path = root / "replay.json"
+          replay_exit_path = root / "replay.exit-code.txt"
+          trace_path = Path("cases/m87-black-hole/ltp/m87-visibility-audit.jsonl")
+          manifest_path = Path("cases/m87-black-hole/visibility/source-artifact-manifest.json")
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+          def sha256(path: Path) -> str:
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          receipt = {
+              "schema_version": 1,
+              "profile": "org.ltp.agent-trace-auditor.v0.1",
+              "ltp_skill_commit": "9f905e278bf172a8557dbdd0651a3524d92f06a6",
+              "transition_id": "m87-visibility-30221599082",
+              "subject_id": "claim:m87:ring-image",
+              "audit_mode": "gating",
+              "verdict": "ADMISSIBLE",
+              "evidence_grade": "E3_MACHINE_VERIFIABLE_ARTIFACT",
+              "authority": {
+                  "mode": "audit_only",
+                  "may_promote_evidence_level": False,
+                  "may_refute_alternatives": False,
+                  "reason": "LTP inspects the path and response boundary; it does not issue scientific authority."
+              },
+              "tool_facts": {
+                  "trace_integrity": report["compliance"]["trace_integrity"],
+                  "identity_binding": report["compliance"]["identity_binding"],
+                  "replay_determinism": report["compliance"]["replay_determinism"],
+                  "compliance_verdict": report["audit_summary"]["verdict"],
+                  "trace_sha256": sha256(trace_path),
+                  "trace_hash_root": report["input"]["hash_root"],
+                  "inspect_report_sha256": sha256(report_path),
+                  "replay_command_exit_code": int(replay_exit_path.read_text(encoding="utf-8").strip()),
+                  "replay_output_empty": replay_path.stat().st_size == 0,
+                  "replay_output_sha256": sha256(replay_path),
+                  "source_manifest_sha256": sha256(manifest_path),
+                  "source_artifact_digest": manifest["artifact"]["digest"]
+              },
+              "allowed_response_claims": manifest["interpretation_boundary"]["allowed_claims"],
+              "blocked_response_claims": manifest["interpretation_boundary"]["blocked_claims"],
+              "required_next_action": "Register and independently review observable-specific thresholds before evaluating falsification tests or changing the S3 evidence level.",
+              "claim_boundary": "Tool facts about executed diagnostics are supported. Absolute-fit acceptance, alternative refutation, and evidence-level promotion remain blocked because thresholds and independent authority are absent."
+          }
+          (root / "receipt.json").write_text(
+              json.dumps(receipt, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Verify committed receipt matches fresh generation byte-for-byte
+        run: cmp cases/m87-black-hole/ltp/m87-visibility-ltp-receipt.json artifacts/ltp-m87-visibility/receipt.json
+
+      - name: Upload LTP audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: m87-ltp-visibility-audit
+          path: artifacts/ltp-m87-visibility
+          if-no-files-found: error

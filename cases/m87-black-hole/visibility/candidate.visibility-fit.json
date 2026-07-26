@@ -1,0 +1,113 @@
+{
+  "bands": [
+    {
+      "band_id": "low",
+      "observables": [
+        {
+          "api_path": "obs.chisq(image,dtype=vis,ttype=nfft)",
+          "issues": [],
+          "observable": "vis",
+          "reduced_chi_squared": 1581.5986304266023,
+          "status": "success"
+        },
+        {
+          "api_path": "obs.chisq(image,dtype=amp,ttype=nfft)",
+          "issues": [],
+          "observable": "amp",
+          "reduced_chi_squared": 2221.639632723845,
+          "status": "success"
+        },
+        {
+          "api_path": "obs.chisq(image,dtype=cphase,ttype=nfft)",
+          "issues": [],
+          "observable": "cphase",
+          "reduced_chi_squared": 1.2584158269495258,
+          "status": "success"
+        },
+        {
+          "api_path": "obs.chisq(image,dtype=logcamp,ttype=nfft)",
+          "issues": [],
+          "observable": "logcamp",
+          "reduced_chi_squared": 2.097999853945081,
+          "status": "success"
+        }
+      ],
+      "row_count": 7447,
+      "uvfits": {
+        "path": "SR1_M87_2017_101_lo_hops_netcal_StokesI.uvfits",
+        "sha256": "697af2bb3bbf732115108ffefacd3e59e307f38fe685c3c4579146b0bd661298",
+        "size_bytes": 650880
+      }
+    },
+    {
+      "band_id": "high",
+      "observables": [
+        {
+          "api_path": "obs.chisq(image,dtype=vis,ttype=nfft)",
+          "issues": [],
+          "observable": "vis",
+          "reduced_chi_squared": 6399.811356825332,
+          "status": "success"
+        },
+        {
+          "api_path": "obs.chisq(image,dtype=amp,ttype=nfft)",
+          "issues": [],
+          "observable": "amp",
+          "reduced_chi_squared": 1994.9715813365062,
+          "status": "success"
+        },
+        {
+          "api_path": "obs.chisq(image,dtype=cphase,ttype=nfft)",
+          "issues": [],
+          "observable": "cphase",
+          "reduced_chi_squared": 1.2411027366942855,
+          "status": "success"
+        },
+        {
+          "api_path": "obs.chisq(image,dtype=logcamp,ttype=nfft)",
+          "issues": [],
+          "observable": "logcamp",
+          "reduced_chi_squared": 1.7370328248068687,
+          "status": "success"
+        }
+      ],
+      "row_count": 8058,
+      "uvfits": {
+        "path": "SR1_M87_2017_101_hi_hops_netcal_StokesI.uvfits",
+        "sha256": "618c3019f60e88268980267a9db68f638b379a85842d83c06003d28550d191f5",
+        "size_bytes": 702720
+      }
+    }
+  ],
+  "image": {
+    "path": "candidate.fits",
+    "sha256": "f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb",
+    "size_bytes": 37440
+  },
+  "limitations": [
+    "The reported values use the public ehtim 1.1.0 chisq API and inherit its observable definitions, data selection, uncertainty handling, and transform implementation.",
+    "This diagnostic does not yet reproduce the exact data-term schedule or self-calibration state at every iteration of the published pipeline.",
+    "Reduced chi-squared values are not interpreted as an absolute acceptance verdict until observable-specific reviewed thresholds and degrees-of-freedom assumptions are registered.",
+    "Low and high bands are measured separately; no cross-band covariance model is included.",
+    "A successful image-domain fit does not uniquely identify the source physics."
+  ],
+  "method": {
+    "declared_version": "1.1.0",
+    "library": "ehtim",
+    "method_id": "ehtim-1.1.0-image-chisq-v0.1",
+    "observables": [
+      "vis",
+      "amp",
+      "cphase",
+      "logcamp"
+    ],
+    "transform_type": "first successful of nfft, fast, direct, or library default"
+  },
+  "report_version": 1,
+  "status": "complete",
+  "summary": {
+    "failed_count": 0,
+    "requested_count": 8,
+    "successful_count": 8
+  }
+}

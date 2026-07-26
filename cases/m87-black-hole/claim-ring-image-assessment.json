@@ -1,0 +1,111 @@
+{
+  "assessment_id": "assessment:m87:ring-image:v1",
+  "version": 1,
+  "claim_ref": "claim:m87:ring-image",
+  "provenance_complete": true,
+  "observation_present": true,
+  "data_available": true,
+  "method_available": true,
+  "code_available": true,
+  "environment_pinned": true,
+  "uncertainty_declared": true,
+  "reproduced": true,
+  "independent_confirmation": false,
+  "multiple_independent_channels": false,
+  "successful_falsifiable_predictions": false,
+  "criterion_evidence": {
+    "provenance_complete": {
+      "value": true,
+      "justification": "The data release, imaging release, exact input files, source commits, release trees, OCI environment, exact Conda lock, compatibility patch, workflow artifacts, signed attestation, and hash-linked bundle are individually identified.",
+      "refs": [
+        "source-release-manifest.json",
+        "imaging-source-release-manifest.json",
+        "m87-ehtim-environment-provenance.json",
+        "evidence-bundle.json"
+      ]
+    },
+    "observation_present": {
+      "value": true,
+      "justification": "The bundle contains an instrument-linked observation object for ring-scale interferometric structure.",
+      "refs": [
+        "observation:m87:ring-scale-structure",
+        "instrument:eht:network"
+      ]
+    },
+    "data_available": {
+      "value": true,
+      "justification": "The official calibrated April 11 low- and high-band UVFITS files are published and pinned by SHA-256.",
+      "refs": [
+        "evidence:m87:calibrated-release-2019-D01-01"
+      ]
+    },
+    "method_available": {
+      "value": true,
+      "justification": "The official fiducial eht-imaging pipeline, declared command, parameters, and Paper VI-derived comparison contracts are inspectable.",
+      "refs": [
+        "transformation:m87:image-reconstruction",
+        "eht-imaging-reproduction-plan.json",
+        "m87-image-comparison-contract.json",
+        "m87-cross-run-stability-contract.json"
+      ]
+    },
+    "code_available": {
+      "value": true,
+      "justification": "The official imaging release and the pinned upstream eht-imaging source commit are publicly available and hashed.",
+      "refs": [
+        "imaging-source-release-manifest.json",
+        "m87-ehtim-environment-provenance.json"
+      ]
+    },
+    "environment_pinned": {
+      "value": true,
+      "justification": "The linux/amd64 OCI image, immutable base image, exact Conda lock, upstream tree, compatibility patch, and discovered runtime dependencies are pinned.",
+      "refs": [
+        "m87-ehtim-environment-provenance.json",
+        "containers/m87-ehtim/explicit-linux-64.txt"
+      ]
+    },
+    "uncertainty_declared": {
+      "value": true,
+      "justification": "Evidence objects and comparison reports explicitly record cross-run numerical drift, implementation limits, lack of independent review, and the boundary between reconstruction and physical interpretation.",
+      "refs": [
+        "evidence:m87:ehtim-bootstrap-reproduction",
+        "evidence:m87:ehtim-podman-runtime-confirmation",
+        "evidence:m87:paper-derived-morphology-stability"
+      ]
+    },
+    "reproduced": {
+      "value": true,
+      "justification": "The official reconstruction completed multiple times; exact execution-family outputs and cross-run morphology stability were verified through Docker, Podman, and historical artifact comparison workflows.",
+      "refs": [
+        "evidence:m87:ehtim-bootstrap-reproduction",
+        "evidence:m87:ehtim-podman-runtime-confirmation",
+        "evidence:m87:paper-derived-morphology-stability"
+      ]
+    },
+    "independent_confirmation": {
+      "value": false,
+      "justification": "No independently controlled operator, infrastructure owner, dataset, or materially different scientific method has yet confirmed the reconstruction result.",
+      "refs": []
+    },
+    "multiple_independent_channels": {
+      "value": false,
+      "justification": "Docker and Podman are runtime-diverse but share the same OCI image, data, pipeline, and GitHub-hosted infrastructure class.",
+      "refs": [
+        "evidence:m87:ehtim-podman-runtime-confirmation"
+      ]
+    },
+    "successful_falsifiable_predictions": {
+      "value": false,
+      "justification": "The current REC claim concerns retrospective image reconstruction and has not yet been linked to a registered successful future prediction contract.",
+      "refs": []
+    }
+  },
+  "limitations": [
+    "The assessment applies only to the REC claim that the ring-like image is reconstructible under declared methods and parameters.",
+    "It does not calculate an evidence level for the broader inference that M87* is a Kerr black hole.",
+    "The Paper VI-derived feature extractor and cross-run stability limits are not independently reviewed.",
+    "Cross-run exact FITS and pixel hashes differ, so S3 relies on declared semantic comparison rather than universal bitwise determinism.",
+    "Independent confirmation remains false, preventing S4 promotion."
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "candidate_report_sha256": "3032264d9d2a62c908d41b2f488eeaff7e9248270eff178df7582a37f68eea11",
+  "common_successful_observables": 8,
+  "comparisons": [
+    {
+      "absolute_delta": 2.5530156929276018,
+      "candidate_reduced_chi_squared": 1994.9715813365062,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "high.amp",
+      "reference_reduced_chi_squared": 1992.4185656435786,
+      "reference_status": "success",
+      "relative_delta": 0.0012813651393089396
+    },
+    {
+      "absolute_delta": 0.00010526470140503896,
+      "candidate_reduced_chi_squared": 1.2411027366942855,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "high.cphase",
+      "reference_reduced_chi_squared": 1.2412080013956905,
+      "reference_status": "success",
+      "relative_delta": 8.480826846642373e-05
+    },
+    {
+      "absolute_delta": 0.00037437511073079577,
+      "candidate_reduced_chi_squared": 1.7370328248068687,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "high.logcamp",
+      "reference_reduced_chi_squared": 1.7374071999175995,
+      "reference_status": "success",
+      "relative_delta": 0.00021547919839894262
+    },
+    {
+      "absolute_delta": 2.3031353371834484,
+      "candidate_reduced_chi_squared": 6399.811356825332,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "high.vis",
+      "reference_reduced_chi_squared": 6402.1144921625155,
+      "reference_status": "success",
+      "relative_delta": 0.0003597460401564128
+    },
+    {
+      "absolute_delta": 2.806965846460571,
+      "candidate_reduced_chi_squared": 2221.639632723845,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "low.amp",
+      "reference_reduced_chi_squared": 2218.8326668773843,
+      "reference_status": "success",
+      "relative_delta": 0.0012650642332622947
+    },
+    {
+      "absolute_delta": 0.00037974473038282497,
+      "candidate_reduced_chi_squared": 1.2584158269495258,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "low.cphase",
+      "reference_reduced_chi_squared": 1.2587955716799086,
+      "reference_status": "success",
+      "relative_delta": 0.0003016730745851304
+    },
+    {
+      "absolute_delta": 0.0005018480936622716,
+      "candidate_reduced_chi_squared": 2.097999853945081,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "low.logcamp",
+      "reference_reduced_chi_squared": 2.0974980058514188,
+      "reference_status": "success",
+      "relative_delta": 0.0002392603436390686
+    },
+    {
+      "absolute_delta": 0.8345844861296428,
+      "candidate_reduced_chi_squared": 1581.5986304266023,
+      "candidate_status": "success",
+      "comparable": true,
+      "key": "low.vis",
+      "reference_reduced_chi_squared": 1580.7640459404727,
+      "reference_status": "success",
+      "relative_delta": 0.0005279627204786962
+    }
+  ],
+  "interpretation_status": "thresholds_not_registered",
+  "limitations": [
+    "No absolute scientific acceptance threshold is applied in this diagnostic workflow.",
+    "Observable-specific reduced-chi-squared definitions and degrees of freedom are inherited from ehtim 1.1.0.",
+    "The diagnostic compares final FITS images against released calibrated data and does not replay every intermediate self-calibration state.",
+    "Thresholds must be registered and reviewed before the report can support or refute an alternative claim."
+  ],
+  "reference_report_sha256": "303dbc94d4ea0c4a845eafe5edb02710431a77473e224b9d7d5bd488af025192",
+  "report_version": 1,
+  "status": "diagnostic_complete"
+}
