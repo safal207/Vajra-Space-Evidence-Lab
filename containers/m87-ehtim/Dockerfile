@@ -63,5 +63,5 @@ RUN useradd --create-home --uid 10001 vajra \
 USER 10001:10001
 WORKDIR /workspace
 
-ENTRYPOINT ["micromamba", "run", "--no-capture-output", "-n", "vajra"]
+ENTRYPOINT []
 CMD ["python", "-c", "import ehtim; print('vajra-m87-ehtim-ready')"]
