@@ -110,3 +110,27 @@ def test_ltp_route_allows_facts_and_blocks_overclaims() -> None:
     assert all(branch["status"] == "blocked" for branch in branches[1:])
     assert "thresholds_not_registered" in branches[1]["constraints"]
     assert "falsification_tests_not_evaluated" in branches[2]["constraints"]
+
+
+def test_committed_ltp_receipt_preserves_response_integrity_boundary() -> None:
+    receipt = json.loads(
+        (ROOT / "cases/m87-black-hole/ltp/m87-visibility-ltp-receipt.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert receipt["verdict"] == "ADMISSIBLE"
+    assert receipt["evidence_grade"] == "E3_MACHINE_VERIFIABLE_ARTIFACT"
+    assert receipt["authority"] == {
+        "may_promote_evidence_level": False,
+        "may_refute_alternatives": False,
+        "mode": "audit_only",
+        "reason": "LTP inspects the path and response boundary; it does not issue scientific authority.",
+    }
+    assert receipt["tool_facts"]["trace_integrity"] == "verified"
+    assert receipt["tool_facts"]["identity_binding"] == "ok"
+    assert receipt["tool_facts"]["replay_determinism"] == "ok"
+    assert receipt["tool_facts"]["replay_command_exit_code"] == 0
+    assert receipt["tool_facts"]["replay_output_empty"] is True
+    assert len(receipt["allowed_response_claims"]) == 2
+    assert len(receipt["blocked_response_claims"]) == 3
