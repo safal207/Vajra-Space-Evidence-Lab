@@ -38,12 +38,12 @@ def validate_comparison_contract(
         validator.iter_errors(contract),
         key=lambda item: list(item.absolute_path),
     ):
-        path = "$" if not error.absolute_path else "$.​" + ".".join(
+        path = "$" if not error.absolute_path else "$." + ".".join(
             str(part) for part in error.absolute_path
         )
         issues.append({
             "code": "schema_error",
-            "path": path.replace("$.​", "$.") ,
+            "path": path,
             "message": error.message,
         })
     return issues
