@@ -10,6 +10,7 @@
   "ehtim_tree_sha256": "efea21644ef3dc837b878431bf1081c4e7e1570084a690e57cfa2ec0714fe5ef",
   "environment_lock_path": "containers/m87-ehtim/explicit-linux-64.txt",
   "environment_lock_sha256": "099067a3cc02fb6cb6e556ada2f9ebeb0d6d9e173e2c61aac3e6b13c0d4527c7",
+  "lock_sync_commit": "b14713f17da04ab3f6e04d807cd1d0591bb1d902",
   "oci_digest": "sha256:ced397b05da668df2d07c28ecf8139dde719e9c5f0f7551857d3b63a41076ee5",
   "oci_image": "ghcr.io/safal207/vajra-m87-ehtim",
   "oci_reference": "ghcr.io/safal207/vajra-m87-ehtim@sha256:ced397b05da668df2d07c28ecf8139dde719e9c5f0f7551857d3b63a41076ee5",
