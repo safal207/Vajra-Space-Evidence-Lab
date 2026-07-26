@@ -12,7 +12,7 @@
       "kind": "claim",
       "id": "claim:m87:ring-image",
       "path": "claim-ring-image.json",
-      "sha256": "cfc0057531c95a6cbed00999ddc66fd67a069ad3deda4f467c7e8b310e614d58"
+      "sha256": "1cd19fd3057fb94cd30faef125aee5b11f83c679bae6997ae410703060dff423"
     },
     {
       "kind": "claim",
@@ -54,13 +54,19 @@
       "kind": "evidence",
       "id": "evidence:m87:ehtim-bootstrap-reproduction",
       "path": "evidence-ehtim-bootstrap-reproduction.json",
-      "sha256": "596a2733a7006fd875e3be460a3ac4249206724a4d68776fe3599a934e7fec89"
+      "sha256": "8f53ca3b28fa786e87136a44ca1203cd564593cacc84ec44300987eac565acaa"
     },
     {
       "kind": "evidence",
       "id": "evidence:m87:ehtim-podman-runtime-confirmation",
       "path": "evidence-ehtim-podman-runtime-confirmation.json",
       "sha256": "2f62cab9486cd748cf062716c441b7b658bd8f3c1c045167856d98772cf7d458"
+    },
+    {
+      "kind": "evidence",
+      "id": "evidence:m87:paper-derived-morphology-stability",
+      "path": "evidence-paper-derived-morphology-stability.json",
+      "sha256": "1437f44aa04abb5f8c0cd431ec42098d719cce8aeef94c57c65fb1da95970dc4"
     },
     {
       "kind": "observation",
