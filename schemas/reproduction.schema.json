@@ -41,7 +41,16 @@
           "type": "string",
           "pattern": "^[^@\\s]+@sha256:[a-fA-F0-9]{64}$"
         },
-        "user": {"type": "string", "default": "65534:65534"}
+        "runtime": {
+          "type": "string",
+          "enum": ["docker", "podman"],
+          "default": "docker"
+        },
+        "user": {"type": "string", "default": "65534:65534"},
+        "network": {"type": "string", "const": "none", "default": "none"},
+        "read_only_root": {"type": "boolean", "const": true, "default": true},
+        "drop_all_capabilities": {"type": "boolean", "const": true, "default": true},
+        "no_new_privileges": {"type": "boolean", "const": true, "default": true}
       }
     },
     "inputs": {
