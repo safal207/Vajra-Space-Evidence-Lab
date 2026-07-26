@@ -1,0 +1,143 @@
+{
+  "candidate": {
+    "artifact_id": 8636817251,
+    "feature_report_sha256": "fb1ed75c166d32ce6fb178cd3df5fcdc4422903703c219333f1665e0db1d7260",
+    "fits_sha256": "f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb",
+    "metrics": {
+      "azimuth_profile_count": 360,
+      "circularity_fractional_spread": 0.03289117037605474,
+      "diameter_standard_deviation_microarcseconds": 1.350867776653215,
+      "fractional_width": 0.379406526411929,
+      "fwhm_standard_deviation_microarcseconds": 0.8976289438300893,
+      "maximum_peak_radius_microarcseconds": 22.25,
+      "mean_diameter_microarcseconds": 41.07083333333333,
+      "mean_fwhm_microarcseconds": 15.582542211843267,
+      "minimum_peak_radius_microarcseconds": 18.75,
+      "valid_width_profile_count": 360
+    },
+    "workflow_run_id": 30219587273
+  },
+  "claim_ref": "claim:m87:ring-image",
+  "comparators": [
+    {
+      "basis": "A 0.02 circularity-spread tolerance is smaller than the approximately 0.05–0.06 reconstructed-image distribution peak discussed in Paper VI.",
+      "comparator_id": "circularity-absolute-delta",
+      "metric_path": "morphology.circularity_absolute_delta",
+      "observed": 0.002521399059673149,
+      "operator": "max",
+      "passed": true,
+      "threshold": 0.02
+    },
+    {
+      "basis": "A one-microarcsecond cross-run diameter tolerance is much narrower than the Paper VI 38–44 microarcsecond descriptive span.",
+      "comparator_id": "diameter-absolute-delta",
+      "metric_path": "morphology.mean_diameter_absolute_delta_microarcseconds",
+      "observed": 0.05972222222222001,
+      "operator": "max",
+      "passed": true,
+      "threshold": 1.0
+    },
+    {
+      "basis": "A 0.02 fractional-width tolerance is substantially smaller than the Paper VI upper range of approximately 0.5.",
+      "comparator_id": "fractional-width-absolute-delta",
+      "metric_path": "morphology.fractional_width_absolute_delta",
+      "observed": 0.0010392494338228864,
+      "operator": "max",
+      "passed": true,
+      "threshold": 0.02
+    },
+    {
+      "basis": "A one-microarcsecond FWHM tolerance detects substantial changes while accommodating small numerical drift.",
+      "comparator_id": "fwhm-absolute-delta",
+      "metric_path": "morphology.mean_fwhm_absolute_delta_microarcseconds",
+      "observed": 0.019961773119737458,
+      "operator": "max",
+      "passed": true,
+      "threshold": 1.0
+    },
+    {
+      "basis": "A correlation above 0.999 requires the reconstructed image morphology to remain nearly identical despite byte-level drift.",
+      "comparator_id": "pixel-correlation",
+      "metric_path": "image.pixel_correlation",
+      "observed": 0.9999496395928357,
+      "operator": "min",
+      "passed": true,
+      "threshold": 0.999
+    },
+    {
+      "basis": "A two-percent relative L1 ceiling limits total absolute pixel drift.",
+      "comparator_id": "relative-l1-difference",
+      "metric_path": "image.relative_l1_difference",
+      "observed": 0.009165130643725325,
+      "operator": "max",
+      "passed": true,
+      "threshold": 0.02
+    },
+    {
+      "basis": "A two-percent relative L2 ceiling treats small numerical drift as acceptable while rejecting materially different images.",
+      "comparator_id": "relative-l2-difference",
+      "metric_path": "image.relative_l2_difference",
+      "observed": 0.009147046302421028,
+      "operator": "max",
+      "passed": true,
+      "threshold": 0.02
+    }
+  ],
+  "contract_id": "image-stability:m87:cross-run:v0.1",
+  "contract_status": "engineering_derived",
+  "contract_version": 1,
+  "inputs": {
+    "contract_sha256": "518082618626ca858d118be7bb6a4630fe5adba566b27655d095a09257c532ae",
+    "schema_sha256": "429bb605549f2c26685278e8d6169f137135d2544e5c03cb5c7b8214baafa023"
+  },
+  "limitations": [
+    "These tolerances are engineering-derived by Vajra and have not been independently reviewed by the EHT Collaboration.",
+    "The comparison uses two GitHub-hosted workflow runs and the same OCI image, input data, pipeline, and scientific method.",
+    "Passing this contract establishes semantic cross-run stability, not universal bitwise determinism.",
+    "The contract does not identify whether drift originates from host CPU features, numerical libraries, thread scheduling, or undeclared pipeline randomness.",
+    "Passing supports the REC claim only and cannot promote the physical interpretation to S4."
+  ],
+  "measurements": {
+    "image": {
+      "maximum_absolute_pixel_difference": 2.2729204484107793e-05,
+      "mean_absolute_pixel_difference": 1.334236186355791e-06,
+      "pixel_correlation": 0.9999496395928357,
+      "relative_l1_difference": 0.009165130643725325,
+      "relative_l2_difference": 0.009147046302421028,
+      "rmse": 2.9141354237206137e-06
+    },
+    "morphology": {
+      "circularity_absolute_delta": 0.002521399059673149,
+      "fractional_width_absolute_delta": 0.0010392494338228864,
+      "mean_diameter_absolute_delta_microarcseconds": 0.05972222222222001,
+      "mean_fwhm_absolute_delta_microarcseconds": 0.019961773119737458
+    }
+  },
+  "reference": {
+    "artifact_id": 8633763531,
+    "feature_report_sha256": "9157a590f44bd580f0ce38598f322844a2e6782b9180ebca75d79c991b8ed2da",
+    "fits_sha256": "70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad",
+    "metrics": {
+      "azimuth_profile_count": 360,
+      "circularity_fractional_spread": 0.03036977131638159,
+      "diameter_standard_deviation_microarcseconds": 1.2454980658751607,
+      "fractional_width": 0.3804457758457519,
+      "fwhm_standard_deviation_microarcseconds": 0.9022361749702952,
+      "maximum_peak_radius_microarcseconds": 22.0,
+      "mean_diameter_microarcseconds": 41.01111111111111,
+      "mean_fwhm_microarcseconds": 15.602503984963004,
+      "minimum_peak_radius_microarcseconds": 18.75,
+      "valid_width_profile_count": 360
+    },
+    "workflow_run_id": 30208439097
+  },
+  "report_version": 1,
+  "status": "pass",
+  "workflow": {
+    "artifact_digest": "sha256:a1789cb268b5c259dace78f8e3297e189960cf4973232f87842fac2f2d438e29",
+    "artifact_id": 8636907398,
+    "commit": "bd2f85430d2d8fccff176926ef21226037daa4a5",
+    "run_id": 30219938594,
+    "run_url": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30219938594"
+  }
+}
