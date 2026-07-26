@@ -20,22 +20,28 @@ assumptions, uncertainty, independent confirmations, competing explanations, and
 
 Build a validated **Evidence Card** format and publish the first reference case for **M87\***.
 
-## Verified M87 environment checkpoint
+## Verified M87 reproduction checkpoint
 
-The official April 11 data, official imaging pipeline, exact scientific environment, and OCI image are now pinned:
+The official April 11 data, official imaging pipeline, exact scientific environment, and generated output are now pinned:
 
 - environment lock: `containers/m87-ehtim/explicit-linux-64.txt`
-- environment lock SHA-256: `099067a3cc02fb6cb6e556ada2f9ebeb0d6d9e173e2c61aac3e6b13c0d4527c7`
-- OCI image: `ghcr.io/safal207/vajra-m87-ehtim@sha256:ced397b05da668df2d07c28ecf8139dde719e9c5f0f7551857d3b63a41076ee5`
+- environment lock SHA-256: `e4f061d38ccc642dd55cf4e4d100319749e632b001c1b0c5c0ceb5bf10061448`
+- OCI image: `ghcr.io/safal207/vajra-m87-ehtim@sha256:a295853ec4de8ac44523c342e008b0d02b28a3f11aa213e0b777013829db2af3`
 - platform: `linux/amd64`
 - upstream `eht-imaging 1.1.0` commit: `22ae35f307921a4d423aa69f6aed6e93a74ecbc0`
 - audited Python 3 compatibility patch SHA-256: `7b432916770f1e45108329aff59b4200e148b864e564ab669a5a841402e7d167`
+- repeated FITS SHA-256: `70db37ed8661c6354976f071d4911f77f106fc5f99bcdc0d66a8d2a2ffff16ad`
+- repeated canonical-pixel SHA-256: `432f97dbc5ba73f6dfb54be6a948911f8c3690c2e28f7b690979038c369ac6c2`
 
-GitHub Actions independently built and pushed the image, pulled it by digest, imported `ehtim 1.1.0`, and started the official M87 pipeline help path successfully.
+GitHub Actions executed the official April 11 M87 reconstruction twice with container networking disabled, a read-only root filesystem, dropped capabilities, and the same digest-addressed OCI environment. Both generated FITS files matched byte-for-byte and all bootstrap diagnostic values matched exactly.
 
-See [`docs/m87-oci-environment.md`](docs/m87-oci-environment.md) for the environment identity, compatibility patch, verification chain, and remaining scientific limitations.
+See:
 
-The scientific reconstruction remains blocked until the expected FITS output and quantitative comparison contract are established.
+- [`docs/m87-oci-environment.md`](docs/m87-oci-environment.md)
+- [`cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json`](cases/m87-black-hole/m87-ehtim-bootstrap-reproduction.json)
+- [`cases/m87-black-hole/eht-imaging-reproduction-plan.json`](cases/m87-black-hole/eht-imaging-reproduction-plan.json)
+
+The reproduction status is **partial**, not complete. Independent execution, reviewed scientific image comparators, and cross-runtime stability limits remain open.
 
 ## Immediate execution order
 
