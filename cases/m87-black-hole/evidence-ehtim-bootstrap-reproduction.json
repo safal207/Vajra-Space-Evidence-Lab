@@ -1,0 +1,16 @@
+{
+  "evidence_id": "evidence:m87:ehtim-bootstrap-reproduction",
+  "evidence_type": "reproduction",
+  "source_uri": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30208439097",
+  "source_hash": "426bf04167f25e4974186bd045815ed96aaad1efd4145ed294955aa416ad4f80",
+  "collected_at": "2026-07-26T15:34:55Z",
+  "instrument_ref": "instrument:eht:network",
+  "transformation_refs": [
+    "transformation:m87:image-reconstruction"
+  ],
+  "uncertainty": {
+    "description": "The official released April 11 eht-imaging pipeline produced byte-identical FITS and canonical-pixel hashes in two runs inside one pinned linux/amd64 OCI environment. Independent operator, runner, platform, and official image-ensemble metric confirmation remain unavailable, so this evidence supports reproducibility of the reconstruction path but not independent confirmation of the full physical interpretation.",
+    "value": null,
+    "unit": null
+  }
+}
