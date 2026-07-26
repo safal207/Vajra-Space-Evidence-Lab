@@ -52,10 +52,52 @@ jobs:
             bash -lc '
               set -euo pipefail
               micromamba create --yes --name lock -f /work/containers/m87-ehtim/environment.seed.yml
-              micromamba list --name lock --explicit > /work/containers/m87-ehtim/explicit-linux-64.txt
+              micromamba list --name lock --json > /work/containers/m87-ehtim/micromamba-packages.json
             ' >m87-conda-solve.log 2>&1
           rc=$?
           set -e
+
+          if [ "$rc" -eq 0 ]; then
+            set +e
+            python - <<'PY' >>m87-conda-solve.log 2>&1
+          import json
+          from pathlib import Path
+
+          source = Path('containers/m87-ehtim/micromamba-packages.json')
+          target = Path('containers/m87-ehtim/explicit-linux-64.txt')
+          records = json.loads(source.read_text(encoding='utf-8'))
+          if not isinstance(records, list) or not records:
+              raise SystemExit('micromamba package inventory is empty or invalid')
+
+          lines = []
+          for record in records:
+              url = record.get('url') or record.get('package_url')
+              if not url:
+                  base = record.get('base_url') or record.get('channel')
+                  filename = record.get('fn') or record.get('filename')
+                  if base and filename and str(base).startswith(('http://', 'https://')):
+                      url = f"{str(base).rstrip('/')}/{filename}"
+              checksum = record.get('md5') or record.get('sha256')
+              if not url or not checksum:
+                  raise SystemExit(
+                      f"package record lacks immutable URL/checksum: {record.get('name')}"
+                  )
+              lines.append(f"{url}#{checksum}")
+
+          target.write_text(
+              '# This file is generated from micromamba list --json.\n'
+              '# platform: linux-64\n'
+              '@EXPLICIT\n'
+              + '\n'.join(sorted(lines))
+              + '\n',
+              encoding='utf-8',
+          )
+          print(f'wrote {len(lines)} exact package records to {target}')
+          PY
+            rc=$?
+            set -e
+          fi
+
           echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           cat m87-conda-solve.log
           if [ "$rc" -eq 0 ]; then
@@ -70,6 +112,7 @@ jobs:
           path: |
             m87-conda-solve.log
             containers/m87-ehtim/environment.seed.yml
+            containers/m87-ehtim/micromamba-packages.json
             containers/m87-ehtim/explicit-linux-64.txt
           if-no-files-found: warn
           retention-days: 30
