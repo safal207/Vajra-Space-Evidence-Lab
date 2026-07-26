@@ -2,12 +2,14 @@
   "claim_id": "claim:m87:ring-image",
   "claim_text": "A ring-like image can be reconstructed from calibrated VLBI measurements under declared algorithms and parameters.",
   "claim_type": "REC",
-  "status": "not_assessed",
-  "evidence_level": "S0",
+  "status": "supported",
+  "evidence_level": "S3",
   "created_at": "2026-07-25T00:00:00Z",
-  "version": 1,
+  "version": 2,
   "supersedes": null,
-  "evidence_refs": [],
+  "evidence_refs": [
+    "evidence:m87:ehtim-bootstrap-reproduction"
+  ],
   "assumption_refs": [
     "assumption:m87:gr-model"
   ],
