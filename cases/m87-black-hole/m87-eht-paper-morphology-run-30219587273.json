@@ -1,0 +1,84 @@
+{
+  "artifact": {
+    "artifact_id": 8636817251,
+    "digest": "sha256:f1ade0ce48a5677c73254a17a5d69cf7afbbf9488272b2a8ab2ba8dbec1fe66c",
+    "name": "m87-ehtim-bootstrap-reproduction"
+  },
+  "comparison": {
+    "comparators": [
+      {
+        "comparator_id": "m87-circularity-spread-paper-vi",
+        "maximum": 0.1,
+        "observed": 0.03289117037605474,
+        "operator": "max",
+        "passed": true,
+        "source_location": "Paper VI, Section 7.4 and Figure 18 discussion"
+      },
+      {
+        "comparator_id": "m87-fractional-width-paper-vi",
+        "maximum": 0.5,
+        "observed": 0.379406526411929,
+        "operator": "max",
+        "passed": true,
+        "source_location": "Paper VI, Sections 7.1–7.2"
+      },
+      {
+        "comparator_id": "m87-ring-diameter-paper-vi",
+        "maximum": 44.0,
+        "minimum": 38.0,
+        "observed": 41.07083333333333,
+        "operator": "range",
+        "passed": true,
+        "source_location": "Paper VI, Section 7.2"
+      }
+    ],
+    "contract_id": "image-comparison:m87:eht-paper-derived:v0.1",
+    "contract_sha256": "a5154604a970e52ec0806d738fd765fb63b4e4caf145146241badf330668bbc6",
+    "contract_status": "paper_derived",
+    "run1_comparison_sha256": "b49e4a3fe537548daf93cc15d5386bd9b018c96bd285f78d676a77680be9a959",
+    "run2_comparison_sha256": "4a7187577fbb7239b373acf2e689f6064a2882c58edc0525c2f006f721e428ad",
+    "status": "pass"
+  },
+  "feature_extraction": {
+    "feature_method_id": "eht-paper-vi-section-7-case-b-derived-v0.1",
+    "metrics": {
+      "azimuth_profile_count": 360,
+      "circularity_fractional_spread": 0.03289117037605474,
+      "diameter_standard_deviation_microarcseconds": 1.350867776653215,
+      "fractional_width": 0.379406526411929,
+      "fwhm_standard_deviation_microarcseconds": 0.8976289438300893,
+      "maximum_peak_radius_microarcseconds": 22.25,
+      "mean_diameter_microarcseconds": 41.07083333333333,
+      "mean_fwhm_microarcseconds": 15.582542211843267,
+      "minimum_peak_radius_microarcseconds": 18.75,
+      "valid_width_profile_count": 360
+    },
+    "metrics_equal_between_runs": true,
+    "run1_feature_report_sha256": "b8eb0ceef0b71d7b418fda36162720f8834274420638c4c95a38065b98701889",
+    "run2_feature_report_sha256": "20b35930cdd7b99aeaa491b76f321dd17e410f1ab3aab7e99bea954a3f2429e3"
+  },
+  "limitations": [
+    "The feature extractor is a Vajra implementation derived from the published Paper VI prose and is not official EHT analysis code.",
+    "The Paper VI ranges are descriptive morphology references, not an independently reviewed acceptance interval for this single April 11 reconstruction.",
+    "This workflow produced a different FITS and canonical-pixel SHA-256 from workflow 30208439097 despite the same OCI image, input data, and pipeline. Exact cross-run determinism is therefore not established.",
+    "Passing the morphology contract supports the REC claim only and does not establish the Kerr black-hole interpretation."
+  ],
+  "output": {
+    "canonical_pixel_sha256": "340b629a40a0e222c40a937ff517a442395541f9f78962d0b6c65356c87cf99e",
+    "fits_sha256": "f161737292487ddc96a042f7eebacdc91a1f0ac1206c532ee75042af719eefdb",
+    "fits_size_bytes": 37440,
+    "repeatability_inside_workflow": {
+      "canonical_pixels_equal": true,
+      "fits_bytes_equal": true,
+      "morphology_metrics_equal": true
+    }
+  },
+  "report_version": 1,
+  "status": "paper_derived_contract_pass",
+  "workflow": {
+    "commit": "5ed0310e5f4604aa300a635a3c79403e6d5928d0",
+    "repository": "safal207/Vajra-Space-Evidence-Lab",
+    "run_id": 30219587273,
+    "run_url": "https://github.com/safal207/Vajra-Space-Evidence-Lab/actions/runs/30219587273"
+  }
+}
