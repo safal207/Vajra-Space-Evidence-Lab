@@ -5,11 +5,14 @@
   "status": "not_assessed",
   "evidence_level": "S0",
   "created_at": "2026-07-25T00:00:00Z",
-  "version": 1,
+  "version": 2,
   "supersedes": null,
   "evidence_refs": [],
   "assumption_refs": [],
   "alternative_claim_refs": [
     "claim:m87:ring-image"
+  ],
+  "falsification_criteria_refs": [
+    "falsification:m87:calibration-artifact:v1"
   ]
 }
