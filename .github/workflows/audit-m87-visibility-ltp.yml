@@ -62,7 +62,7 @@ jobs:
           mkdir -p artifacts/ltp-m87-visibility
           cd .ltp
           set +e
-          pnpm -w ltp:inspect -- trace \
+          pnpm exec ts-node tools/ltp-inspect/inspect.ts trace \
             --strict \
             --quiet \
             --format json \
@@ -112,7 +112,7 @@ jobs:
           LTP_BUILD: "9f905e278bf172a8557dbdd0651a3524d92f06a6"
         run: |
           cd .ltp
-          pnpm -w ltp:inspect -- replay \
+          pnpm exec ts-node tools/ltp-inspect/inspect.ts replay \
             --quiet \
             --format json \
             --color never \
