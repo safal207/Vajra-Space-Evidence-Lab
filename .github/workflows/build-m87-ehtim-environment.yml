@@ -44,7 +44,6 @@ jobs:
           echo "reference=$BASE_TAG@$digest" >> "$GITHUB_OUTPUT"
 
       - name: Solve explicit Conda environment
-        id: solve
         shell: bash
         run: |
           set +e
@@ -61,11 +60,11 @@ jobs:
             ' >m87-conda-solve.log 2>&1
           rc=$?
           set -e
-          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           cat m87-conda-solve.log
           if [ "$rc" -eq 0 ]; then
             test -s containers/m87-ehtim/explicit-linux-64.txt
           fi
+          exit "$rc"
 
       - name: Upload solver diagnostics
         if: always()
@@ -79,10 +78,6 @@ jobs:
             containers/m87-ehtim/explicit-linux-64.txt
           if-no-files-found: warn
           retention-days: 30
-
-      - name: Fail closed when environment cannot be solved
-        if: steps.solve.outputs.exit_code != '0'
-        run: exit 1
 
       - name: Hash exact eht-imaging 1.1.0 source tree
         id: ehtim
