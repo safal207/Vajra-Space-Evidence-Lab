@@ -1,0 +1,160 @@
+{
+  "contract_id": "visibility-threshold:m87:april-11:v0.1",
+  "version": 1,
+  "registration_status": "draft",
+  "created_at": "2026-07-26T22:30:00Z",
+  "registered_at": null,
+  "evaluation_authorized": false,
+  "scope": {
+    "subject_claim_ref": "claim:m87:ring-image",
+    "purpose": "Preregister observable-specific acceptance criteria for the April 11 low- and high-band visibility-domain diagnostic before any scientific pass/fail interpretation or falsification-test evaluation.",
+    "allowed_interpretation": [
+      "A reviewed contract may classify whether the bound diagnostic values satisfy its declared observable-specific rules.",
+      "A completed evaluation remains scoped to the declared report, method, bands, observables, uncertainty model, and degrees-of-freedom assumptions."
+    ],
+    "blocked_interpretation": [
+      "This draft contract must not evaluate the existing M87 reports.",
+      "Passing future thresholds would not by itself prove a Kerr black hole or refute every alternative explanation.",
+      "The contract must not promote the reconstruction claim above S3 without materially independent confirmation."
+    ]
+  },
+  "method_binding": {
+    "method_id": "ehtim-1.1.0-image-chisq-v0.1",
+    "library": "ehtim",
+    "declared_version": "1.1.0",
+    "report_schema": "schemas/visibility-comparison.schema.json",
+    "source_report_refs": [
+      "visibility/reference.visibility-fit.json",
+      "visibility/candidate.visibility-fit.json",
+      "visibility/m87-visibility-cross-run.json",
+      "ltp/m87-visibility-ltp-receipt.json"
+    ]
+  },
+  "thresholds": [
+    {
+      "threshold_id": "threshold:m87:low:vis:v0.1",
+      "band_id": "low",
+      "observable": "vis",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:low:amp:v0.1",
+      "band_id": "low",
+      "observable": "amp",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:low:cphase:v0.1",
+      "band_id": "low",
+      "observable": "cphase",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:low:logcamp:v0.1",
+      "band_id": "low",
+      "observable": "logcamp",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:high:vis:v0.1",
+      "band_id": "high",
+      "observable": "vis",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:high:amp:v0.1",
+      "band_id": "high",
+      "observable": "amp",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:high:cphase:v0.1",
+      "band_id": "high",
+      "observable": "cphase",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    },
+    {
+      "threshold_id": "threshold:m87:high:logcamp:v0.1",
+      "band_id": "high",
+      "observable": "logcamp",
+      "metric": "reduced_chi_squared",
+      "comparison": "maximum",
+      "minimum": null,
+      "maximum": null,
+      "degrees_of_freedom_assumption": null,
+      "uncertainty_model": null,
+      "rationale": null,
+      "source_refs": [],
+      "preregistered_before_evaluation": false
+    }
+  ],
+  "review": {
+    "status": "pending",
+    "reviewer_identity": null,
+    "reviewed_at": null,
+    "review_artifact_ref": null,
+    "independence_statement": null
+  },
+  "limitations": [
+    "No threshold values, degrees-of-freedom assumptions, uncertainty model, or scientific rationale are registered in this draft.",
+    "The existing diagnostic values were observed before this draft contract, so they cannot be used as preregistered acceptance evidence under version 1.",
+    "Any future reviewed version must disclose whether reviewers saw the existing M87 measurements and must use held-out or independently reduced evidence where possible.",
+    "The contract evaluates a diagnostic rule and does not grant authority to promote the claim evidence level."
+  ]
+}
