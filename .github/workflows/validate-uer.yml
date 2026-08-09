@@ -5,7 +5,9 @@ on:
     paths:
       - "records/**/*.uer.json"
       - "schemas/**/*.schema.json"
+      - "graphs/**/*.mmd"
       - "tools/validate_uer.py"
+      - "tools/render_uer_graph.py"
       - ".github/workflows/validate-uer.yml"
   push:
     branches:
@@ -14,7 +16,9 @@ on:
     paths:
       - "records/**/*.uer.json"
       - "schemas/**/*.schema.json"
+      - "graphs/**/*.mmd"
       - "tools/validate_uer.py"
+      - "tools/render_uer_graph.py"
       - ".github/workflows/validate-uer.yml"
 
 permissions:
@@ -39,3 +43,6 @@ jobs:
 
       - name: Validate UER records
         run: python tools/validate_uer.py
+
+      - name: Verify generated evidence graphs are current
+        run: python tools/render_uer_graph.py --check
