@@ -100,6 +100,21 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["source_id", "title", "source_type", "url"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source_type": {"const": "preprint"}
+            }
+          },
+          "then": {
+            "required": ["version"],
+            "properties": {
+              "version": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ],
       "properties": {
         "source_id": {"type": "string", "minLength": 1},
         "title": {"type": "string", "minLength": 1},
