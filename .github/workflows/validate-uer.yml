@@ -7,9 +7,11 @@ on:
       - "schemas/**/*.schema.json"
       - "graphs/**/*.mmd"
       - "reports/**/*.md"
+      - "scores/**/*.json"
       - "tools/validate_uer.py"
       - "tools/render_uer_graph.py"
       - "tools/render_uer_report.py"
+      - "tools/score_uer.py"
       - ".github/workflows/validate-uer.yml"
   push:
     branches:
@@ -20,9 +22,11 @@ on:
       - "schemas/**/*.schema.json"
       - "graphs/**/*.mmd"
       - "reports/**/*.md"
+      - "scores/**/*.json"
       - "tools/validate_uer.py"
       - "tools/render_uer_graph.py"
       - "tools/render_uer_report.py"
+      - "tools/score_uer.py"
       - ".github/workflows/validate-uer.yml"
 
 permissions:
@@ -53,3 +57,6 @@ jobs:
 
       - name: Verify generated evidence reports are current
         run: python tools/render_uer_report.py --check
+
+      - name: Verify generated readiness scores are current
+        run: python tools/score_uer.py --check
