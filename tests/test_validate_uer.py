@@ -52,6 +52,19 @@ class TestUERNegativeIntegrity(unittest.TestCase):
             errors,
         )
 
+    def test_evidence_free_speculative_claim_is_allowed(self) -> None:
+        speculative = copy.deepcopy(self.record)
+        claim = next(item for item in speculative["claims"] if item["claim_id"] == "claim:association")
+        claim["claim_type"] = "speculative"
+        claim["supported_by"] = []
+        claim["contradicted_by"] = []
+
+        errors = self.semantic_errors(speculative)
+        self.assertFalse(
+            any("has neither supporting nor contradicting evidence" in error for error in errors),
+            errors,
+        )
+
     def test_evidence_without_provenance_is_rejected(self) -> None:
         broken = copy.deepcopy(self.record)
         evidence = next(item for item in broken["evidence"] if item["evidence_id"] == "ev:ep-detection")
