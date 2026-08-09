@@ -149,7 +149,11 @@ def validate_semantics(record: dict[str, Any], record_path: Path) -> list[str]:
                 f"{record_path}: {owner} is model_dependent but has no assumption_ids"
             )
 
-        if not item.get("supported_by") and not item.get("contradicted_by"):
+        if (
+            claim_type != "speculative"
+            and not item.get("supported_by")
+            and not item.get("contradicted_by")
+        ):
             errors.append(
                 f"{record_path}: {owner} has neither supporting nor contradicting evidence"
             )
