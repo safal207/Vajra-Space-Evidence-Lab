@@ -63,5 +63,5 @@ jobs:
       - name: Verify generated readiness scores are current
         run: python tools/score_uer.py --check
 
-      - name: Test Evidence Readiness Score invariants
+      - name: Test UER integrity and ERS invariants
         run: python -m unittest discover -s tests -p "test_*.py" -v
