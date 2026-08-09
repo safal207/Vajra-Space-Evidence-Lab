@@ -1,0 +1,41 @@
+name: Validate UER
+
+on:
+  pull_request:
+    paths:
+      - "records/**/*.uer.json"
+      - "schemas/**/*.schema.json"
+      - "tools/validate_uer.py"
+      - ".github/workflows/validate-uer.yml"
+  push:
+    branches:
+      - main
+      - "agent/**"
+    paths:
+      - "records/**/*.uer.json"
+      - "schemas/**/*.schema.json"
+      - "tools/validate_uer.py"
+      - ".github/workflows/validate-uer.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install validator dependency
+        run: python -m pip install --disable-pip-version-check "jsonschema>=4.23,<5"
+
+      - name: Validate UER records
+        run: python tools/validate_uer.py
