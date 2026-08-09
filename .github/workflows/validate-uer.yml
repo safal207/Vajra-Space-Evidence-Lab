@@ -6,8 +6,10 @@ on:
       - "records/**/*.uer.json"
       - "schemas/**/*.schema.json"
       - "graphs/**/*.mmd"
+      - "reports/**/*.md"
       - "tools/validate_uer.py"
       - "tools/render_uer_graph.py"
+      - "tools/render_uer_report.py"
       - ".github/workflows/validate-uer.yml"
   push:
     branches:
@@ -17,8 +19,10 @@ on:
       - "records/**/*.uer.json"
       - "schemas/**/*.schema.json"
       - "graphs/**/*.mmd"
+      - "reports/**/*.md"
       - "tools/validate_uer.py"
       - "tools/render_uer_graph.py"
+      - "tools/render_uer_report.py"
       - ".github/workflows/validate-uer.yml"
 
 permissions:
@@ -46,3 +50,6 @@ jobs:
 
       - name: Verify generated evidence graphs are current
         run: python tools/render_uer_graph.py --check
+
+      - name: Verify generated evidence reports are current
+        run: python tools/render_uer_report.py --check
