@@ -4,7 +4,7 @@
 This score is NOT a probability that a scientific claim is true.
 It measures how review-ready a claim is based on provenance, evidence directness,
 inferential distance, assumption transparency, challenge coverage, and whether
-there is a concrete discriminating path.
+there is a concrete claim-relevant discriminating path.
 
 Usage:
     python tools/score_uer.py
@@ -46,6 +46,7 @@ CLAIM_DISTANCE = {
 }
 
 NEGATIVE_EVIDENCE = {"upper_limit", "non_detection", "negative_result"}
+NON_INFERENTIAL_CLAIMS = {"observational", "derived", "statistical"}
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -71,13 +72,12 @@ def score_record(record: dict[str, Any]) -> dict[str, Any]:
     hypotheses = record.get("hypotheses", [])
     discriminating = record.get("discriminating_observations", [])
 
-    has_alternatives = len(hypotheses) >= 2 and any(
-        item.get("status") in {"active", "unresolved", "disfavored"}
-        for item in hypotheses
-    )
-    has_discriminating_path = any(
-        len(item.get("discriminates_between", [])) >= 2 for item in discriminating
-    )
+    hypothesis_evidence: dict[str, set[str]] = {}
+    for item in hypotheses:
+        hypothesis_evidence[item["hypothesis_id"]] = {
+            *item.get("supporting_evidence", []),
+            *item.get("contradicting_evidence", []),
+        }
 
     claim_scores: list[dict[str, Any]] = []
 
@@ -106,10 +106,10 @@ def score_record(record: dict[str, Any]) -> dict[str, Any]:
         else:
             directness = 0
 
-        inferential_distance = CLAIM_DISTANCE.get(claim.get("claim_type"), 0)
+        claim_type = claim.get("claim_type")
+        inferential_distance = CLAIM_DISTANCE.get(claim_type, 0)
 
         assumption_refs = claim.get("assumption_ids", [])
-        claim_type = claim.get("claim_type")
         if claim_type in {"interpretation", "model_dependent", "speculative"}:
             if assumption_refs and all(
                 assumption_by_id.get(ref, {}).get("source_ids") for ref in assumption_refs
@@ -122,17 +122,40 @@ def score_record(record: dict[str, Any]) -> dict[str, Any]:
         else:
             assumption_transparency = 15
 
+        claim_evidence_ids = set(evidence_refs)
+        relevant_hypothesis_ids = {
+            hypothesis_id
+            for hypothesis_id, hypothesis_refs in hypothesis_evidence.items()
+            if claim_evidence_ids & hypothesis_refs
+        }
+        has_relevant_alternatives = len(relevant_hypothesis_ids) >= 2
+        has_relevant_discriminating_path = any(
+            len(relevant_hypothesis_ids.intersection(item.get("discriminates_between", [])))
+            >= 2
+            for item in discriminating
+        )
+
         has_negative_or_contradicting = bool(claim.get("contradicted_by")) or any(
             item.get("evidence_type") in NEGATIVE_EVIDENCE for item in supporting
         )
         if has_negative_or_contradicting:
             challenge_coverage = 15
-        elif has_alternatives:
+        elif claim_type in NON_INFERENTIAL_CLAIMS:
+            # Descriptive/derived claims do not require competing mechanism hypotheses,
+            # but absence of explicit counter-evidence is not awarded the full 15.
+            challenge_coverage = 12
+        elif has_relevant_alternatives:
             challenge_coverage = 12
         else:
             challenge_coverage = 5
 
-        discriminating_path = 10 if has_discriminating_path else 0
+        if claim_type in NON_INFERENTIAL_CLAIMS:
+            # A hypothesis-discriminating experiment is not applicable to a claim that
+            # is already observational/derived/statistical, so do not penalize it for
+            # unrelated mechanism-level hypotheses elsewhere in the same event record.
+            discriminating_path = 10
+        else:
+            discriminating_path = 10 if has_relevant_discriminating_path else 0
 
         components = {
             "provenance": provenance,
