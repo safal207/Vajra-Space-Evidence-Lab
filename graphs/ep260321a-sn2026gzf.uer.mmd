@@ -1,0 +1,87 @@
+flowchart LR
+  event_641550e5a16b["EP260321a<br/>SN 2026gzf"]
+  subgraph src_group[Sources]
+    src_8f018f22086d["src:oconnor:2606.09992<br/>preprint"]
+    src_4f4da158824e["src:rastinejad:2606.10011<br/>preprint"]
+    src_9baab8922b09["src:suzuki:2607.24045<br/>preprint"]
+    src_dbe7581f90cb["src:vajra:issue12<br/>repository_issue"]
+  end
+  subgraph ev_group[Evidence]
+    ev_26f808962243["ev:ep-detection<br/>direct_observation"]
+    ev_ead6d8a70bb5["ev:sn-classification<br/>derived_measurement"]
+    ev_ae82c50736e1["ev:xray-thermal-properties<br/>derived_measurement"]
+    ev_547ee616cb46["ev:chandra-nondetection<br/>non_detection"]
+    ev_8eff1024f9fc["ev:radio-upper-limits<br/>upper_limit"]
+    ev_3b29aa0f6e54["ev:successful-jet-constraint<br/>model_output"]
+    ev_589688953fd9["ev:dense-wind-model<br/>model_output"]
+  end
+  subgraph claim_group[Claims]
+    claim_f85f667e8e49["claim:association<br/>derived"]
+    claim_c5f2a4cb636c["claim:shock-breakout<br/>interpretation"]
+    claim_f252f883f9e1["claim:powerful-onaxis-jet<br/>model_dependent"]
+    claim_78197a53e8c0["claim:choked-outflow<br/>model_dependent"]
+  end
+  subgraph assumption_group[Assumptions]
+    assumption_8a29dc82571a["assumption:shock-breakout-model"]
+    assumption_1a9f3dfd4b1c["assumption:afterglow-physics"]
+    assumption_fb603cc405ae["assumption:circumburst-environment"]
+    assumption_6d22be8c4110["assumption:jet-launch"]
+  end
+  subgraph hyp_group[Hypotheses]
+    hyp_59d908d4684c["hyp:weak-choked-outflow<br/>active"]
+    hyp_32b76005d737["hyp:offaxis-or-lowenergy-jet<br/>unresolved"]
+    hyp_17f270516673["hyp:no-jet-csm-breakout<br/>unresolved"]
+    hyp_f42bbe1b9223["hyp:standard-powerful-onaxis-jet<br/>disfavored"]
+  end
+  subgraph obs_group[Next observations]
+    obs_67d745fa4c86["next:late-radio-xray<br/>high"]
+    obs_35fa047d560f["next:csm-constraints<br/>high"]
+  end
+  event_641550e5a16b -->|contains| ev_26f808962243
+  src_8f018f22086d -->|provenance| ev_26f808962243
+  src_4f4da158824e -->|provenance| ev_26f808962243
+  event_641550e5a16b -->|contains| ev_ead6d8a70bb5
+  src_8f018f22086d -->|provenance| ev_ead6d8a70bb5
+  event_641550e5a16b -->|contains| ev_ae82c50736e1
+  src_8f018f22086d -->|provenance| ev_ae82c50736e1
+  event_641550e5a16b -->|contains| ev_547ee616cb46
+  src_8f018f22086d -->|provenance| ev_547ee616cb46
+  event_641550e5a16b -->|contains| ev_8eff1024f9fc
+  src_4f4da158824e -->|provenance| ev_8eff1024f9fc
+  event_641550e5a16b -->|contains| ev_3b29aa0f6e54
+  src_8f018f22086d -->|provenance| ev_3b29aa0f6e54
+  event_641550e5a16b -->|contains| ev_589688953fd9
+  src_9baab8922b09 -->|provenance| ev_589688953fd9
+  ev_26f808962243 -->|supports| claim_f85f667e8e49
+  ev_ead6d8a70bb5 -->|supports| claim_f85f667e8e49
+  ev_ae82c50736e1 -->|supports| claim_c5f2a4cb636c
+  ev_589688953fd9 -->|supports| claim_c5f2a4cb636c
+  assumption_8a29dc82571a -->|assumption| claim_c5f2a4cb636c
+  ev_547ee616cb46 -->|supports| claim_f252f883f9e1
+  ev_8eff1024f9fc -->|supports| claim_f252f883f9e1
+  ev_3b29aa0f6e54 -->|supports| claim_f252f883f9e1
+  assumption_1a9f3dfd4b1c -->|assumption| claim_f252f883f9e1
+  assumption_fb603cc405ae -->|assumption| claim_f252f883f9e1
+  ev_ae82c50736e1 -->|supports| claim_78197a53e8c0
+  ev_547ee616cb46 -->|supports| claim_78197a53e8c0
+  ev_8eff1024f9fc -->|supports| claim_78197a53e8c0
+  ev_3b29aa0f6e54 -->|supports| claim_78197a53e8c0
+  assumption_1a9f3dfd4b1c -->|assumption| claim_78197a53e8c0
+  assumption_fb603cc405ae -->|assumption| claim_78197a53e8c0
+  assumption_6d22be8c4110 -->|assumption| claim_78197a53e8c0
+  ev_ae82c50736e1 -->|supports| hyp_59d908d4684c
+  ev_547ee616cb46 -->|supports| hyp_59d908d4684c
+  ev_8eff1024f9fc -->|supports| hyp_59d908d4684c
+  ev_3b29aa0f6e54 -->|supports| hyp_59d908d4684c
+  ev_3b29aa0f6e54 -->|supports| hyp_32b76005d737
+  ev_547ee616cb46 -->|contradicts| hyp_32b76005d737
+  ev_8eff1024f9fc -->|contradicts| hyp_32b76005d737
+  ev_ae82c50736e1 -->|supports| hyp_17f270516673
+  ev_589688953fd9 -->|supports| hyp_17f270516673
+  ev_547ee616cb46 -->|contradicts| hyp_f42bbe1b9223
+  ev_8eff1024f9fc -->|contradicts| hyp_f42bbe1b9223
+  hyp_59d908d4684c -->|tested by| obs_67d745fa4c86
+  hyp_32b76005d737 -->|tested by| obs_67d745fa4c86
+  hyp_17f270516673 -->|tested by| obs_67d745fa4c86
+  hyp_59d908d4684c -->|tested by| obs_35fa047d560f
+  hyp_17f270516673 -->|tested by| obs_35fa047d560f
