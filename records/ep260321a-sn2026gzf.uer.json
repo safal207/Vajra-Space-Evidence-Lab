@@ -1,0 +1,301 @@
+{
+  "uer_version": "0.1",
+  "record_id": "uer:EP260321a:SN2026gzf:001",
+  "created_at": "2026-08-09T04:24:00Z",
+  "event": {
+    "id": "EP260321a",
+    "type": "fast_xray_transient_supernova",
+    "aliases": ["SN 2026gzf"],
+    "discovery_time": "2026-03-21",
+    "redshift": 0.0344
+  },
+  "sources": [
+    {
+      "source_id": "src:oconnor:2606.09992",
+      "title": "EP260321a/SN 2026gzf: The Faintest Shock Breakout Associated with a Broad-Lined Supernova",
+      "source_type": "preprint",
+      "url": "https://arxiv.org/abs/2606.09992v1",
+      "identifier": "arXiv:2606.09992",
+      "version": "v1",
+      "publication_status": "preprint; submitted to ApJL"
+    },
+    {
+      "source_id": "src:rastinejad:2606.10011",
+      "title": "A Multi-Wavelength View of the First Type Ic-BL Supernova with an Einstein Probe X-ray Shock Breakout",
+      "source_type": "preprint",
+      "url": "https://arxiv.org/abs/2606.10011v1",
+      "identifier": "arXiv:2606.10011",
+      "version": "v1",
+      "publication_status": "preprint; submitted to ApJL"
+    },
+    {
+      "source_id": "src:suzuki:2607.24045",
+      "title": "Shock breakout from mildly relativistic ejecta in a dense wind: the case of EP260321a/SN 2026gzf",
+      "source_type": "preprint",
+      "url": "https://arxiv.org/abs/2607.24045v1",
+      "identifier": "arXiv:2607.24045",
+      "version": "v1",
+      "publication_status": "preprint; submitted"
+    },
+    {
+      "source_id": "src:vajra:issue12",
+      "title": "Dual evidence case: SN 2026gzf choked-jet inference and RBH-1 merger reconstruction",
+      "source_type": "repository_issue",
+      "url": "https://github.com/safal207/Vajra-Space-Evidence-Lab/issues/12",
+      "identifier": "Vajra-Space-Evidence-Lab#12",
+      "version": null,
+      "publication_status": "open research note"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev:ep-detection",
+      "evidence_type": "direct_observation",
+      "statement": "Einstein Probe detected the fast X-ray transient EP260321a, later associated with SN 2026gzf.",
+      "source_ids": ["src:oconnor:2606.09992", "src:rastinejad:2606.10011"],
+      "facility": "Einstein Probe",
+      "instrument": null,
+      "measurement": {
+        "quantity": "detection",
+        "value": "fast X-ray transient",
+        "unit": null,
+        "uncertainty": null,
+        "band": "X-ray",
+        "time": "2026-03-21"
+      },
+      "confidence": "high"
+    },
+    {
+      "evidence_id": "ev:sn-classification",
+      "evidence_type": "derived_measurement",
+      "statement": "Follow-up observations associate EP260321a with the broad-lined Type Ic supernova SN 2026gzf at redshift approximately 0.0344.",
+      "source_ids": ["src:oconnor:2606.09992"],
+      "facility": null,
+      "instrument": null,
+      "measurement": {
+        "quantity": "redshift",
+        "value": 0.0344,
+        "unit": null,
+        "uncertainty": null,
+        "band": "optical spectroscopy / multi-wavelength follow-up",
+        "time": null
+      },
+      "confidence": "high"
+    },
+    {
+      "evidence_id": "ev:xray-thermal-properties",
+      "evidence_type": "derived_measurement",
+      "statement": "The reported X-ray emission is thermal with kT about 160 eV and peak luminosity about 2.2e44 erg/s.",
+      "source_ids": ["src:oconnor:2606.09992"],
+      "facility": "Einstein Probe",
+      "instrument": null,
+      "measurement": {
+        "quantity": "thermal X-ray spectral temperature and peak luminosity",
+        "value": "kT=160 eV; L_peak=2.2e44 erg/s",
+        "unit": "mixed",
+        "uncertainty": null,
+        "band": "X-ray",
+        "time": null
+      },
+      "confidence": "reported"
+    },
+    {
+      "evidence_id": "ev:chandra-nondetection",
+      "evidence_type": "non_detection",
+      "statement": "Deep later Chandra X-ray observations did not detect an X-ray afterglow; the study reports that these limits exclude afterglows comparable to known gamma-ray bursts or fast X-ray transients.",
+      "source_ids": ["src:oconnor:2606.09992"],
+      "facility": "Chandra X-ray Observatory",
+      "instrument": null,
+      "measurement": null,
+      "confidence": "high for non-detection; interpretation depends on comparison model"
+    },
+    {
+      "evidence_id": "ev:radio-upper-limits",
+      "evidence_type": "upper_limit",
+      "statement": "Radio follow-up from 5.8 to 54.5 days after the fast X-ray transient rules out an on-axis jet counterpart with isotropic-equivalent kinetic energy above 1e49 erg for circumburst densities above 1e-2 cm^-3, under the study assumptions.",
+      "source_ids": ["src:rastinejad:2606.10011"],
+      "facility": null,
+      "instrument": null,
+      "measurement": {
+        "quantity": "on-axis jet kinetic-energy constraint",
+        "value": "E_K,iso > 1e49 excluded for n > 1e-2 under model assumptions",
+        "unit": "erg; cm^-3",
+        "uncertainty": null,
+        "band": "radio",
+        "time": "5.8-54.5 days post-FXT"
+      },
+      "confidence": "model-dependent constraint"
+    },
+    {
+      "evidence_id": "ev:successful-jet-constraint",
+      "evidence_type": "model_output",
+      "statement": "If a successful relativistic jet was launched, the O'Connor et al. modeling requires low initial Lorentz factor and low kinetic energy for the stated wind-density regime.",
+      "source_ids": ["src:oconnor:2606.09992"],
+      "facility": null,
+      "instrument": null,
+      "measurement": {
+        "quantity": "conditional relativistic-jet constraint",
+        "value": "Gamma_0 < 30; E_kin < 1e49 erg for A_* >= 1",
+        "unit": "dimensionless; erg",
+        "uncertainty": null,
+        "band": null,
+        "time": null
+      },
+      "confidence": "conditional on afterglow and environment assumptions"
+    },
+    {
+      "evidence_id": "ev:dense-wind-model",
+      "evidence_type": "model_output",
+      "statement": "An independent shock-breakout model reproduces the X-ray properties using mildly relativistic ejecta interacting with a dense wind-like circumstellar medium.",
+      "source_ids": ["src:suzuki:2607.24045"],
+      "facility": null,
+      "instrument": null,
+      "measurement": null,
+      "confidence": "model-dependent"
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim:association",
+      "text": "EP260321a is associated with the broad-lined Type Ic supernova SN 2026gzf.",
+      "claim_type": "derived",
+      "supported_by": ["ev:ep-detection", "ev:sn-classification"],
+      "contradicted_by": [],
+      "assumption_ids": [],
+      "confidence": "high",
+      "status": "supported"
+    },
+    {
+      "claim_id": "claim:shock-breakout",
+      "text": "The soft thermal X-ray transient is consistent with a shock-breakout origin.",
+      "claim_type": "interpretation",
+      "supported_by": ["ev:xray-thermal-properties", "ev:dense-wind-model"],
+      "contradicted_by": [],
+      "assumption_ids": ["assumption:shock-breakout-model"],
+      "confidence": "strongly supported by current modeling, but still interpretive",
+      "status": "supported_with_model_dependency"
+    },
+    {
+      "claim_id": "claim:powerful-onaxis-jet",
+      "text": "A standard powerful on-axis relativistic jet/afterglow is disfavored for EP260321a/SN 2026gzf.",
+      "claim_type": "model_dependent",
+      "supported_by": ["ev:chandra-nondetection", "ev:radio-upper-limits", "ev:successful-jet-constraint"],
+      "contradicted_by": [],
+      "assumption_ids": ["assumption:afterglow-physics", "assumption:circumburst-environment"],
+      "confidence": "high within the tested parameter regimes",
+      "status": "conditional"
+    },
+    {
+      "claim_id": "claim:choked-outflow",
+      "text": "A weak, mildly relativistic outflow choked by the progenitor star is a proposed explanation for the event.",
+      "claim_type": "model_dependent",
+      "supported_by": ["ev:xray-thermal-properties", "ev:chandra-nondetection", "ev:radio-upper-limits", "ev:successful-jet-constraint"],
+      "contradicted_by": [],
+      "assumption_ids": ["assumption:afterglow-physics", "assumption:circumburst-environment", "assumption:jet-launch"],
+      "confidence": "plausible proposed interpretation; mechanism not directly observed",
+      "status": "conditional"
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "assumption:shock-breakout-model",
+      "description": "The thermal X-ray signal is interpreted through shock-breakout models whose inferred physical parameters depend on the ejecta/CSM model.",
+      "value": null,
+      "source_ids": ["src:oconnor:2606.09992", "src:suzuki:2607.24045"]
+    },
+    {
+      "assumption_id": "assumption:afterglow-physics",
+      "description": "Jet constraints depend on the adopted synchrotron-afterglow model and microphysical parameters.",
+      "value": null,
+      "source_ids": ["src:oconnor:2606.09992", "src:rastinejad:2606.10011"]
+    },
+    {
+      "assumption_id": "assumption:circumburst-environment",
+      "description": "Jet and radio/X-ray constraints depend on the assumed circumburst density or wind-density profile.",
+      "value": null,
+      "source_ids": ["src:oconnor:2606.09992", "src:rastinejad:2606.10011"]
+    },
+    {
+      "assumption_id": "assumption:jet-launch",
+      "description": "The choked-outflow interpretation assumes that the stellar explosion launched an outflow/jet whose propagation can be constrained indirectly even though the jet itself was not directly observed.",
+      "value": null,
+      "source_ids": ["src:oconnor:2606.09992"]
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp:weak-choked-outflow",
+      "description": "A weak, mildly relativistic outflow was launched and choked by the progenitor star.",
+      "supporting_evidence": ["ev:xray-thermal-properties", "ev:chandra-nondetection", "ev:radio-upper-limits", "ev:successful-jet-constraint"],
+      "contradicting_evidence": [],
+      "status": "active"
+    },
+    {
+      "hypothesis_id": "hyp:offaxis-or-lowenergy-jet",
+      "description": "A successful jet existed but was off-axis, low-energy, low-Lorentz-factor, or otherwise below current detection limits.",
+      "supporting_evidence": ["ev:successful-jet-constraint"],
+      "contradicting_evidence": ["ev:chandra-nondetection", "ev:radio-upper-limits"],
+      "status": "unresolved"
+    },
+    {
+      "hypothesis_id": "hyp:no-jet-csm-breakout",
+      "description": "No astrophysically important jet is required; shock breakout and circumstellar interaction dominate the observed high-energy signal.",
+      "supporting_evidence": ["ev:xray-thermal-properties", "ev:dense-wind-model"],
+      "contradicting_evidence": [],
+      "status": "unresolved"
+    },
+    {
+      "hypothesis_id": "hyp:standard-powerful-onaxis-jet",
+      "description": "The event launched a standard powerful on-axis relativistic jet comparable to classical GRB afterglows.",
+      "supporting_evidence": [],
+      "contradicting_evidence": ["ev:chandra-nondetection", "ev:radio-upper-limits"],
+      "status": "disfavored"
+    }
+  ],
+  "discriminating_observations": [
+    {
+      "observation_id": "next:late-radio-xray",
+      "description": "Obtain or compile deeper late-time radio and X-ray constraints to separate a weak/off-axis surviving jet from a no-jet or choked-outflow scenario.",
+      "discriminates_between": ["hyp:weak-choked-outflow", "hyp:offaxis-or-lowenergy-jet", "hyp:no-jet-csm-breakout"],
+      "expected_outcomes": {
+        "late_non_detection": "Further restricts surviving energetic-jet parameter space, conditional on environment and microphysics.",
+        "emerging_afterglow": "Would strengthen a successful off-axis or weak-jet interpretation and permit tighter energy/geometry inference."
+      },
+      "priority": "high"
+    },
+    {
+      "observation_id": "next:csm-constraints",
+      "description": "Improve constraints on circumstellar density structure and progenitor mass loss so that jet and shock-breakout inferences are less degenerate with environment assumptions.",
+      "discriminates_between": ["hyp:weak-choked-outflow", "hyp:no-jet-csm-breakout"],
+      "expected_outcomes": {},
+      "priority": "high"
+    }
+  ],
+  "readiness": [
+    {
+      "context": "public communication",
+      "status": "CONDITIONAL",
+      "rationale": "The X-ray transient and SN association are strongly supported; a choked jet/outflow should be described as an inference or proposed scenario, not as a directly observed mechanism."
+    },
+    {
+      "context": "telescope-time allocation",
+      "status": "CONDITIONAL",
+      "rationale": "Existing non-detections identify useful late-time radio/X-ray parameter space, but interpretation remains coupled to environment and afterglow assumptions."
+    },
+    {
+      "context": "AI training labels",
+      "status": "CONDITIONAL",
+      "rationale": "A label such as 'choked jet' should carry model-dependent provenance rather than being converted into a ground-truth observational class."
+    },
+    {
+      "context": "population inference",
+      "status": "INSUFFICIENT_EVIDENCE",
+      "rationale": "A single event and model-dependent jet interpretation are insufficient by themselves for a robust population-level label or rate claim."
+    }
+  ],
+  "notes": [
+    "This pilot intentionally encodes the choked-outflow explanation as model-dependent rather than directly observed.",
+    "Null fields mean the value has not been encoded from a verified source in this record; they must not be silently guessed.",
+    "The record is a protocol demonstration, not an endorsement by Einstein Probe, the cited authors, or their institutions."
+  ]
+}

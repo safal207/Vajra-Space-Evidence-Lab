@@ -1,0 +1,87 @@
+{
+  "score_version": "0.1",
+  "record_id": "uer:EP260321a:SN2026gzf:001",
+  "meaning": "Evidence readiness, not truth probability.",
+  "max_score": 100,
+  "bands": {
+    "REVIEW_READY": "85-100",
+    "CONDITIONAL": "70-84",
+    "LIMITED": "50-69",
+    "INSUFFICIENT": "0-49"
+  },
+  "dimensions": {
+    "provenance": 20,
+    "evidence_directness": 20,
+    "inferential_distance": 20,
+    "assumption_transparency": 15,
+    "challenge_coverage": 15,
+    "discriminating_path": 10
+  },
+  "summary": {
+    "claims_scored": 4,
+    "minimum": 76,
+    "maximum": 93
+  },
+  "claims": [
+    {
+      "claim_id": "claim:association",
+      "claim_type": "derived",
+      "score": 93,
+      "band": "REVIEW_READY",
+      "components": {
+        "provenance": 20,
+        "evidence_directness": 18,
+        "inferential_distance": 18,
+        "assumption_transparency": 15,
+        "challenge_coverage": 12,
+        "discriminating_path": 10
+      },
+      "interpretation": "Evidence readiness only; this score must not be interpreted as the probability that the claim is true."
+    },
+    {
+      "claim_id": "claim:shock-breakout",
+      "claim_type": "interpretation",
+      "score": 78,
+      "band": "CONDITIONAL",
+      "components": {
+        "provenance": 20,
+        "evidence_directness": 11,
+        "inferential_distance": 10,
+        "assumption_transparency": 15,
+        "challenge_coverage": 12,
+        "discriminating_path": 10
+      },
+      "interpretation": "Evidence readiness only; this score must not be interpreted as the probability that the claim is true."
+    },
+    {
+      "claim_id": "claim:powerful-onaxis-jet",
+      "claim_type": "model_dependent",
+      "score": 76,
+      "band": "CONDITIONAL",
+      "components": {
+        "provenance": 20,
+        "evidence_directness": 11,
+        "inferential_distance": 5,
+        "assumption_transparency": 15,
+        "challenge_coverage": 15,
+        "discriminating_path": 10
+      },
+      "interpretation": "Evidence readiness only; this score must not be interpreted as the probability that the claim is true."
+    },
+    {
+      "claim_id": "claim:choked-outflow",
+      "claim_type": "model_dependent",
+      "score": 77,
+      "band": "CONDITIONAL",
+      "components": {
+        "provenance": 20,
+        "evidence_directness": 12,
+        "inferential_distance": 5,
+        "assumption_transparency": 15,
+        "challenge_coverage": 15,
+        "discriminating_path": 10
+      },
+      "interpretation": "Evidence readiness only; this score must not be interpreted as the probability that the claim is true."
+    }
+  ]
+}

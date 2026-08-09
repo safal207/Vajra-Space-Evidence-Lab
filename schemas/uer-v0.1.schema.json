@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/Vajra-Space-Evidence-Lab/schemas/uer-v0.1.schema.json",
+  "title": "Unified Evidence Record v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "uer_version",
+    "record_id",
+    "event",
+    "sources",
+    "evidence",
+    "claims",
+    "assumptions",
+    "hypotheses",
+    "discriminating_observations",
+    "readiness"
+  ],
+  "properties": {
+    "uer_version": {
+      "const": "0.1"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "event": {
+      "$ref": "#/$defs/event"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assumption"
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hypothesis"
+      }
+    },
+    "discriminating_observations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/discriminatingObservation"
+      }
+    },
+    "readiness": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/readiness"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "aliases"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1},
+        "aliases": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "discovery_time": {"type": ["string", "null"]},
+        "redshift": {"type": ["number", "null"]}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "title", "source_type", "url"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source_type": {"const": "preprint"}
+            }
+          },
+          "then": {
+            "required": ["version"],
+            "properties": {
+              "version": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "source_type": {
+          "enum": ["alert", "preprint", "paper", "circular", "archive", "dataset", "repository_issue", "other"]
+        },
+        "url": {"type": ["string", "null"]},
+        "identifier": {"type": ["string", "null"]},
+        "version": {"type": ["string", "null"]},
+        "publication_status": {"type": ["string", "null"]}
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "quantity": {"type": ["string", "null"]},
+        "value": {"type": ["number", "string", "null"]},
+        "unit": {"type": ["string", "null"]},
+        "uncertainty": {"type": ["number", "string", "object", "null"]},
+        "band": {"type": ["string", "null"]},
+        "time": {"type": ["string", "null"]}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "evidence_type", "statement", "source_ids"],
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "evidence_type": {
+          "enum": [
+            "direct_observation",
+            "derived_measurement",
+            "upper_limit",
+            "non_detection",
+            "statistical_result",
+            "model_output",
+            "simulation",
+            "literature_evidence",
+            "negative_result"
+          ]
+        },
+        "statement": {"type": "string", "minLength": 1},
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string"}
+        },
+        "facility": {"type": ["string", "null"]},
+        "instrument": {"type": ["string", "null"]},
+        "measurement": {
+          "anyOf": [
+            {"$ref": "#/$defs/measurement"},
+            {"type": "null"}
+          ]
+        },
+        "confidence": {"type": ["string", "null"]}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "text", "claim_type", "supported_by", "contradicted_by", "assumption_ids"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "text": {"type": "string", "minLength": 1},
+        "claim_type": {
+          "enum": ["observational", "derived", "statistical", "interpretation", "model_dependent", "speculative"]
+        },
+        "supported_by": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "contradicted_by": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "assumption_ids": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "confidence": {"type": ["string", "null"]},
+        "status": {"type": ["string", "null"]}
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assumption_id", "description"],
+      "properties": {
+        "assumption_id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "value": {"type": ["number", "string", "null"]},
+        "source_ids": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_id", "description", "supporting_evidence", "contradicting_evidence", "status"],
+      "properties": {
+        "hypothesis_id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "supporting_evidence": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "contradicting_evidence": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "status": {
+          "enum": ["active", "favored", "disfavored", "rejected", "unresolved"]
+        }
+      }
+    },
+    "discriminatingObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observation_id", "description", "priority"],
+      "properties": {
+        "observation_id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "discriminates_between": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "expected_outcomes": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        },
+        "priority": {"enum": ["low", "medium", "high"]}
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "status", "rationale"],
+      "properties": {
+        "context": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["SUPPORTED", "CONDITIONAL", "DISPUTED", "INSUFFICIENT_EVIDENCE"]
+        },
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
