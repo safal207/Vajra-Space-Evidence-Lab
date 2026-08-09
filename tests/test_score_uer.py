@@ -82,18 +82,29 @@ class EvidenceReadinessInvariantTests(unittest.TestCase):
         self.assertEqual(changed["components"]["assumption_transparency"], 0)
         self.assertEqual(changed["score"], baseline["score"] - 15)
 
-    def test_removing_discriminating_path_reduces_every_claim(self) -> None:
+    def test_removing_discriminating_path_only_reduces_inferential_claims(self) -> None:
         degraded = copy.deepcopy(self.record)
         degraded["discriminating_observations"] = []
         changed_scores = score_uer.score_record(degraded)
 
-        for baseline in self.baseline["claims"]:
-            changed = claim_result(changed_scores, baseline["claim_id"])
+        association_baseline = claim_result(self.baseline, "claim:association")
+        association_changed = claim_result(changed_scores, "claim:association")
+        self.assertEqual(association_baseline["components"]["discriminating_path"], 10)
+        self.assertEqual(association_changed["components"]["discriminating_path"], 10)
+        self.assertEqual(association_changed["score"], association_baseline["score"])
+
+        for claim_id in (
+            "claim:shock-breakout",
+            "claim:powerful-onaxis-jet",
+            "claim:choked-outflow",
+        ):
+            baseline = claim_result(self.baseline, claim_id)
+            changed = claim_result(changed_scores, claim_id)
             self.assertEqual(baseline["components"]["discriminating_path"], 10)
             self.assertEqual(changed["components"]["discriminating_path"], 0)
             self.assertEqual(changed["score"], baseline["score"] - 10)
 
-    def test_removing_alternatives_and_discriminating_path_penalizes_unchallenged_claim(self) -> None:
+    def test_unrelated_event_hypotheses_do_not_inflate_derived_claim(self) -> None:
         degraded = copy.deepcopy(self.record)
         degraded["hypotheses"] = []
         degraded["discriminating_observations"] = []
@@ -101,7 +112,32 @@ class EvidenceReadinessInvariantTests(unittest.TestCase):
         baseline = claim_result(self.baseline, "claim:association")
         changed = claim_result(score_uer.score_record(degraded), "claim:association")
 
+        self.assertEqual(changed["components"]["challenge_coverage"], 12)
+        self.assertEqual(changed["components"]["discriminating_path"], 10)
+        self.assertEqual(changed["score"], baseline["score"])
+
+    def test_removing_relevant_alternatives_penalizes_interpretive_claim(self) -> None:
+        degraded = copy.deepcopy(self.record)
+        degraded["hypotheses"] = []
+        degraded["discriminating_observations"] = []
+
+        baseline = claim_result(self.baseline, "claim:shock-breakout")
+        changed = claim_result(score_uer.score_record(degraded), "claim:shock-breakout")
+
         self.assertEqual(baseline["components"]["challenge_coverage"], 12)
+        self.assertEqual(changed["components"]["challenge_coverage"], 5)
+        self.assertEqual(changed["components"]["discriminating_path"], 0)
+        self.assertEqual(changed["score"], baseline["score"] - 17)
+
+    def test_irrelevant_hypotheses_do_not_create_discriminating_credit(self) -> None:
+        degraded = copy.deepcopy(self.record)
+        for hypothesis in degraded["hypotheses"]:
+            hypothesis["supporting_evidence"] = ["ev:ep-detection"]
+            hypothesis["contradicting_evidence"] = []
+
+        baseline = claim_result(self.baseline, "claim:shock-breakout")
+        changed = claim_result(score_uer.score_record(degraded), "claim:shock-breakout")
+
         self.assertEqual(changed["components"]["challenge_coverage"], 5)
         self.assertEqual(changed["components"]["discriminating_path"], 0)
         self.assertEqual(changed["score"], baseline["score"] - 17)
