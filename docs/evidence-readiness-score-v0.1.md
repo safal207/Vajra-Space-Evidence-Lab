@@ -52,6 +52,7 @@ This intentionally prevents a model-dependent mechanism from receiving the same 
 3. A high ERS can coexist with scientific uncertainty; it means the uncertainty is well represented and reviewable.
 4. A model-dependent claim should remain penalized for inferential distance even when assumptions and provenance are excellent.
 5. Scores are reproducible from the UER and must change when the canonical evidence structure changes.
+6. ERS v0.1 is a protocol heuristic, not a validated scientific metric; its weights should be calibrated with domain-expert review before decision-critical use.
 
 ## EP260321a pilot
 
